@@ -144,8 +144,10 @@ static bool arch_perfCreate(run_t* run, pid_t pid, dynFileMethod_t method, int* 
 
     switch (method) {
     case _HF_DYNFILE_INSTR_COUNT:
-        LOG_D("Using: PERF_COUNT_HW_INSTRUCTIONS for pid=%d", (int)pid);
-        pe.config  = PERF_COUNT_HW_INSTRUCTIONS;
+         //LOG_D("Using: PERF_COUNT_HW_INSTRUCTIONS for pid=%d", (int)pid);
+        LOG_D("Using: PERF_COUNT_HW_CPU_CYCLES for pid=%d", (int)pid);
+        //pe.config  = PERF_COUNT_HW_INSTRUCTIONS;
+        pe.config  = PERF_COUNT_HW_CPU_CYCLES;
         pe.inherit = 1;
         break;
     case _HF_DYNFILE_BRANCH_COUNT:
