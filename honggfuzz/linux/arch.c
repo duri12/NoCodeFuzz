@@ -162,6 +162,7 @@ bool arch_launchChild(run_t* run) {
 #if defined(__NR_execveat)
     syscall(__NR_execveat, run->global->arch_linux.exeFd, "", run->args, environ, AT_EMPTY_PATH);
 #endif /* defined__NR_execveat) */
+    LOG_I("execve with arguments %s",run->args[1]);
     execve(run->args[0], (char* const*)run->args, environ);
     int errno_cpy = errno;
     alarm(1);
