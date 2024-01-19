@@ -404,7 +404,7 @@ static bool subproc_New(run_t* run) {
             exit(EXIT_FAILURE);
         }
 
-        LOG_D("Launching '%s' on file '%s' (%s mode)", run->args[0],
+        LOG_I("Launching '%s' on file '%s' (%s mode)", run->args[0],
             run->global->exe.persistent ? "PERSISTENT_MODE" : _HF_INPUT_FILE_PATH,
             run->global->exe.fuzzStdin ? "stdin" : "file");
 
