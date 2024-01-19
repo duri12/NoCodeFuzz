@@ -450,7 +450,6 @@ static bool subproc_runNoFork(run_t* run) {
     }
     for (size_t i = 0; i < ARRAYSIZE(run->global->exe.env_ptrs) && run->global->exe.env_ptrs[i];
          i++) {
-        LOG_I("PUT: %s", run->global->exe.env_ptrs[i]);
         putenv(run->global->exe.env_ptrs[i]);
     }
 
