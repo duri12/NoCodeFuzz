@@ -436,7 +436,7 @@ static bool subproc_New(run_t* run) {
 
 static void MyFunction(char** args){
     LOG_I("***********************************");
-    LOG_I("we are in my Function, we got %s",args[0]);
+    LOG_I("we are in my Function, we got %s",args[1]);
     LOG_I("***********************************");
     sleep(1);
 
