@@ -345,11 +345,11 @@ static bool subproc_PrepareExecv(run_t* run) {
     return true;
 }
 
-static void MyFunction(char* args){
+static void MyFunction(char** args){
     LOG_I("***********************************");
-    Log_I("we are in my Function, we got %s",args[0]);
+    LOG_I("we are in my Function, we got %s",args[0]);
     LOG_I("***********************************");
-    time.sleep(1);
+    sleep(1);
 
 }
 static bool subproc_runNoFork(run_t* run) {
@@ -369,23 +369,19 @@ static bool subproc_runNoFork(run_t* run) {
     * This might fail in Docker, as Docker blocks __NR_personality. Consequently
     * it's just a debug warning
     */
-    if (run->global->arch_linux.disableRandomization &&
-        syscall(__NR_personality, ADDR_NO_RANDOMIZE) == -1) {
-        PLOG_D("personality(ADDR_NO_RANDOMIZE) failed");
-    }
-    alarm(0);
+    arch_prepare(run);
 
     clock_t start = clock();
     MyFunction(run->args);
     clock_t end = clock();
 
-    LOG_I("the program lasted %d seconds",end - start);
+    LOG_I("the program lasted %l seconds",end - start);
 
     if (run->global->feedback.dynFileMethod == _HF_DYNFILE_NONE) {
         return false;
     }
 
-    uint64_t instrCount = end-start;
+    int64_t instrCount = end-start;
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT){
         run->hwCnts.cpuInstrCnt  = instrCount;
     }
@@ -401,11 +397,14 @@ static bool subproc_runNoFork(run_t* run) {
 
     return true;
 }
+
+/*
 static bool subproc_New(run_t* run) {
     if (run->pid) {
         return true;
     }
-    /*
+    */
+/*
     int sv[2];
     if (run->global->exe.persistent) {
         if (run->persistentSock != -1) {
@@ -422,7 +421,8 @@ static bool subproc_New(run_t* run) {
         }
         run->persistentSock = sv[0];
     }
-    */
+    *//*
+
     LOG_D("Forking new process for thread: %" PRId32, run->fuzzNo);
 
     //run->pid = arch_fork(run);
@@ -431,10 +431,13 @@ static bool subproc_New(run_t* run) {
         run->pid = 0;
         return false;
     }
-    /* The child process AKA shouldnt get here */
+    */
+/* The child process AKA shouldnt get here *//*
+
     if (!run->pid) {
         logMutexReset();
-        /*
+        */
+/*
          * Reset sighandlers, and set alarm(1). It's a guarantee against dead-locks
          * in the child, where we ensure here that the child process will either
          * execve or get signaled by SIGALRM within 1 second.
@@ -443,7 +446,8 @@ static bool subproc_New(run_t* run) {
          * when fork()-ing a single thread of a process: e.g. with glibc < 2.24
          * (or, Ubuntu's 2.23-0ubuntu6). For more see
          * http://changelogs.ubuntu.com/changelogs/pool/main/g/glibc/glibc_2.23-0ubuntu7/changelog
-         */
+         *//*
+
         alarm(1);
         signal(SIGALRM, SIG_DFL);
 
@@ -472,7 +476,9 @@ static bool subproc_New(run_t* run) {
         abort();
     }
 
-    /* Parent */
+    */
+/* Parent *//*
+
     LOG_D("Launched new process, pid=%d, thread: %" PRId32 " (concurrency: %zd)", (int)run->pid,
         run->fuzzNo, run->global->threads.threadsMax);
 
@@ -486,6 +492,7 @@ static bool subproc_New(run_t* run) {
 
     return true;
 }
+*/
 
 bool subproc_Run(run_t* run) {
     /*

@@ -106,6 +106,13 @@ pid_t arch_fork(run_t* run) {
     return pid;
 }
 
+void arch_prepare(run_t* run){
+    if (syscall(__NR_personality, ADDR_NO_RANDOMIZE) == -1) {
+        PLOG_D("personality(ADDR_NO_RANDOMIZE) failed");
+    }
+    alarm(0);
+}
+
 bool arch_launchChild(run_t* run) {
     /* Try to enable network namespacing */
     if (run->global->arch_linux.useNetNs == HF_MAYBE) {
