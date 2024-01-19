@@ -107,7 +107,8 @@ pid_t arch_fork(run_t* run) {
 }
 
 void arch_prepare(run_t* run){
-    if (syscall(__NR_personality, ADDR_NO_RANDOMIZE) == -1) {
+    if (run&&
+        syscall(__NR_personality, ADDR_NO_RANDOMIZE) == -1) {
         PLOG_D("personality(ADDR_NO_RANDOMIZE) failed");
     }
     alarm(0);
