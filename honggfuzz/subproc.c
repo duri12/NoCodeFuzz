@@ -37,6 +37,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <timr.h>
 
 #include "arch.h"
 #include "fuzz.h"
@@ -345,11 +346,67 @@ static bool subproc_PrepareExecv(run_t* run) {
     return true;
 }
 
+static void MyFunction(char* args){
+    LOG_I("***********************************");
+    Log_I("we are in my Function, we got %s",args[0]);
+    LOG_I("***********************************");
+    time.sleep(1);
+
+}
+static bool subproc_runNoFork(run_t* run) {
+    /*set up the environment*/
+    if (run->global->exe.clearEnv) {
+        environ = NULL;
+    }
+    for (size_t i = 0; i < ARRAYSIZE(run->global->exe.env_ptrs) && run->global->exe.env_ptrs[i];
+         i++) {
+        putenv(run->global->exe.env_ptrs[i]);
+    }
+
+    subproc_prepareExecvArgs(run) ;/* put the args in run->args*/
+
+    /*
+    * Disable ASLR:
+    * This might fail in Docker, as Docker blocks __NR_personality. Consequently
+    * it's just a debug warning
+    */
+    if (run->global->arch_linux.disableRandomization &&
+        syscall(__NR_personality, ADDR_NO_RANDOMIZE) == -1) {
+        PLOG_D("personality(ADDR_NO_RANDOMIZE) failed");
+    }
+    alarm(0);
+
+    clock_t start = clock();
+    MyFunction(run->args);
+    clock_t end = clock();
+
+    LOG_I("the program lasted %d seconds",end - start);
+
+    if (run->global->feedback.dynFileMethod == _HF_DYNFILE_NONE) {
+        return false;
+    }
+
+    uint64_t instrCount = end-start;
+    if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT){
+        run->hwCnts.cpuInstrCnt  = instrCount;
+    }
+
+    int64_t diffUSecs = util_timeNowUSecs() - run->timeStartedUSecs;
+
+    {
+        MX_SCOPED_LOCK(&run->global->mutex.timing);
+        if (diffUSecs >= ATOMIC_GET(run->global->timing.timeOfLongestUnitUSecs)) {
+            ATOMIC_SET(run->global->timing.timeOfLongestUnitUSecs, diffUSecs);
+        }
+    }
+
+    return true;
+}
 static bool subproc_New(run_t* run) {
     if (run->pid) {
         return true;
     }
-
+    /*
     int sv[2];
     if (run->global->exe.persistent) {
         if (run->persistentSock != -1) {
@@ -366,16 +423,16 @@ static bool subproc_New(run_t* run) {
         }
         run->persistentSock = sv[0];
     }
-
+    */
     LOG_D("Forking new process for thread: %" PRId32, run->fuzzNo);
 
-    run->pid = arch_fork(run);
+    //run->pid = arch_fork(run);
     if (run->pid == -1) {
         PLOG_E("Couldn't fork");
         run->pid = 0;
         return false;
     }
-    /* The child process */
+    /* The child process AKA shouldnt get here */
     if (!run->pid) {
         logMutexReset();
         /*
@@ -432,6 +489,7 @@ static bool subproc_New(run_t* run) {
 }
 
 bool subproc_Run(run_t* run) {
+    /*
     if (!subproc_New(run)) {
         LOG_E("subproc_New()");
         return false;
@@ -450,6 +508,8 @@ bool subproc_Run(run_t* run) {
     }
 
     return true;
+     */
+    return subproc_runNoFork(run);
 }
 
 uint8_t subproc_System(run_t* run, const char* const argv[]) {
