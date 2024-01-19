@@ -42,4 +42,5 @@ extern void arch_prepareParent(run_t* run);
 
 extern void arch_prepareParentAfterFork(run_t* run);
 
+extern void arch_prepare(run_t* run);
 #endif /* _HF_ARCH_H_ */

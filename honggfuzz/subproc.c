@@ -345,6 +345,95 @@ static bool subproc_PrepareExecv(run_t* run) {
     return true;
 }
 
+
+static bool subproc_New(run_t* run) {
+    if (run->pid) {
+        return true;
+    }
+
+
+    int sv[2];
+    if (run->global->exe.persistent) {
+        if (run->persistentSock != -1) {
+            close(run->persistentSock);
+        }
+
+        int sock_type = SOCK_STREAM;
+#if defined(SOCK_CLOEXEC)
+        sock_type |= SOCK_CLOEXEC;
+#endif
+        if (socketpair(AF_UNIX, sock_type, 0, sv) == -1) {
+            PLOG_W("socketpair(AF_UNIX, SOCK_STREAM, 0, sv)");
+            return false;
+        }
+        run->persistentSock = sv[0];
+    }
+
+    LOG_D("Forking new process for thread: %" PRId32, run->fuzzNo);
+
+    //run->pid = arch_fork(run);
+    if (run->pid == -1) {
+        PLOG_E("Couldn't fork");
+        run->pid = 0;
+        return false;
+    }
+    /* The child process AKA shouldnt get here */
+    if (!run->pid) {
+        logMutexReset();
+        /*
+         * Reset sighandlers, and set alarm(1). It's a guarantee against dead-locks
+         * in the child, where we ensure here that the child process will either
+         * execve or get signaled by SIGALRM within 1 second.
+         *
+         * Those deadlocks typically stem from the fact, that malloc() can behave weirdly
+         * when fork()-ing a single thread of a process: e.g. with glibc < 2.24
+         * (or, Ubuntu's 2.23-0ubuntu6). For more see
+         * http://changelogs.ubuntu.com/changelogs/pool/main/g/glibc/glibc_2.23-0ubuntu7/changelog
+         */
+        alarm(1);
+        signal(SIGALRM, SIG_DFL);
+
+        if (run->global->exe.persistent) {
+            if (TEMP_FAILURE_RETRY(dup2(sv[1], _HF_PERSISTENT_FD)) == -1) {
+                PLOG_F("dup2('%d', '%d')", sv[1], _HF_PERSISTENT_FD);
+            }
+            close(sv[0]);
+            close(sv[1]);
+        }
+
+        if (!subproc_PrepareExecv(run)) {
+            LOG_E("subproc_PrepareExecv() failed");
+            exit(EXIT_FAILURE);
+        }
+
+        LOG_D("Launching '%s' on file '%s' (%s mode)", run->args[0],
+              run->global->exe.persistent ? "PERSISTENT_MODE" : _HF_INPUT_FILE_PATH,
+              run->global->exe.fuzzStdin ? "stdin" : "file");
+
+        if (!arch_launchChild(run)) {
+            LOG_E("Error launching child process");
+            kill(run->global->threads.mainPid, SIGTERM);
+            _exit(1);
+        }
+        abort();
+    }
+
+    /* Parent */
+    LOG_D("Launched new process, pid=%d, thread: %" PRId32 " (concurrency: %zd)", (int)run->pid,
+          run->fuzzNo, run->global->threads.threadsMax);
+
+    arch_prepareParentAfterFork(run);
+
+    if (run->global->exe.persistent) {
+        close(sv[1]);
+        run->runState = _HF_RS_WAITING_FOR_INITIAL_READY;
+        LOG_I("Persistent mode: Launched new persistent pid=%d", (int)run->pid);
+    }
+
+    return true;
+}
+
+
 static void MyFunction(char** args){
     LOG_I("***********************************");
     LOG_I("we are in my Function, we got %s",args[0]);
@@ -400,91 +489,6 @@ static bool subproc_runNoFork(run_t* run) {
     return true;
 }
 
-static bool subproc_New(run_t* run) {
-    if (run->pid) {
-        return true;
-    }
-    /*
-    int sv[2];
-    if (run->global->exe.persistent) {
-        if (run->persistentSock != -1) {
-            close(run->persistentSock);
-        }
-
-        int sock_type = SOCK_STREAM;
-#if defined(SOCK_CLOEXEC)
-        sock_type |= SOCK_CLOEXEC;
-#endif
-        if (socketpair(AF_UNIX, sock_type, 0, sv) == -1) {
-            PLOG_W("socketpair(AF_UNIX, SOCK_STREAM, 0, sv)");
-            return false;
-        }
-        run->persistentSock = sv[0];
-    }
-    */
-    LOG_D("Forking new process for thread: %" PRId32, run->fuzzNo);
-
-    //run->pid = arch_fork(run);
-    if (run->pid == -1) {
-        PLOG_E("Couldn't fork");
-        run->pid = 0;
-        return false;
-    }
-    /* The child process AKA shouldnt get here */
-    if (!run->pid) {
-        logMutexReset();
-        /*
-         * Reset sighandlers, and set alarm(1). It's a guarantee against dead-locks
-         * in the child, where we ensure here that the child process will either
-         * execve or get signaled by SIGALRM within 1 second.
-         *
-         * Those deadlocks typically stem from the fact, that malloc() can behave weirdly
-         * when fork()-ing a single thread of a process: e.g. with glibc < 2.24
-         * (or, Ubuntu's 2.23-0ubuntu6). For more see
-         * http://changelogs.ubuntu.com/changelogs/pool/main/g/glibc/glibc_2.23-0ubuntu7/changelog
-         */
-        alarm(1);
-        signal(SIGALRM, SIG_DFL);
-
-        if (run->global->exe.persistent) {
-            if (TEMP_FAILURE_RETRY(dup2(sv[1], _HF_PERSISTENT_FD)) == -1) {
-                PLOG_F("dup2('%d', '%d')", sv[1], _HF_PERSISTENT_FD);
-            }
-            close(sv[0]);
-            close(sv[1]);
-        }
-
-        if (!subproc_PrepareExecv(run)) {
-            LOG_E("subproc_PrepareExecv() failed");
-            exit(EXIT_FAILURE);
-        }
-
-        LOG_D("Launching '%s' on file '%s' (%s mode)", run->args[0],
-            run->global->exe.persistent ? "PERSISTENT_MODE" : _HF_INPUT_FILE_PATH,
-            run->global->exe.fuzzStdin ? "stdin" : "file");
-
-        if (!arch_launchChild(run)) {
-            LOG_E("Error launching child process");
-            kill(run->global->threads.mainPid, SIGTERM);
-            _exit(1);
-        }
-        abort();
-    }
-
-    /* Parent */
-    LOG_D("Launched new process, pid=%d, thread: %" PRId32 " (concurrency: %zd)", (int)run->pid,
-        run->fuzzNo, run->global->threads.threadsMax);
-
-    arch_prepareParentAfterFork(run);
-
-    if (run->global->exe.persistent) {
-        close(sv[1]);
-        run->runState = _HF_RS_WAITING_FOR_INITIAL_READY;
-        LOG_I("Persistent mode: Launched new persistent pid=%d", (int)run->pid);
-    }
-
-    return true;
-}
 
 bool subproc_Run(run_t* run) {
     /*
