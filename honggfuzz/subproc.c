@@ -453,6 +453,23 @@ static bool subproc_runNoFork(run_t* run) {
         putenv(run->global->exe.env_ptrs[i]);
     }
 
+
+    if (!run->global->socketFuzzer.enabled) {
+        /* The input file to _HF_INPUT_FD */
+        if (TEMP_FAILURE_RETRY(dup2(run->dynfile->fd, _HF_INPUT_FD)) == -1) {
+            PLOG_E("dup2('%d', _HF_INPUT_FD='%d')", run->dynfile->fd, _HF_INPUT_FD);
+            return false;
+        }
+        if (lseek(_HF_INPUT_FD, 0, SEEK_SET) == (off_t)-1) {
+            PLOG_E("lseek(_HF_INPUT_FD=%d, 0, SEEK_SET)", _HF_INPUT_FD);
+            return false;
+        }
+        if (run->global->exe.fuzzStdin &&
+            TEMP_FAILURE_RETRY(dup2(run->dynfile->fd, STDIN_FILENO)) == -1) {
+            PLOG_E("dup2(_HF_INPUT_FD=%d, STDIN_FILENO=%d)", run->dynfile->fd, STDIN_FILENO);
+            return false;
+        }
+    }
     subproc_prepareExecvArgs(run) ;/* put the args in run->args*/
 
     /*
