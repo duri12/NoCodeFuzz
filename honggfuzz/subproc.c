@@ -37,7 +37,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <timr.h>
 
 #include "arch.h"
 #include "fuzz.h"
