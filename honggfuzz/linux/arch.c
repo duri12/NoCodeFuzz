@@ -160,7 +160,7 @@ bool arch_launchChild(run_t* run) {
     if (kill(syscall(__NR_getpid), SIGSTOP) == -1) {
         LOG_F("Couldn't stop itself");
     }
-    LOG_I("execve with arguments %s",run->args[1]);
+    LOG_I("execve with arguments %s",run->global->arch_linux.exeFd);
 #if defined(__NR_execveat)
     syscall(__NR_execveat, run->global->arch_linux.exeFd, "", run->args, environ, AT_EMPTY_PATH);
 #endif /* defined__NR_execveat) */
