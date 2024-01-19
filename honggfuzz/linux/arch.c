@@ -107,7 +107,7 @@ pid_t arch_fork(run_t* run) {
 }
 
 bool arch_launchChild(run_t* run) {
-    LOG_I("execve with arguments %s",run->args[1]);
+    LOG_I("execve with arguments %s",run->args[0]);
     /* Try to enable network namespacing */
     if (run->global->arch_linux.useNetNs == HF_MAYBE) {
         if (unshare(CLONE_NEWUSER | CLONE_NEWNET) == -1) {
