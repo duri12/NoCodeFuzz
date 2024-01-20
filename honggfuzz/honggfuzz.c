@@ -277,6 +277,7 @@ static uint8_t mainThreadLoop(honggfuzz_t* hfuzz) {
             }
             LOG_I("calling display.display");
             display_display(hfuzz);
+            LOG_I("exiting display.display");
         }
         if (ATOMIC_GET(sigReceived) > 0) {
             LOG_I("Signal %d (%s) received, terminating", ATOMIC_GET(sigReceived),
