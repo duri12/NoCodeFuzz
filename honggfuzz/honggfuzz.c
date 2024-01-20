@@ -222,7 +222,7 @@ static void printSummary(honggfuzz_t* hfuzz) {
 static void pingThreads(honggfuzz_t* hfuzz) {
     for (size_t i = 0; i < hfuzz->threads.threadsMax; i++) {
         if (pthread_kill(hfuzz->threads.threads[i], SIGCHLD) != 0 && errno != EINTR && errno != 0) {
-            PLOG_I("pthread_kill(thread=%zu, SIGCHLD)", i);
+            PLOG_W("pthread_kill(thread=%zu, SIGCHLD)", i);
         }
     }
 }
@@ -275,6 +275,7 @@ static uint8_t mainThreadLoop(honggfuzz_t* hfuzz) {
             if (ATOMIC_XCHG(clearWin, false)) {
                 display_clear();
             }
+            LOG_I("calling display.display");
             display_display(hfuzz);
         }
         if (ATOMIC_GET(sigReceived) > 0) {
