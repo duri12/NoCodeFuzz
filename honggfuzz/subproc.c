@@ -456,17 +456,8 @@ static bool subproc_runNoFork(run_t* run) {
 
     if (!run->global->socketFuzzer.enabled) {
         /* The input file to _HF_INPUT_FD */
-        if (TEMP_FAILURE_RETRY(dup2(run->dynfile->fd, _HF_INPUT_FD)) == -1) {
-            PLOG_E("dup2('%d', _HF_INPUT_FD='%d')", run->dynfile->fd, _HF_INPUT_FD);
-            return false;
-        }
-        if (lseek(_HF_INPUT_FD, 0, SEEK_SET) == (off_t)-1) {
-            PLOG_E("lseek(_HF_INPUT_FD=%d, 0, SEEK_SET)", _HF_INPUT_FD);
-            return false;
-        }
-        if (run->global->exe.fuzzStdin &&
-            TEMP_FAILURE_RETRY(dup2(run->dynfile->fd, STDIN_FILENO)) == -1) {
-            PLOG_E("dup2(_HF_INPUT_FD=%d, STDIN_FILENO=%d)", run->dynfile->fd, STDIN_FILENO);
+        if (lseek(run->dynfile->fd, 0, SEEK_SET) == (off_t)-1) {
+            PLOG_E("lseek(run->dynfile->fd=%d, 0, SEEK_SET)", _HF_INPUT_FD);
             return false;
         }
     }
@@ -478,7 +469,10 @@ static bool subproc_runNoFork(run_t* run) {
     * it's just a debug warning
     */
     arch_prepare(run);
-
+    char input[1024];
+    read(run->dynfile->fd, input, run->dynfile->size);
+    LOG_I("the input is %s", input);
+    LOG_I("the  content of dynfile data is %s", run->dynfile->data);
     clock_t start = clock();
     MyFunction(run->args);
     clock_t end = clock();
