@@ -238,7 +238,7 @@ static void fuzz_perfFeedback(run_t* run) {
             softNewPC, softNewCmp, run->hwCnts.cpuInstrCnt, run->hwCnts.cpuBranchCnt,
             run->global->feedback.hwCnts.bbCnt, run->global->feedback.hwCnts.softCntEdge,
             run->global->feedback.hwCnts.softCntPc, run->global->feedback.hwCnts.softCntCmp);
-
+        LOG_I("the input was %s", run->dynfile->data);
         if (run->global->io.statsFileName) {
             const time_t curr_sec      = time(NULL);
             const time_t elapsed_sec   = curr_sec - run->global->timing.timeStart;
