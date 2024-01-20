@@ -435,12 +435,119 @@ static bool subproc_New(run_t* run) {
 
 
 static void MyFunction(uint8_t* args){
-    LOG_I("***********************************");
-    LOG_I("we are in my Function, we got %s",args);
-    LOG_I("***********************************");
-    sleep(1);
 
+    char password[1024];
+
+    strncpy(password, args, 8);
+
+    // if(strlen(password) != 6)
+    //     return 0;
+    if(password[6] != '\0')
+        return 0;
+    if(password[0]=='P')
+    {
+
+        __asm__ __volatile__
+        (
+        "pause;"
+        "movq $0, %%rdx;"
+        "movq $0x100000, %%rbx;"
+        "loop:"
+        "inc %%rdx;"
+        "cmpq %%rdx, %%rbx;"
+        "jg loop;"
+        :
+        :
+        : "rdx","rbx","cc", "memory"
+        );
+
+        if(password[1]=='A')
+        {
+            __asm__ __volatile__
+            (
+            "pause;"
+            "movq $0, %%rdx;"
+            "movq $0x100000, %%rbx;"
+            "loop1:"
+            "inc %%rdx;"
+            "cmpq %%rdx, %%rbx;"
+            "jg loop1;"
+            :
+            :
+            : "rdx","rbx","cc", "memory"
+            );
+            if(password[2]=='S')
+            {
+                __asm__ __volatile__
+                (
+                "pause;"
+                "movq $0, %%rdx;"
+                "movq $0x100000, %%rbx;"
+                "loop2:"
+                "inc %%rdx;"
+                "cmpq %%rdx, %%rbx;"
+                "jg loop2;"
+                :
+                :
+                : "rdx","rbx","cc", "memory"
+                );
+                if(password[3]=='s')
+                {
+                    __asm__ __volatile__
+                    (
+                    "pause;"
+                    "movq $0, %%rdx;"
+                    "movq $0x100000, %%rbx;"
+                    "loop3:"
+                    "inc %%rdx;"
+                    "cmpq %%rdx, %%rbx;"
+                    "jg loop3;"
+                    :
+                    :
+                    : "rdx","rbx","cc", "memory"
+                    );
+                    if(password[4]=='1')
+                    {
+                        __asm__ __volatile__
+                        (
+                        "pause;"
+                        "movq $0, %%rdx;"
+                        "movq $0x100000, %%rbx;"
+                        "loop4:"
+                        "inc %%rdx;"
+                        "cmpq %%rdx, %%rbx;"
+                        "jg loop4;"
+                        :
+                        :
+                        : "rdx","rbx","cc", "memory"
+                        );
+                        if(password[5]=='!')
+                        {
+                            __asm__ __volatile__
+                            (
+                            "pause;"
+                            "movq $0, %%rdx;"
+                            "movq $0x100000, %%rbx;"
+                            "loop5:"
+                            "inc %%rdx;"
+                            "cmpq %%rdx, %%rbx;"
+                            "jg loop5;"
+                            :
+                            :
+                            : "rdx","rbx","cc", "memory"
+                            );
+                            LOG_I("found it !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    return 0;
 }
+
 static bool subproc_runNoFork(run_t* run) {
     if (run->global->exe.persistent)
         subproc_New(run); /*should not run . here to skip unused error*/
