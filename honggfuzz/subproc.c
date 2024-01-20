@@ -443,7 +443,7 @@ static void MyFunction(uint8_t* args){
     // if(strlen(password) != 6)
     //     return 0;
     if(password[6] != '\0')
-        return 0;
+        return;
     if(password[0]=='P')
     {
 
