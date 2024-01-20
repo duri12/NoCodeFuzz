@@ -537,6 +537,7 @@ static void MyFunction(uint8_t* args){
                             : "rdx","rbx","cc", "memory"
                             );
                             LOG_I("found it !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                            sleep(10);
                         }
                     }
                 }
