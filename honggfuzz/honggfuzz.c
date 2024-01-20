@@ -299,6 +299,7 @@ static uint8_t mainThreadLoop(honggfuzz_t* hfuzz) {
         }
         pingThreads(hfuzz);
         //pause();
+        sleep(1);
     }
 
     fuzz_setTerminating();
