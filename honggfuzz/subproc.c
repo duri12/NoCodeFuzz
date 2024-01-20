@@ -443,7 +443,7 @@ static void MyFunction(uint8_t* args){
 }
 static bool subproc_runNoFork(run_t* run) {
     if (run->global->exe.persistent)
-        subproc_New(run);
+        subproc_New(run); /*should not run . here to skip unused error*/
     /*set up the environment*/
     if (run->global->exe.clearEnv) {
         environ = NULL;
@@ -454,13 +454,6 @@ static bool subproc_runNoFork(run_t* run) {
     }
 
 
-    if (!run->global->socketFuzzer.enabled) {
-        /* The input file to _HF_INPUT_FD */
-        if (lseek(run->dynfile->fd, 0, SEEK_SET) == (off_t)-1) {
-            PLOG_E("lseek(run->dynfile->fd=%d, 0, SEEK_SET)", _HF_INPUT_FD);
-            return false;
-        }
-    }
     subproc_prepareExecvArgs(run) ;/* put the args in run->args*/
 
     /*
@@ -470,15 +463,13 @@ static bool subproc_runNoFork(run_t* run) {
     */
     arch_prepare(run);
 
-    clock_t start = clock();
-    MyFunction(run->dynfile->data);
-    clock_t end = clock();
-
-    LOG_I("the program lasted some seconds");
-
     if (run->global->feedback.dynFileMethod == _HF_DYNFILE_NONE) {
         return false;
     }
+
+    clock_t start = clock();
+    MyFunction(run->dynfile->data);
+    clock_t end = clock();
 
     int64_t instrCount = end-start;
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT){
