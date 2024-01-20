@@ -436,16 +436,11 @@ static bool subproc_New(run_t* run) {
 }
 
 
-static void MyFunction(uint8_t* args){
+static void MyFunction(char * args){
 
-    char password[1024];
-
-    strncpy(password,(char * )args, 8);
-
-    // if(strlen(password) != 6)
-    //     return 0;
     if(password[6] != '\0')
         return;
+
     if(password[0]=='P')
     {
         if(password[1]=='A')
@@ -498,13 +493,19 @@ static bool subproc_runNoFork(run_t* run) {
     unsigned cycles_low_start, cycles_high_start, cycles_low_end, cycles_high_end;
     uint64_t start, end;
 
+    char password[1024];
+
+    strncpy(password,(char * )run->dynfile->data, 8);
+
+    // if(strlen(password) != 6)
+    //     return 0;
 
     __asm__ __volatile__ ("CPUID\n\t"
                   "RDTSC\n\t"
                   "mov %%edx, %0\n\t"                                                                                 "mov %%eax, %1\n\t": "=r" (cycles_high_start), "=r" (cycles_low_start)::
     "%rax", "%rbx", "%rcx", "%rdx");
 
-    MyFunction(run->dynfile->data);
+    MyFunction(password);
 
     __asm__ __volatile__("RDTSCP\n\t"
                  "mov %%edx, %0\n\t"
