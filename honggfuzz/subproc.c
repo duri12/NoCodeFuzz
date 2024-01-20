@@ -579,14 +579,14 @@ static bool subproc_runNoFork(run_t* run) {
     uint64_t start, end;
 
 
-    asm volatile ("CPUID\n\t"
+    __asm__ __volatile__ ("CPUID\n\t"
                   "RDTSC\n\t"
                   "mov %%edx, %0\n\t"                                                                                 "mov %%eax, %1\n\t": "=r" (cycles_high_start), "=r" (cycles_low_start)::
     "%rax", "%rbx", "%rcx", "%rdx");
 
     MyFunction(run->dynfile->data);
 
-    asm volatile("RDTSCP\n\t"
+    __asm__ __volatile__("RDTSCP\n\t"
                  "mov %%edx, %0\n\t"
                  "mov %%eax, %1\n\t"
                  "CPUID\n\t": "=r" (cycles_high_end), "=r" (cycles_low_end)::
