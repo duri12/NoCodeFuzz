@@ -38,6 +38,8 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include <stdint.h>
+
 #include "arch.h"
 #include "fuzz.h"
 #include "libhfcommon/common.h"
@@ -572,9 +574,27 @@ static bool subproc_runNoFork(run_t* run) {
         return false;
     }
 
-    clock_t start = clock();
+
+    unsigned cycles_low_start, cycles_high_start, cycles_low_end, cycles_high_end;
+    uint64_t start, end;
+
+
+    asm volatile ("CPUID\n\t"
+                  "RDTSC\n\t"
+                  "mov %%edx, %0\n\t"                                                                                 "mov %%eax, %1\n\t": "=r" (cycles_high_start), "=r" (cycles_low_start)::
+    "%rax", "%rbx", "%rcx", "%rdx");
+
     MyFunction(run->dynfile->data);
-    clock_t end = clock();
+
+    asm volatile("RDTSCP\n\t"
+                 "mov %%edx, %0\n\t"
+                 "mov %%eax, %1\n\t"
+                 "CPUID\n\t": "=r" (cycles_high_end), "=r" (cycles_low_end)::
+    "%rax", "%rbx", "%rcx", "%rdx");
+
+    //interprets values
+    start = ( ((uint64_t)cycles_high_start << 32) | cycles_low_start );
+    end = ( ((uint64_t)cycles_high_end << 32) | cycles_low_end);
 
     int64_t instrCount = end-start;
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT){
