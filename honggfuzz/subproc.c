@@ -438,7 +438,7 @@ static void MyFunction(uint8_t* args){
 
     char password[1024];
 
-    strncpy(password, args, 8);
+    strncpy(password,(char * )args, 8);
 
     // if(strlen(password) != 6)
     //     return 0;
@@ -543,9 +543,6 @@ static void MyFunction(uint8_t* args){
             }
         }
     }
-
-
-    return 0;
 }
 
 static bool subproc_runNoFork(run_t* run) {
