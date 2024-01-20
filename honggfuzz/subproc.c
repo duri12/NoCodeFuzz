@@ -448,96 +448,16 @@ static void MyFunction(uint8_t* args){
         return;
     if(password[0]=='P')
     {
-
-        __asm__ __volatile__
-        (
-        "pause;"
-        "movq $0, %%rdx;"
-        "movq $0x100000, %%rbx;"
-        "loop:"
-        "inc %%rdx;"
-        "cmpq %%rdx, %%rbx;"
-        "jg loop;"
-        :
-        :
-        : "rdx","rbx","cc", "memory"
-        );
-
         if(password[1]=='A')
         {
-            __asm__ __volatile__
-            (
-            "pause;"
-            "movq $0, %%rdx;"
-            "movq $0x100000, %%rbx;"
-            "loop1:"
-            "inc %%rdx;"
-            "cmpq %%rdx, %%rbx;"
-            "jg loop1;"
-            :
-            :
-            : "rdx","rbx","cc", "memory"
-            );
             if(password[2]=='S')
             {
-                __asm__ __volatile__
-                (
-                "pause;"
-                "movq $0, %%rdx;"
-                "movq $0x100000, %%rbx;"
-                "loop2:"
-                "inc %%rdx;"
-                "cmpq %%rdx, %%rbx;"
-                "jg loop2;"
-                :
-                :
-                : "rdx","rbx","cc", "memory"
-                );
                 if(password[3]=='s')
                 {
-                    __asm__ __volatile__
-                    (
-                    "pause;"
-                    "movq $0, %%rdx;"
-                    "movq $0x100000, %%rbx;"
-                    "loop3:"
-                    "inc %%rdx;"
-                    "cmpq %%rdx, %%rbx;"
-                    "jg loop3;"
-                    :
-                    :
-                    : "rdx","rbx","cc", "memory"
-                    );
                     if(password[4]=='1')
                     {
-                        __asm__ __volatile__
-                        (
-                        "pause;"
-                        "movq $0, %%rdx;"
-                        "movq $0x100000, %%rbx;"
-                        "loop4:"
-                        "inc %%rdx;"
-                        "cmpq %%rdx, %%rbx;"
-                        "jg loop4;"
-                        :
-                        :
-                        : "rdx","rbx","cc", "memory"
-                        );
                         if(password[5]=='!')
                         {
-                            __asm__ __volatile__
-                            (
-                            "pause;"
-                            "movq $0, %%rdx;"
-                            "movq $0x100000, %%rbx;"
-                            "loop5:"
-                            "inc %%rdx;"
-                            "cmpq %%rdx, %%rbx;"
-                            "jg loop5;"
-                            :
-                            :
-                            : "rdx","rbx","cc", "memory"
-                            );
                             LOG_I("found it !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                             sleep(10);
                         }
