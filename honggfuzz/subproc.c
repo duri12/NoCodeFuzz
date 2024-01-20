@@ -434,9 +434,9 @@ static bool subproc_New(run_t* run) {
 }
 
 
-static void MyFunction(char** args){
+static void MyFunction(char* args){
     LOG_I("***********************************");
-    LOG_I("we are in my Function, we got %s",args[0]);
+    LOG_I("we are in my Function, we got %s",args);
     LOG_I("***********************************");
     sleep(1);
 
@@ -469,14 +469,9 @@ static bool subproc_runNoFork(run_t* run) {
     * it's just a debug warning
     */
     arch_prepare(run);
-    char input[1024];
-    if(read(run->dynfile->fd, input, run->dynfile->size) == -1){
-        LOG_E("read(run->dynfile->fd)");
-    }
-    LOG_I("the input is %s", input);
-    LOG_I("the  content of dynfile data is %s", run->dynfile->data);
+
     clock_t start = clock();
-    MyFunction(run->args);
+    MyFunction(run->dynfile->data);
     clock_t end = clock();
 
     LOG_I("the program lasted some seconds");
