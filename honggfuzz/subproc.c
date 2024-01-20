@@ -444,32 +444,32 @@ static void MyFunction(char * password){
     if(password[0]=='P')
     {
         for (int i = 0; i < 10; ++i) {
-            continue;
+            sleep(0.01);
         }
         if(password[1]=='A')
         {
             for (int i = 0; i < 10; ++i) {
-                continue;
+                sleep(0.01);
             }
             if(password[2]=='S')
             {
                 for (int i = 0; i < 10; ++i) {
-                    continue;
+                    sleep(0.01);
                 }
                 if(password[3]=='s')
                 {
                     for (int i = 0; i < 10; ++i) {
-                        continue;
+                        sleep(0.01);
                     }
                     if(password[4]=='1')
                     {
                         for (int i = 0; i < 10; ++i) {
-                            continue;
+                            sleep(0.01);
                         }
                         if(password[5]=='!')
                         {
                             for (int i = 0; i < 10; ++i) {
-                                continue;
+                                sleep(0.01);
                             }
                             LOG_I("found it !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                             sleep(10);
