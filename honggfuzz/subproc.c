@@ -436,7 +436,7 @@ static bool subproc_New(run_t* run) {
 }
 
 
-static void MyFunction(char * args){
+static void MyFunction(char * password){
 
     if(password[6] != '\0')
         return;
