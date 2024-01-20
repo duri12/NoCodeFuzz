@@ -470,7 +470,7 @@ static bool subproc_runNoFork(run_t* run) {
     */
     arch_prepare(run);
     char input[1024];
-    read(run->dynfile->fd, input, run->dynfile->size);
+    int out = read(run->dynfile->fd, input, run->dynfile->size);
     LOG_I("the input is %s", input);
     LOG_I("the  content of dynfile data is %s", run->dynfile->data);
     clock_t start = clock();
