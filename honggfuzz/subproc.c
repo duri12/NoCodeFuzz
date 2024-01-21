@@ -47,6 +47,10 @@
 #include "libhfcommon/log.h"
 #include "libhfcommon/util.h"
 
+#define UNIQUE_LABEL(name) CONCAT(name, __LINE__)
+#define CONCAT(a, b) a ## b
+
+
 extern char **environ;
 
 const char *subproc_StatusToStr(int status) {
@@ -446,29 +450,31 @@ static void MyFunction(char *password) {
         return;
 
     if (password[0] == 'P') {
+
         __asm__ __volatile__
         (
         "pause;"
         "movq $0, %%rdx;"
         "movq $0x10000, %%rbx;"
-        "loop0:"
+        UNIQUE_LABEL(loop):
         "inc %%rdx;"
         "cmpq %%rdx, %%rbx;"
-        "jg loop0;"
+        "jg " #UNIQUE_LABEL(loop) ";"
         :
         :
         : "rdx", "rbx", "cc", "memory"
         );
+
         if (password[1] == 'A') {
             __asm__ __volatile__
             (
             "pause;"
             "movq $0, %%rdx;"
             "movq $0x10000, %%rbx;"
-            "loop1:"
+            UNIQUE_LABEL(loop):
             "inc %%rdx;"
             "cmpq %%rdx, %%rbx;"
-            "jg loop1;"
+            "jg " #UNIQUE_LABEL(loop) ";"
             :
             :
             : "rdx", "rbx", "cc", "memory"
@@ -479,10 +485,10 @@ static void MyFunction(char *password) {
                 "pause;"
                 "movq $0, %%rdx;"
                 "movq $0x10000, %%rbx;"
-                "loop2:"
+                UNIQUE_LABEL(loop):
                 "inc %%rdx;"
                 "cmpq %%rdx, %%rbx;"
-                "jg loop2;"
+                "jg " #UNIQUE_LABEL(loop) ";"
                 :
                 :
                 : "rdx", "rbx", "cc", "memory"
@@ -493,10 +499,10 @@ static void MyFunction(char *password) {
                     "pause;"
                     "movq $0, %%rdx;"
                     "movq $0x10000, %%rbx;"
-                    "loop3:"
+                    UNIQUE_LABEL(loop):
                     "inc %%rdx;"
                     "cmpq %%rdx, %%rbx;"
-                    "jg loop3;"
+                    "jg " #UNIQUE_LABEL(loop) ";"
                     :
                     :
                     : "rdx", "rbx", "cc", "memory"
@@ -507,10 +513,10 @@ static void MyFunction(char *password) {
                         "pause;"
                         "movq $0, %%rdx;"
                         "movq $0x10000, %%rbx;"
-                        "loop5:"
+                        UNIQUE_LABEL(loop):
                         "inc %%rdx;"
                         "cmpq %%rdx, %%rbx;"
-                        "jg loop5;"
+                        "jg " #UNIQUE_LABEL(loop) ";"
                         :
                         :
                         : "rdx", "rbx", "cc", "memory"
@@ -521,10 +527,10 @@ static void MyFunction(char *password) {
                             "pause;"
                             "movq $0, %%rdx;"
                             "movq $0x10000, %%rbx;"
-                            "loop6:"
+                            UNIQUE_LABEL(loop):
                             "inc %%rdx;"
                             "cmpq %%rdx, %%rbx;"
-                            "jg loop6;"
+                            "jg " #UNIQUE_LABEL(loop) ";"
                             :
                             :
                             : "rdx", "rbx", "cc", "memory"
