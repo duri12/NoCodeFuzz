@@ -452,10 +452,10 @@ static void MyFunction(char *password) {
         "pause;"
         "movq $0, %%rdx;"
         "movq $0x10000, %%rbx;"
-        "loop0:"
+        "2:"
         "inc %%rdx;"
         "cmpq %%rdx, %%rbx;"
-        "jg loop0;"
+        "jg 2;"
         :
         :
         : "rdx", "rbx", "cc", "memory"
@@ -466,10 +466,10 @@ static void MyFunction(char *password) {
             "pause;"
             "movq $0, %%rdx;"
             "movq $0x10000, %%rbx;"
-            "loop1:"
+            "3:"
             "inc %%rdx;"
             "cmpq %%rdx, %%rbx;"
-            "jg loop1;"
+            "jg 3;"
             :
             :
             : "rdx", "rbx", "cc", "memory"
@@ -480,10 +480,10 @@ static void MyFunction(char *password) {
                 "pause;"
                 "movq $0, %%rdx;"
                 "movq $0x10000, %%rbx;"
-                "loop2:"
+                "4:"
                 "inc %%rdx;"
                 "cmpq %%rdx, %%rbx;"
-                "jg loop2;"
+                "jg 4;"
                 :
                 :
                 : "rdx", "rbx", "cc", "memory"
@@ -494,10 +494,10 @@ static void MyFunction(char *password) {
                     "pause;"
                     "movq $0, %%rdx;"
                     "movq $0x10000, %%rbx;"
-                    "loop3:"
+                    "5:"
                     "inc %%rdx;"
                     "cmpq %%rdx, %%rbx;"
-                    "jg loop3;"
+                    "jg 5;"
                     :
                     :
                     : "rdx", "rbx", "cc", "memory"
@@ -508,10 +508,10 @@ static void MyFunction(char *password) {
                         "pause;"
                         "movq $0, %%rdx;"
                         "movq $0x10000, %%rbx;"
-                        "loop4:"
+                        "6:"
                         "inc %%rdx;"
                         "cmpq %%rdx, %%rbx;"
-                        "jg loop4;"
+                        "jg 6;"
                         :
                         :
                         : "rdx", "rbx", "cc", "memory"
