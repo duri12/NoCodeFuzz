@@ -448,10 +448,10 @@ static void MyFunction(char * password){
         "pause;"
         "movq $0, %%rdx;"
         "movq $0x1000, %%rbx;"
-        "loop4:"
+        "loop0:"
         "inc %%rdx;"
         "cmpq %%rdx, %%rbx;"
-        "jg loop4;"
+        "jg loop0;"
         :
         :
         : "rdx","rbx","cc", "memory"
@@ -463,10 +463,10 @@ static void MyFunction(char * password){
             "pause;"
             "movq $0, %%rdx;"
             "movq $0x1000, %%rbx;"
-            "loop4:"
+            "loop1:"
             "inc %%rdx;"
             "cmpq %%rdx, %%rbx;"
-            "jg loop4;"
+            "jg loop1;"
             :
             :
             : "rdx","rbx","cc", "memory"
@@ -478,10 +478,10 @@ static void MyFunction(char * password){
                 "pause;"
                 "movq $0, %%rdx;"
                 "movq $0x1000, %%rbx;"
-                "loop4:"
+                "loop2:"
                 "inc %%rdx;"
                 "cmpq %%rdx, %%rbx;"
-                "jg loop4;"
+                "jg loop2;"
                 :
                 :
                 : "rdx","rbx","cc", "memory"
@@ -493,10 +493,10 @@ static void MyFunction(char * password){
                     "pause;"
                     "movq $0, %%rdx;"
                     "movq $0x1000, %%rbx;"
-                    "loop4:"
+                    "loop3:"
                     "inc %%rdx;"
                     "cmpq %%rdx, %%rbx;"
-                    "jg loop4;"
+                    "jg loop3;"
                     :
                     :
                     : "rdx","rbx","cc", "memory"
@@ -508,19 +508,29 @@ static void MyFunction(char * password){
                         "pause;"
                         "movq $0, %%rdx;"
                         "movq $0x1000, %%rbx;"
-                        "loop4:"
+                        "loop5:"
                         "inc %%rdx;"
                         "cmpq %%rdx, %%rbx;"
-                        "jg loop4;"
+                        "jg loop5;"
                         :
                         :
                         : "rdx","rbx","cc", "memory"
                         );
                         if(password[5]=='!')
                         {
-                            for (int i = 0; i < 10; ++i) {
-                                sleep(0.01);
-                            }
+                            __asm__ __volatile__
+                            (
+                            "pause;"
+                            "movq $0, %%rdx;"
+                            "movq $0x1000, %%rbx;"
+                            "loop6:"
+                            "inc %%rdx;"
+                            "cmpq %%rdx, %%rbx;"
+                            "jg loop6;"
+                            :
+                            :
+                            : "rdx","rbx","cc", "memory"
+                            );
                             LOG_I("found it !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                             sleep(10);
                         }
