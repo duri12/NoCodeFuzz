@@ -450,7 +450,7 @@ static void MyFunction(char *password) {
         (
         "pause;"
         "movq $0, %%rdx;"
-        "movq $0x1000, %%rbx;"
+        "movq $0x10000, %%rbx;"
         "loop0:"
         "inc %%rdx;"
         "cmpq %%rdx, %%rbx;"
@@ -464,7 +464,7 @@ static void MyFunction(char *password) {
             (
             "pause;"
             "movq $0, %%rdx;"
-            "movq $0x1000, %%rbx;"
+            "movq $0x10000, %%rbx;"
             "loop1:"
             "inc %%rdx;"
             "cmpq %%rdx, %%rbx;"
@@ -478,7 +478,7 @@ static void MyFunction(char *password) {
                 (
                 "pause;"
                 "movq $0, %%rdx;"
-                "movq $0x1000, %%rbx;"
+                "movq $0x10000, %%rbx;"
                 "loop2:"
                 "inc %%rdx;"
                 "cmpq %%rdx, %%rbx;"
@@ -492,7 +492,7 @@ static void MyFunction(char *password) {
                     (
                     "pause;"
                     "movq $0, %%rdx;"
-                    "movq $0x1000, %%rbx;"
+                    "movq $0x10000, %%rbx;"
                     "loop3:"
                     "inc %%rdx;"
                     "cmpq %%rdx, %%rbx;"
@@ -506,7 +506,7 @@ static void MyFunction(char *password) {
                         (
                         "pause;"
                         "movq $0, %%rdx;"
-                        "movq $0x1000, %%rbx;"
+                        "movq $0x10000, %%rbx;"
                         "loop5:"
                         "inc %%rdx;"
                         "cmpq %%rdx, %%rbx;"
@@ -520,7 +520,7 @@ static void MyFunction(char *password) {
                             (
                             "pause;"
                             "movq $0, %%rdx;"
-                            "movq $0x1000, %%rbx;"
+                            "movq $0x10000, %%rbx;"
                             "loop6:"
                             "inc %%rdx;"
                             "cmpq %%rdx, %%rbx;"
