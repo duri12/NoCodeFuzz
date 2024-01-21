@@ -452,10 +452,7 @@ static void MyFunction(char *password) {
         "pause;"
         "movq $0, %%rdx;"
         "movq $0x10000, %%rbx;"
-#ifndef LOOP0
-#define LOOP0
         "loop0:"
-#endif
         "inc %%rdx;"
         "cmpq %%rdx, %%rbx;"
         "jg loop0;"
