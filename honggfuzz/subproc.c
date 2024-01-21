@@ -452,12 +452,10 @@ static void MyFunction(char *password) {
         "pause;"
         "movq $0, %%rdx;"
         "movq $0x10000, %%rbx;"
-        UNIQUE_LABEL(loop)
-        ":"
+        "loop0:"
         "inc %%rdx;"
         "cmpq %%rdx, %%rbx;"
-        "jg " #UNIQUE_LABEL(loop)
-        ";"
+        "jg loop0;"
         :
         :
         : "rdx", "rbx", "cc", "memory"
@@ -468,12 +466,10 @@ static void MyFunction(char *password) {
             "pause;"
             "movq $0, %%rdx;"
             "movq $0x10000, %%rbx;"
-            UNIQUE_LABEL(loop)
-            ":"
+            "loop1:"
             "inc %%rdx;"
             "cmpq %%rdx, %%rbx;"
-            "jg " #UNIQUE_LABEL(loop)
-            ";"
+            "jg loop1;"
             :
             :
             : "rdx", "rbx", "cc", "memory"
@@ -484,12 +480,10 @@ static void MyFunction(char *password) {
                 "pause;"
                 "movq $0, %%rdx;"
                 "movq $0x10000, %%rbx;"
-                UNIQUE_LABEL(loop)
-                ":"
+                "loop2:"
                 "inc %%rdx;"
                 "cmpq %%rdx, %%rbx;"
-                "jg " #UNIQUE_LABEL(loop)
-                ";"
+                "jg loop2;"
                 :
                 :
                 : "rdx", "rbx", "cc", "memory"
@@ -500,12 +494,10 @@ static void MyFunction(char *password) {
                     "pause;"
                     "movq $0, %%rdx;"
                     "movq $0x10000, %%rbx;"
-                    UNIQUE_LABEL(loop)
-                    ":"
+                    "loop3:"
                     "inc %%rdx;"
                     "cmpq %%rdx, %%rbx;"
-                    "jg " #UNIQUE_LABEL(loop)
-                    ";"
+                    "jg loop3;"
                     :
                     :
                     : "rdx", "rbx", "cc", "memory"
@@ -516,32 +508,15 @@ static void MyFunction(char *password) {
                         "pause;"
                         "movq $0, %%rdx;"
                         "movq $0x10000, %%rbx;"
-                        UNIQUE_LABEL(loop)
-                        ":"
+                        "loop4:"
                         "inc %%rdx;"
                         "cmpq %%rdx, %%rbx;"
-                        "jg " #UNIQUE_LABEL(loop)
-                        ";"
+                        "jg loop4;"
                         :
                         :
                         : "rdx", "rbx", "cc", "memory"
                         );
                         if (password[5] == '!') {
-                            __asm__ __volatile__
-                            (
-                            "pause;"
-                            "movq $0, %%rdx;"
-                            "movq $0x10000, %%rbx;"
-                            UNIQUE_LABEL(loop)
-                            ":"
-                            "inc %%rdx;"
-                            "cmpq %%rdx, %%rbx;"
-                            "jg " #UNIQUE_LABEL(loop)
-                            ";"
-                            :
-                            :
-                            : "rdx", "rbx", "cc", "memory"
-                            );
                             LOG_I("found it !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                             sleep(10);
                         }
