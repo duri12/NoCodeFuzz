@@ -37,7 +37,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-
+#include <math.h>
 #include <stdint.h>
 
 #include "arch.h"
@@ -610,7 +610,7 @@ static bool subproc_runNoFork(run_t *run) {
 
     int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
     float mean = middle_mean(instrCountArr, n);
-    instrCount = round(mean) ;
+    int64_t instrCount = round(mean) ;
 
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT) {
         run->hwCnts.cpuInstrCnt = instrCount;
