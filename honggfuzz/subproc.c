@@ -443,29 +443,79 @@ static void MyFunction(char * password){
 
     if(password[0]=='P')
     {
-        for (int i = 0; i < 10; ++i) {
-            sleep(0.01);
-        }
+        __asm__ __volatile__
+        (
+        "pause;"
+        "movq $0, %%rdx;"
+        "movq $0x1000, %%rbx;"
+        "loop4:"
+        "inc %%rdx;"
+        "cmpq %%rdx, %%rbx;"
+        "jg loop4;"
+        :
+        :
+        : "rdx","rbx","cc", "memory"
+        );
         if(password[1]=='A')
         {
-            for (int i = 0; i < 10; ++i) {
-                sleep(0.01);
-            }
+            __asm__ __volatile__
+            (
+            "pause;"
+            "movq $0, %%rdx;"
+            "movq $0x1000, %%rbx;"
+            "loop4:"
+            "inc %%rdx;"
+            "cmpq %%rdx, %%rbx;"
+            "jg loop4;"
+            :
+            :
+            : "rdx","rbx","cc", "memory"
+            );
             if(password[2]=='S')
             {
-                for (int i = 0; i < 10; ++i) {
-                    sleep(0.01);
-                }
+                __asm__ __volatile__
+                (
+                "pause;"
+                "movq $0, %%rdx;"
+                "movq $0x1000, %%rbx;"
+                "loop4:"
+                "inc %%rdx;"
+                "cmpq %%rdx, %%rbx;"
+                "jg loop4;"
+                :
+                :
+                : "rdx","rbx","cc", "memory"
+                );
                 if(password[3]=='s')
                 {
-                    for (int i = 0; i < 10; ++i) {
-                        sleep(0.01);
-                    }
+                    __asm__ __volatile__
+                    (
+                    "pause;"
+                    "movq $0, %%rdx;"
+                    "movq $0x1000, %%rbx;"
+                    "loop4:"
+                    "inc %%rdx;"
+                    "cmpq %%rdx, %%rbx;"
+                    "jg loop4;"
+                    :
+                    :
+                    : "rdx","rbx","cc", "memory"
+                    );
                     if(password[4]=='1')
                     {
-                        for (int i = 0; i < 10; ++i) {
-                            sleep(0.01);
-                        }
+                        __asm__ __volatile__
+                        (
+                        "pause;"
+                        "movq $0, %%rdx;"
+                        "movq $0x1000, %%rbx;"
+                        "loop4:"
+                        "inc %%rdx;"
+                        "cmpq %%rdx, %%rbx;"
+                        "jg loop4;"
+                        :
+                        :
+                        : "rdx","rbx","cc", "memory"
+                        );
                         if(password[5]=='!')
                         {
                             for (int i = 0; i < 10; ++i) {

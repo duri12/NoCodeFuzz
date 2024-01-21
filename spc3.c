@@ -18,7 +18,7 @@ int main(){
 	  (
 			"pause;"
 	    		"movq $0, %%rdx;"
-			"movq $0x100000, %%rbx;"
+			"movq $0x1000, %%rbx;"
 			"loop:"
 			"inc %%rdx;"
     			"cmpq %%rdx, %%rbx;"
@@ -34,7 +34,7 @@ int main(){
           (             
                         "pause;"
 		        "movq $0, %%rdx;"
-                        "movq $0x100000, %%rbx;"
+                        "movq $0x1000, %%rbx;"
                         "loop1:"
                         "inc %%rdx;"
                         "cmpq %%rdx, %%rbx;"
@@ -49,7 +49,7 @@ int main(){
           (
 			"pause;"
                         "movq $0, %%rdx;"
-                        "movq $0x100000, %%rbx;"
+                        "movq $0x1000, %%rbx;"
                         "loop2:"
                         "inc %%rdx;"
                         "cmpq %%rdx, %%rbx;"
@@ -64,7 +64,7 @@ int main(){
           (
 			"pause;"
                         "movq $0, %%rdx;"
-                        "movq $0x100000, %%rbx;"
+                        "movq $0x1000, %%rbx;"
                         "loop3:"
                         "inc %%rdx;"
                         "cmpq %%rdx, %%rbx;"
@@ -79,7 +79,7 @@ int main(){
           (
 			"pause;"
                         "movq $0, %%rdx;"
-                        "movq $0x100000, %%rbx;"
+                        "movq $0x1000, %%rbx;"
                         "loop4:"
                         "inc %%rdx;"
                         "cmpq %%rdx, %%rbx;"
@@ -91,10 +91,10 @@ int main(){
                    if(password[5]=='!')
                 {
                   __asm__ __volatile__
-          (
-			"pause;"
+                  (
+			            "pause;"
                         "movq $0, %%rdx;"
-                        "movq $0x100000, %%rbx;"
+                        "movq $0x1000, %%rbx;"
                         "loop5:"
                         "inc %%rdx;"
                         "cmpq %%rdx, %%rbx;"
