@@ -445,10 +445,10 @@ static void delay(){
     "pause;"
     "movq $0, %%rdx;"
     "movq $0x10000, %%rbx;"
-    "loop0:"
+    "2:"
     "inc %%rdx;"
     "cmpq %%rdx, %%rbx;"
-    "jg loop0;"
+    "jg 2;"
     :
     :
     : "rdx", "rbx", "cc", "memory"
