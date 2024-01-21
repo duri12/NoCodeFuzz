@@ -451,10 +451,12 @@ static void MyFunction(char *password) {
         "pause;"
         "movq $0, %%rdx;"
         "movq $0x10000, %%rbx;"
-        "loop0:"
+        UNIQUE_LABEL(loop)
+        ":"
         "inc %%rdx;"
         "cmpq %%rdx, %%rbx;"
-        "jg loop0;"
+        "jg " #UNIQUE_LABEL(loop)
+        ";"
         :
         :
         : "rdx", "rbx", "cc", "memory"
@@ -465,10 +467,12 @@ static void MyFunction(char *password) {
             "pause;"
             "movq $0, %%rdx;"
             "movq $0x10000, %%rbx;"
-            "loop1:"
+            UNIQUE_LABEL(loop)
+            ":"
             "inc %%rdx;"
             "cmpq %%rdx, %%rbx;"
-            "jg loop1;"
+            "jg " #UNIQUE_LABEL(loop)
+            ";"
             :
             :
             : "rdx", "rbx", "cc", "memory"
@@ -479,10 +483,12 @@ static void MyFunction(char *password) {
                 "pause;"
                 "movq $0, %%rdx;"
                 "movq $0x10000, %%rbx;"
-                "loop2:"
+                UNIQUE_LABEL(loop)
+                ":"
                 "inc %%rdx;"
                 "cmpq %%rdx, %%rbx;"
-                "jg loop2;"
+                "jg " #UNIQUE_LABEL(loop)
+                ";"
                 :
                 :
                 : "rdx", "rbx", "cc", "memory"
@@ -493,10 +499,12 @@ static void MyFunction(char *password) {
                     "pause;"
                     "movq $0, %%rdx;"
                     "movq $0x10000, %%rbx;"
-                    "loop3:"
+                    UNIQUE_LABEL(loop)
+                    ":"
                     "inc %%rdx;"
                     "cmpq %%rdx, %%rbx;"
-                    "jg loop3;"
+                    "jg " #UNIQUE_LABEL(loop)
+                    ";"
                     :
                     :
                     : "rdx", "rbx", "cc", "memory"
@@ -507,10 +515,12 @@ static void MyFunction(char *password) {
                         "pause;"
                         "movq $0, %%rdx;"
                         "movq $0x10000, %%rbx;"
-                        "loop5:"
+                        UNIQUE_LABEL(loop)
+                        ":"
                         "inc %%rdx;"
                         "cmpq %%rdx, %%rbx;"
-                        "jg loop5;"
+                        "jg " #UNIQUE_LABEL(loop)
+                        ";"
                         :
                         :
                         : "rdx", "rbx", "cc", "memory"
@@ -521,10 +531,12 @@ static void MyFunction(char *password) {
                             "pause;"
                             "movq $0, %%rdx;"
                             "movq $0x10000, %%rbx;"
-                            "loop6:"
+                            UNIQUE_LABEL(loop)
+                            ":"
                             "inc %%rdx;"
                             "cmpq %%rdx, %%rbx;"
-                            "jg loop6;"
+                            "jg " #UNIQUE_LABEL(loop)
+                            ";"
                             :
                             :
                             : "rdx", "rbx", "cc", "memory"
@@ -538,15 +550,16 @@ static void MyFunction(char *password) {
         }
     }
 }
+
 int cmp(const void *a, const void *b) {
-    return *(int64_t *)a - *(int64_t *)b;
+    return *(int64_t *) a - *(int64_t *) b;
 }
 
 float middle_mean(int64_t arr[], int64_t n) {
     qsort(arr, n, sizeof(int64_t), cmp);
     int mid = (n + 1) / 2;
-    if (n % 2) return (float)arr[mid - 1];
-    return (float)(arr[mid - 1] + arr[mid]) / 2;
+    if (n % 2) return (float) arr[mid - 1];
+    return (float) (arr[mid - 1] + arr[mid]) / 2;
 }
 
 
@@ -586,8 +599,8 @@ static bool subproc_runNoFork(run_t *run) {
 
     // if(strlen(password) != 6)
     //     return 0;
-    int64_t instrCountArr[10] = {0} ;
-    for (int i = 0; i < 10 ; ++i) {
+    int64_t instrCountArr[10] = {0};
+    for (int i = 0; i < 10; ++i) {
         __asm__ __volatile__ ("CPUID\n\t"
                               "RDTSC\n\t"
                               "mov %%edx, %0\n\t"                                                                                 "mov %%eax, %1\n\t": "=r" (cycles_high_start), "=r" (cycles_low_start)::
@@ -610,7 +623,7 @@ static bool subproc_runNoFork(run_t *run) {
 
     int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
     float mean = middle_mean(instrCountArr, n);
-    int64_t instrCount = round(mean) ;
+    int64_t instrCount = round(mean);
 
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT) {
         run->hwCnts.cpuInstrCnt = instrCount;
