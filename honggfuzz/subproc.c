@@ -538,6 +538,17 @@ static void MyFunction(char *password) {
         }
     }
 }
+int cmp(const void *a, const void *b) {
+    return *(int64_t *)a - *(int64_t *)b;
+}
+
+float middle_mean(int64_t arr[], int64_t n) {
+    qsort(arr, n, sizeof(int64_t), cmp);
+    int mid = (n + 1) / 2;
+    if (n % 2) return (float)arr[mid - 1];
+    return (float)(arr[mid - 1] + arr[mid]) / 2;
+}
+
 
 static bool subproc_runNoFork(run_t *run) {
     if (run->global->exe.persistent)
@@ -575,25 +586,32 @@ static bool subproc_runNoFork(run_t *run) {
 
     // if(strlen(password) != 6)
     //     return 0;
+    int64_t instrCountArr[10] = {0} ;
+    for (int i = 0; i < 10 ; ++i) {
+        __asm__ __volatile__ ("CPUID\n\t"
+                              "RDTSC\n\t"
+                              "mov %%edx, %0\n\t"                                                                                 "mov %%eax, %1\n\t": "=r" (cycles_high_start), "=r" (cycles_low_start)::
+        "%rax", "%rbx", "%rcx", "%rdx");
 
-    __asm__ __volatile__ ("CPUID\n\t"
-                          "RDTSC\n\t"
-                          "mov %%edx, %0\n\t"                                                                                 "mov %%eax, %1\n\t": "=r" (cycles_high_start), "=r" (cycles_low_start)::
-    "%rax", "%rbx", "%rcx", "%rdx");
+        MyFunction(password);
 
-    MyFunction(password);
+        __asm__ __volatile__("RDTSCP\n\t"
+                             "mov %%edx, %0\n\t"
+                             "mov %%eax, %1\n\t"
+                             "CPUID\n\t": "=r" (cycles_high_end), "=r" (cycles_low_end)::
+        "%rax", "%rbx", "%rcx", "%rdx");
 
-    __asm__ __volatile__("RDTSCP\n\t"
-                         "mov %%edx, %0\n\t"
-                         "mov %%eax, %1\n\t"
-                         "CPUID\n\t": "=r" (cycles_high_end), "=r" (cycles_low_end)::
-    "%rax", "%rbx", "%rcx", "%rdx");
+        //interprets values
+        start = (((uint64_t) cycles_high_start << 32) | cycles_low_start);
+        end = (((uint64_t) cycles_high_end << 32) | cycles_low_end);
 
-    //interprets values
-    start = (((uint64_t) cycles_high_start << 32) | cycles_low_start);
-    end = (((uint64_t) cycles_high_end << 32) | cycles_low_end);
+        instrCountArr[i] = end - start;
+    }
 
-    int64_t instrCount = end - start;
+    int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
+    float mean = middle_mean(instrCountArr, n);
+    instrCount = round(mean) ;
+
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT) {
         run->hwCnts.cpuInstrCnt = instrCount;
     }
