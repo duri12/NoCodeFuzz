@@ -517,7 +517,7 @@ static void MyFunction(char *password) {
                         : "rdx", "rbx", "cc", "memory"
                         );
                         if (password[5] == '!') {
-                            LOG_I("found it !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                            LOG_I("found the password");
                             LOG_I("the input was %s",password);
                             sleep(10);
                         }
