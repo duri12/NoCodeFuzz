@@ -577,7 +577,7 @@ static bool subproc_runNoFork(run_t *run) {
     // if(strlen(password) != 6)
     //     return 0;
     int64_t instrCountArr[10] = {0};
-    for (int i = 0; i < 1; ++i) {
+    for (int i = 0; i < 10; ++i) {
         __asm__ __volatile__ ("CPUID\n\t"
                               "RDTSC\n\t"
                               "mov %%edx, %0\n\t"                                                                                 "mov %%eax, %1\n\t": "=r" (cycles_high_start), "=r" (cycles_low_start)::
@@ -600,7 +600,7 @@ static bool subproc_runNoFork(run_t *run) {
 
     int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
     float mean = middle_mean(instrCountArr, n);
-    int64_t instrCount = instrCountArr[0]+  round(mean)*0;
+    int64_t instrCount = round(mean);
 
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT) {
         run->hwCnts.cpuInstrCnt = instrCount;
