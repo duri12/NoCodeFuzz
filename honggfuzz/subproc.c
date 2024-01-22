@@ -518,6 +518,7 @@ static void MyFunction(char *password) {
                         );
                         if (password[5] == '!') {
                             LOG_I("found it !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                            LOG_I("the input was %s",password);
                             sleep(10);
                         }
                     }
