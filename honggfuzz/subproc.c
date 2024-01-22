@@ -600,7 +600,7 @@ static bool subproc_runNoFork(run_t *run) {
 
     int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
     float mean = middle_mean(instrCountArr, n);
-    int64_t instrCount = instrCountArr[0];/* round(mean);*/
+    int64_t instrCount = instrCountArr[0]+  round(mean)*0;
 
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT) {
         run->hwCnts.cpuInstrCnt = instrCount;
