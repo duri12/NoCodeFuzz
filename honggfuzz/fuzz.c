@@ -279,7 +279,7 @@ static void fuzz_perfFeedback(run_t* run) {
         run->dynfile->cov[3] = run->dynfile->size ? (64 - util_Log2(run->dynfile->size)) : 64;
 
         //NOTE: here it creates new inputs according to results.
-        //only if was an increasing
+        //only if was an increasing in cov
         input_addDynamicInput(run);
 
         if (run->global->socketFuzzer.enabled) {
