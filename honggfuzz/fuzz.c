@@ -165,7 +165,9 @@ static void fuzz_minimizeRemoveFiles(run_t* run) {
         if (!input_getNext(run, fname, /* rewind= */ false)) {
             break;
         }
-        if (!input_inDynamicCorpus(run, fname)) {
+        //File wasn't entered to corpus
+        if (!input_inDynamicCorpus(run, fname))
+        {
             if (input_removeStaticFile(run->global->io.inputDir, fname)) {
                 LOG_I("Removed unnecessary '%s'", fname);
             }
@@ -213,16 +215,16 @@ static void fuzz_perfFeedback(run_t* run) {
 
     rmb();
 
-    int64_t diff0 = (int64_t)run->global->feedback.hwCnts.cpuInstrCnt - run->hwCnts.cpuInstrCnt;
-    int64_t diff1 = (int64_t)run->global->feedback.hwCnts.cpuBranchCnt - run->hwCnts.cpuBranchCnt;
+    int64_t diff_instrCnt = (int64_t)run->global->feedback.hwCnts.cpuInstrCnt - run->hwCnts.cpuInstrCnt;
+    int64_t diff_cpuBranchCnt = (int64_t)run->global->feedback.hwCnts.cpuBranchCnt - run->hwCnts.cpuBranchCnt;
 
     /* Any increase in coverage (edge, pc, cmp, hw) counters forces adding input to the corpus */
     if (run->hwCnts.newBBCnt > 0 || softNewPC > 0 || softNewEdge > 0 || softNewCmp > 0 ||
-        diff0 < 0 || diff1 < 0) {
-        if (diff0 < 0) {
+        diff_instrCnt < 0 || diff_cpuBranchCnt < 0) {
+        if (diff_instrCnt < 0) {
             run->global->feedback.hwCnts.cpuInstrCnt = run->hwCnts.cpuInstrCnt;
         }
-        if (diff1 < 0) {
+        if (diff_cpuBranchCnt < 0) {
             run->global->feedback.hwCnts.cpuBranchCnt = run->hwCnts.cpuBranchCnt;
         }
         run->global->feedback.hwCnts.bbCnt += run->hwCnts.newBBCnt;
@@ -246,7 +248,7 @@ static void fuzz_perfFeedback(run_t* run) {
             /*
              * We increase the mutation counter unconditionally in threads, but if it's
              * above hfuzz->mutationsMax we don't really execute the fuzzing loop.
-             * Therefore at the end of fuzzing, the mutation counter might be higher
+             * Therefore, at the end of fuzzing, the mutation counter might be higher
              * than hfuzz->mutationsMax
              */
             if (run->global->mutate.mutationsMax > 0 &&
@@ -275,6 +277,9 @@ static void fuzz_perfFeedback(run_t* run) {
         run->dynfile->cov[1] = softCurCmp;
         run->dynfile->cov[2] = run->hwCnts.cpuInstrCnt + run->hwCnts.cpuBranchCnt;
         run->dynfile->cov[3] = run->dynfile->size ? (64 - util_Log2(run->dynfile->size)) : 64;
+
+        //NOTE: here it creates new inputs according to results.
+        //only if was an increasing
         input_addDynamicInput(run);
 
         if (run->global->socketFuzzer.enabled) {
@@ -356,7 +361,8 @@ static bool fuzz_runVerifier(run_t* run) {
 static bool fuzz_fetchInput(run_t* run) {
     {
         fuzzState_t st = fuzz_getState(run->global);
-        if (st == _HF_STATE_DYNAMIC_DRY_RUN) {
+        if (st == _HF_STATE_DYNAMIC_DRY_RUN)
+        {
             run->mutationsPerRun = 0U;
             if (input_prepareStaticFile(run, /* rewind= */ false, /* mangle= */ false)) {
                 return true;
@@ -366,12 +372,14 @@ static bool fuzz_fetchInput(run_t* run) {
         }
     }
 
-    if (fuzz_getState(run->global) == _HF_STATE_DYNAMIC_MINIMIZE) {
+    if (fuzz_getState(run->global) == _HF_STATE_DYNAMIC_MINIMIZE)
+    {
         fuzz_minimizeRemoveFiles(run);
         return false;
     }
 
-    if (fuzz_getState(run->global) == _HF_STATE_DYNAMIC_MAIN) {
+    if (fuzz_getState(run->global) == _HF_STATE_DYNAMIC_MAIN)
+    {
         if (run->global->exe.externalCommand) {
             if (!input_prepareExternalFile(run)) {
                 LOG_E("input_prepareExternalFile() failed");
@@ -388,7 +396,8 @@ static bool fuzz_fetchInput(run_t* run) {
         }
     }
 
-    if (fuzz_getState(run->global) == _HF_STATE_STATIC) {
+    if (fuzz_getState(run->global) == _HF_STATE_STATIC)
+    {
         if (run->global->exe.externalCommand) {
             if (!input_prepareExternalFile(run)) {
                 LOG_E("input_prepareExternalFile() failed");

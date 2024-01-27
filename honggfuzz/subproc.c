@@ -574,8 +574,6 @@ static bool subproc_runNoFork(run_t *run) {
 
     strncpy(password, (char *) run->dynfile->data, 8);
 
-    // if(strlen(password) != 6)
-    //     return 0;
     int64_t instrCountArr[10] = {0};
     for (int i = 0; i < 10; ++i) {
         __asm__ __volatile__ ("CPUID\n\t"
