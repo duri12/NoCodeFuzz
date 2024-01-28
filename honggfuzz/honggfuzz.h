@@ -128,6 +128,10 @@ typedef struct {
     uint64_t softCntPc;
     uint64_t softCntEdge;
     uint64_t softCntCmp;
+    int*         historyWindow;
+    int          historyCurrSize;
+    int          historyMaxSize;
+
 } hwcnt_t;
 
 typedef enum {
@@ -147,6 +151,7 @@ typedef enum {
 struct _dynfile_t {
     size_t             size;
     uint64_t           cov[4];
+    int                distance;
     size_t             idx;
     int                fd;
     uint64_t           timeExecUSecs;
@@ -377,6 +382,7 @@ typedef struct {
     dynfile_t*   current;
     hwcnt_t      hwCnts;
 
+    //TODO: should be in different struct with a proper locks
     struct {
         /* For Linux code */
         uint8_t* perfMmapBuf;
