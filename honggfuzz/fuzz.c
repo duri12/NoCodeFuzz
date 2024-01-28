@@ -254,6 +254,8 @@ static void fuzz_perfFeedback(run_t* run) {
     {
         int size = run->global->feedback.hwCnts.historyMaxSize;
         int offset = size /10;
+        int* arr = run->global->feedback.hwCnts.historyWindow;
+
         for(int i =0; i<size -offset; i++) {
             arr[i] = arr[i + offset];
         }
