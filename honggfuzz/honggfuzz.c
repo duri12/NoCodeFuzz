@@ -360,7 +360,7 @@ int main(int argc, char** argv) {
 
     //initial history
     hfuzz.feedback.hwCnts.historyMaxSize = 1000;
-    hfuzz.feedback.hwCnts.historyWindow = (int*)malloc(sizeof(int) * hfuzz.historyMaxSize);
+    hfuzz.feedback.hwCnts.historyWindow = (int*)malloc(sizeof(int) * hfuzz.feedback.hwCnts.historyMaxSize);
     hfuzz.feedback.hwCnts.historyCurrSize = 0;
 
     char tmstr[64];
