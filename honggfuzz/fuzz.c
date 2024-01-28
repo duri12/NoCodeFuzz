@@ -249,7 +249,7 @@ static void fuzz_perfFeedback(run_t* run) {
     int64_t diff_instrCnt = (int64_t)run->global->feedback.hwCnts.cpuInstrCnt - run->hwCnts.cpuInstrCnt;
     int64_t diff_cpuBranchCnt = (int64_t)run->global->feedback.hwCnts.cpuBranchCnt - run->hwCnts.cpuBranchCnt;
 
-    int threshold = 20;
+    int threshold = 60;
     /* Any increase in coverage (edge, pc, cmp, hw) counters forces adding input to the corpus */
     if((distance > threshold) ||((distance==-1) && (run->hwCnts.newBBCnt > 0 || softNewPC > 0 || softNewEdge > 0 || softNewCmp > 0 ||
         diff_instrCnt < 0 || diff_cpuBranchCnt < 0)))
