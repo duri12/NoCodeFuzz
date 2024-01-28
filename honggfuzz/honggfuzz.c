@@ -358,6 +358,11 @@ int main(int argc, char** argv) {
         hfuzz.threads.threadsMax = 1;
     }
 
+    //initial history
+    hfuzz.feedback.hwCnts.historyMaxSize = 1000
+    hfuzz.feedback.hwCntshistory = malloc(sizeof(int) * hfuzz.historyMaxSize);
+    hfuzz.feedback.hwCnts.historyCurrSize = 0;
+
     char tmstr[64];
     util_getLocalTime("%F.%H.%M.%S", tmstr, sizeof(tmstr), time(NULL));
     LOG_I("Start time:'%s' bin:'%s', input:'%s', output:'%s', persistent:%s, stdin:%s, "

@@ -215,12 +215,45 @@ static void fuzz_perfFeedback(run_t* run) {
 
     rmb();
 
+    //1. from data to vector representation could be also in outer function
+    //just for now
+    int representation = run->hwCnts.cpuInstrCnt;
+    //filled all data
+    int distance = -1;
+    if(run->global->feedback.hwCnts.historyCurrSize == run->global->feedback.hwCnts.historyMaxSize)
+    {
+        int distancesSum=0;
+        int historyMaxSize = run->global->feedback.hwCnts.historyMaxSize;
+        int* arr = run->global->feedback.hwCnts.historyWindow;
+
+        //calc distance
+        for(int i =0; i<run->global->feedback.hwCnts.historyMaxSize; i++)
+        {
+            distancesSum += arr[i] - representation;
+        }
+        distance = distancesSum/historyMaxSize;
+
+        //shift by one:
+        for(int i =0; i<historyMaxSize-1; i++)
+        {
+            arr[i] = arr[i+1];
+        }
+        arr[historyMaxSize-1] = representation;
+    }
+    else
+    {
+        int* arr = run->global->feedback.hwCnts.historyWindow;
+        arr[run->global->feedback.hwCnts.historyCurrSize++] = representation;
+    }
+
     int64_t diff_instrCnt = (int64_t)run->global->feedback.hwCnts.cpuInstrCnt - run->hwCnts.cpuInstrCnt;
     int64_t diff_cpuBranchCnt = (int64_t)run->global->feedback.hwCnts.cpuBranchCnt - run->hwCnts.cpuBranchCnt;
 
+    int threshold = 100;
     /* Any increase in coverage (edge, pc, cmp, hw) counters forces adding input to the corpus */
-    if (run->hwCnts.newBBCnt > 0 || softNewPC > 0 || softNewEdge > 0 || softNewCmp > 0 ||
-        diff_instrCnt < 0 || diff_cpuBranchCnt < 0) {
+    if((distance > threshold) ||(distance==-1 && threshold = distance;run->hwCnts.newBBCnt > 0 || softNewPC > 0 || softNewEdge > 0 || softNewCmp > 0 ||
+        diff_instrCnt < 0 || diff_cpuBranchCnt < 0)
+    {
         if (diff_instrCnt < 0) {
             run->global->feedback.hwCnts.cpuInstrCnt = run->hwCnts.cpuInstrCnt;
         }
@@ -277,7 +310,7 @@ static void fuzz_perfFeedback(run_t* run) {
         run->dynfile->cov[1] = softCurCmp;
         run->dynfile->cov[2] = run->hwCnts.cpuInstrCnt + run->hwCnts.cpuBranchCnt;
         run->dynfile->cov[3] = run->dynfile->size ? (64 - util_Log2(run->dynfile->size)) : 64;
-
+        run->dynfile->distance = distance;
         //NOTE: here it creates new inputs according to results.
         //only if was an increasing in cov
         input_addDynamicInput(run);

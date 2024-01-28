@@ -353,6 +353,15 @@ bool input_writeCovFile(const char* dir, dynfile_t* dynfile) {
 
 /* true if item1 is bigger than item2 */
 static bool input_cmpCov(dynfile_t* item1, dynfile_t* item2) {
+    if(item1->distance > item2->distance)
+    {
+        return true;
+    }
+    else if(item1->distance < item2->distance)
+    {
+        return false;
+    }
+
     for (size_t j = 0; j < ARRAYSIZE(item1->cov); j++) {
         if (item1->cov[j] > item2->cov[j]) {
             return true;
