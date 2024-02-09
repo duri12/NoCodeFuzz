@@ -584,7 +584,8 @@ static bool subproc_runNoFork(run_t *run)
     //THINK: do we really need the 10 iterations loop
     for (int i = 0; i < 10; ++i)
     {
-        //TODO: prepare all need - l1
+        //TODO: prepare all need - l1 cache
+        //TODO: check pht records (better in seperated code)
         start = rdtsc();
         MyFunction(password);
 
