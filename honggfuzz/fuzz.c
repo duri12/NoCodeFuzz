@@ -215,11 +215,12 @@ static void fuzz_perfFeedback(run_t* run) {
 
     rmb();
 
-    //1. from data to vector representation could be also in outer function
-    //just for now
+
+    //TODO: get all data together
     int representation = run->hwCnts.cpuInstrCnt;
     //filled all data
     int distance = -1;
+    //TODO: calc distance better
     if(run->global->feedback.hwCnts.historyCurrSize == run->global->feedback.hwCnts.historyMaxSize)
     {
         int distancesSum=0;
@@ -240,6 +241,9 @@ static void fuzz_perfFeedback(run_t* run) {
         }
         arr[historyMaxSize-1] = representation;
     }
+    //NOTE: now needed to just shift history by 1
+    //THINK: how to handle sequential inputs (one after another) cases
+    //THINK: how do we want to start the running - with original version (of maximizing)
     else
     {
         int* arr = run->global->feedback.hwCnts.historyWindow;

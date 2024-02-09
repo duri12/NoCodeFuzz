@@ -46,6 +46,7 @@
 #include "libhfcommon/files.h"
 #include "libhfcommon/log.h"
 #include "libhfcommon/util.h"
+#include "side-channels/util.h"
 
 
 extern char **environ;
@@ -540,7 +541,8 @@ float middle_mean(int64_t arr[], int64_t n) {
 }
 
 
-static bool subproc_runNoFork(run_t *run) {
+static bool subproc_runNoFork(run_t *run)
+{
     if (run->global->exe.persistent)
         subproc_New(run); /*should not run . here to skip unused error*/
     /*set up the environment*/
@@ -556,6 +558,7 @@ static bool subproc_runNoFork(run_t *run) {
     subproc_prepareExecvArgs(run);/* put the args in run->args*/
 
     /*
+    * NOTE: not relevant here for my opinion
     * Disable ASLR:
     * This might fail in Docker, as Docker blocks __NR_personality. Consequently
     * it's just a debug warning
@@ -575,31 +578,31 @@ static bool subproc_runNoFork(run_t *run) {
     strncpy(password, (char *) run->dynfile->data, 8);
 
     int64_t instrCountArr[10] = {0};
-    for (int i = 0; i < 10; ++i) {
-        __asm__ __volatile__ ("CPUID\n\t"
-                              "RDTSC\n\t"
-                              "mov %%edx, %0\n\t"                                                                                 "mov %%eax, %1\n\t": "=r" (cycles_high_start), "=r" (cycles_low_start)::
-        "%rax", "%rbx", "%rcx", "%rdx");
+    int l1Cache[10] = {0};
+    int bpRecord[100] = {0}
 
+    //THINK: do we really need the 10 iterations loop
+    for (int i = 0; i < 10; ++i)
+    {
+        //TODO: prepare all need - l1
+        start = rdtsc();
         MyFunction(password);
 
-        __asm__ __volatile__("RDTSCP\n\t"
-                             "mov %%edx, %0\n\t"
-                             "mov %%eax, %1\n\t"
-                             "CPUID\n\t": "=r" (cycles_high_end), "=r" (cycles_low_end)::
-        "%rax", "%rbx", "%rcx", "%rdx");
+        end = rdtsc();
 
         //interprets values
-        start = (((uint64_t) cycles_high_start << 32) | cycles_low_start);
-        end = (((uint64_t) cycles_high_end << 32) | cycles_low_end);
-
         instrCountArr[i] = end - start;
+
+        //TODO: check pht record
+        //TODO: check L1 cache
     }
 
+    //TODO: fix this random code, and think if needed
     int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
     float mean = middle_mean(instrCountArr, n);
     int64_t instrCount = round(mean);
 
+    //TODO: create vector signature
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT) {
         run->hwCnts.cpuInstrCnt = instrCount;
     }
