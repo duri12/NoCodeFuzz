@@ -543,6 +543,8 @@ float middle_mean(int64_t arr[], int64_t n) {
 
 static bool subproc_runNoFork(run_t *run)
 {
+    //TODO: add warmup at first iteration of running code
+
     if (run->global->exe.persistent)
         subproc_New(run); /*should not run . here to skip unused error*/
     /*set up the environment*/
@@ -578,14 +580,24 @@ static bool subproc_runNoFork(run_t *run)
     strncpy(password, (char *) run->dynfile->data, 8);
 
     int64_t instrCountArr[10] = {0};
-    int l1Cache[10] = {0};
-    int bpRecord[100] = {0}
+    int64_t l1Cache[10] = {0};
+    int64_t bpRecord[100] = {0}
 
     //THINK: do we really need the 10 iterations loop
     for (int i = 0; i < 10; ++i)
     {
-        //TODO: prepare all need - l1 cache
-        //TODO: check pht records (better in seperated code)
+        /*TODO: prepare all need - pht
+         * 1. get option for creating branch at wanted location
+         * 2. call randomize_pht
+         * 3. train bp for wanted state
+         * 4. run code twice
+         * 5. probe for getting results
+         */
+        /*TODO: check l1 instruction cache
+         * 1. get option for accessing wanted set entries (like we did using mmap)
+         * 2. prime wanted adress and
+         * 3. probe wanted address
+        */
         start = rdtsc();
         MyFunction(password);
 
