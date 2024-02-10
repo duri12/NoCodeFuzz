@@ -543,9 +543,9 @@ int compare_ints(const void *a, const void *b) {
     return (int_a > int_b) - (int_a < int_b);
 }
 
-int middle_sum(int arr[], int n) {
+float middle_mean(int arr[], int n) {
     // Check if the array is empty or has less than 3 elements
-    if (n == 0 || n < 3) {
+    if (n < 3) {
         return 0;
     }
     qsort(arr, n, sizeof(int), compare_ints);
@@ -556,8 +556,9 @@ int middle_sum(int arr[], int n) {
     for (int i = start; i < end; i++) {
         middle_sum += arr[i];
     }
+    int elements_num = end - start+1;
 
-    return middle_sum;
+    return middle / elements_num;
 }
 
 
@@ -632,7 +633,7 @@ static bool subproc_runNoFork(run_t *run)
     }
 
     int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
-    float mean = middle_sum(instrCountArr, n) /(n/2);
+    float mean = middle_mean(instrCountArr, n);
     int64_t instrCount = floor(mean);
 
 
