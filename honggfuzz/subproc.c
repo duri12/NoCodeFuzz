@@ -588,7 +588,6 @@ static bool subproc_runNoFork(run_t *run)
     }
 
 
-    unsigned cycles_low_start, cycles_high_start, cycles_low_end, cycles_high_end;
     uint64_t start, end;
 
     char password[1024];
@@ -596,8 +595,9 @@ static bool subproc_runNoFork(run_t *run)
     strncpy(password, (char *) run->dynfile->data, 8);
 
     int64_t instrCountArr[10] = {0};
-    int l1Cache[10] = {0};
-    int bpRecord[100] = {0}
+    //uncommand when in use
+    //int l1Cache[10] = {0};
+    //int bpRecord[100] = {0}
 
     //THINK: do we really need the 10 iterations loop
     for (int i = 0; i < 10; ++i)
