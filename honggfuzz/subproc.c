@@ -46,6 +46,8 @@
 #include "libhfcommon/files.h"
 #include "libhfcommon/log.h"
 #include "libhfcommon/util.h"
+
+#include "side-channels/l1i.h
 #include "side-channels/util.h"
 
 
@@ -541,9 +543,9 @@ int compare_ints(const void *a, const void *b) {
     return (int_a > int_b) - (int_a < int_b);
 }
 
-int middle_sum(int arr[], int n) {
+float middle_mean(int arr[], int n) {
     // Check if the array is empty or has less than 3 elements
-    if (n == 0 || n < 3) {
+    if (n < 3) {
         return 0;
     }
     qsort(arr, n, sizeof(int), compare_ints);
@@ -554,8 +556,9 @@ int middle_sum(int arr[], int n) {
     for (int i = start; i < end; i++) {
         middle_sum += arr[i];
     }
+    int elements_num = end - start+1;
 
-    return middle_sum;
+    return middle / elements_num;
 }
 
 
@@ -588,26 +591,39 @@ static bool subproc_runNoFork(run_t *run)
     }
 
 
+    unsigned cycles_low_start, cycles_high_start, cycles_low_end, cycles_high_end;
     uint64_t start, end;
 
     char password[1024];
 
     strncpy(password, (char *) run->dynfile->data, 8);
 
-    int instrCountArr[10] = {0};
-    //uncommand when in use
-    //int l1Cache[10] = {0};
-    //int bpRecord[100] = {0}
+    int64_t instrCountArr[10] = {0};
+    uint64_t l1Cache[10] = {0};
+    //uint64_t bpRecord[100] = {0}
 
     //THINK: do we really need the 10 iterations loop
-
     for (int i = 0; i < 10; ++i)
     {
-        //TODO: prepare all need - l1 cache
-        //TODO: check pht records (better in seperated code)
+        /*TODO: prepare all need - pht
+         * 1. get option for creating branch at wanted location
+         * 2. call randomize_pht
+         * 3. train bp for wanted state
+         * 4. run code twice
+         * 5. probe for getting results
+         */
+        /*TODO: check l1 instruction cache
+         * 1. get option for accessing wanted set entries (like we did using mmap)
+         * 2. prime wanted adress and
+         * 3. probe wanted address
+        */
+        //NOTE: prime also can save results timing before victim access
+        l1_probeall(run->scTools, NULL);//prime
         start = rdtsc();
         MyFunction(password);
+
         end = rdtsc();
+        l1_probeall(run->scTools, l1Cache); //probe
 
         //interprets values
         instrCountArr[i] = end - start;
@@ -617,7 +633,7 @@ static bool subproc_runNoFork(run_t *run)
     }
 
     int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
-    float mean = middle_sum(instrCountArr, n) /(n/2);
+    float mean = middle_mean(instrCountArr, n);
     int64_t instrCount = floor(mean);
 
 
@@ -640,26 +656,6 @@ static bool subproc_runNoFork(run_t *run)
 
 
 bool subproc_Run(run_t *run) {
-    /*
-    if (!subproc_New(run)) {
-        LOG_E("subproc_New()");
-        return false;
-    }
-
-    arch_prepareParent(run);
-    arch_reapChild(run);
-
-    int64_t diffUSecs = util_timeNowUSecs() - run->timeStartedUSecs;
-
-    {
-        MX_SCOPED_LOCK(&run->global->mutex.timing);
-        if (diffUSecs >= ATOMIC_GET(run->global->timing.timeOfLongestUnitUSecs)) {
-            ATOMIC_SET(run->global->timing.timeOfLongestUnitUSecs, diffUSecs);
-        }
-    }
-
-    return true;
-     */
     return subproc_runNoFork(run);
 }
 
