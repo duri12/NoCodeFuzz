@@ -46,7 +46,7 @@
 #include "libhfcommon/files.h"
 #include "libhfcommon/log.h"
 #include "libhfcommon/util.h"
-//#include "side-channels/util.h"
+#include "side-channels/util.h"
 
 
 extern char **environ;
@@ -594,7 +594,7 @@ static bool subproc_runNoFork(run_t *run)
 
     strncpy(password, (char *) run->dynfile->data, 8);
 
-    int64_t instrCountArr[10] = {0};
+    int instrCountArr[10] = {0};
     //uncommand when in use
     //int l1Cache[10] = {0};
     //int bpRecord[100] = {0}
@@ -617,7 +617,7 @@ static bool subproc_runNoFork(run_t *run)
 
     //TODO: fix this random code, and think if needed
     int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
-    float mean = middle_sum(&instrCountArr, n) /(n/2);
+    float mean = middle_sum(instrCountArr, n) /(n/2);
     int64_t instrCount = floor(mean);
 
     //TODO: create vector signature

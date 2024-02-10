@@ -49,7 +49,7 @@ uint64_t rdtsc() {
 }
 
 
-
+/*
 static inline void nop_16() {
   asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");
   asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");
@@ -64,7 +64,7 @@ static inline void additional_ops() {
   nop_16();
 }
 
-
+*/
 // Utilities for two-level predictor based attack
 
 #define FORCE_INLINE __attribute__((always_inline)) inline
