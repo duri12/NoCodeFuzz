@@ -6,6 +6,7 @@
 #include <strings.h>
 
 #include "util.h"
+#include <pht_PP_api.h>
 
 #define PAGE_SIZE 4096
 #define FUNC_SIZE 17
@@ -13,7 +14,7 @@
 struct phtpp{
     void *memory;
     int size;
-}phtpp_t;
+};
 
 
 uint64_t start = 0;
