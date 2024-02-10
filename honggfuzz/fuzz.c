@@ -49,6 +49,7 @@
 #include "sanitizers.h"
 #include "socketfuzzer.h"
 #include "subproc.h"
+#include "side-channels/l1i.h"
 
 static time_t termTimeStamp = 0;
 
@@ -589,6 +590,7 @@ static void* fuzz_threadNew(void* arg) {
     defer {
         free(run.dynfile);
     };
+    //init here all side-channel tools
 
     /* Do not try to handle input files with socketfuzzer */
     char mapname[32];
@@ -621,6 +623,10 @@ static void* fuzz_threadNew(void* arg) {
     if (!arch_archThreadInit(&run)) {
         LOG_F("Could not initialize the thread");
     }
+
+    //NOTE: here initializing l1i sc tools structure
+    run.scTools.l1i = l1i_prepare();
+    //TODO: add also for pht
 
     for (;;) {
         /* Check if dry run mode with verifier enabled */
@@ -660,6 +666,7 @@ static void* fuzz_threadNew(void* arg) {
         kill(run.pid, SIGKILL);
     }
 
+    l1i_release(run.scTools.l1i);
     size_t j = ATOMIC_PRE_INC(run.global->threads.threadsFinished);
     LOG_I("Terminating thread no. #%" PRId32 ", left: %zu", fuzzNo, hfuzz->threads.threadsMax - j);
     return NULL;

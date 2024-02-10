@@ -46,6 +46,8 @@
 #include "libhfcommon/files.h"
 #include "libhfcommon/log.h"
 #include "libhfcommon/util.h"
+
+#include "side-channels/l1i.h
 #include "side-channels/util.h"
 
 
@@ -572,7 +574,6 @@ static bool subproc_runNoFork(run_t *run)
     }
 
 
-    unsigned cycles_low_start, cycles_high_start, cycles_low_end, cycles_high_end;
     uint64_t start, end;
 
     char password[1024];
@@ -580,8 +581,8 @@ static bool subproc_runNoFork(run_t *run)
     strncpy(password, (char *) run->dynfile->data, 8);
 
     int64_t instrCountArr[10] = {0};
-    int64_t l1Cache[10] = {0};
-    int64_t bpRecord[100] = {0}
+    uint64_t l1Cache[10] = {0};
+    uint64_t bpRecord[100] = {0}
 
     //THINK: do we really need the 10 iterations loop
     for (int i = 0; i < 10; ++i)
@@ -598,10 +599,13 @@ static bool subproc_runNoFork(run_t *run)
          * 2. prime wanted adress and
          * 3. probe wanted address
         */
+        //NOTE: prime also can save results timing before victim access
+        l1_probeall(run->scTools, NULL);//prime
         start = rdtsc();
         MyFunction(password);
 
         end = rdtsc();
+        l1_probeall(run->scTools, l1Cache); //probe
 
         //interprets values
         instrCountArr[i] = end - start;
@@ -634,26 +638,6 @@ static bool subproc_runNoFork(run_t *run)
 
 
 bool subproc_Run(run_t *run) {
-    /*
-    if (!subproc_New(run)) {
-        LOG_E("subproc_New()");
-        return false;
-    }
-
-    arch_prepareParent(run);
-    arch_reapChild(run);
-
-    int64_t diffUSecs = util_timeNowUSecs() - run->timeStartedUSecs;
-
-    {
-        MX_SCOPED_LOCK(&run->global->mutex.timing);
-        if (diffUSecs >= ATOMIC_GET(run->global->timing.timeOfLongestUnitUSecs)) {
-            ATOMIC_SET(run->global->timing.timeOfLongestUnitUSecs, diffUSecs);
-        }
-    }
-
-    return true;
-     */
     return subproc_runNoFork(run);
 }
 

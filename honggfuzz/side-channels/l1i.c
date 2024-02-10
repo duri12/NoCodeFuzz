@@ -6,9 +6,8 @@
 #include <strings.h>
 
 #include <mastik/low.h>
-#include <l1i.h>
-
-
+#include "l1i.h"
+#include "util.h"
 
 
 l1ipp_t l1i_prepare(void) {
@@ -97,27 +96,30 @@ void l1i_randomise(l1ipp_t l1) {
 }
 
 typedef void (*fptr)(void);
-void l1i_probe(l1ipp_t l1, uint16_t *results , uint16_t set){
-    uint32_t start = rdtscp();
+uint64_t l1i_probe(l1ipp_t l1 , uint16_t set)
+{
+    //TODO: switch rdtscp to our global measure tool - rdtsc
+    uint64_t start = rdtsc();
+    //FUTURE TODO: move every indirect access out of timing
     (*((fptr)SET(0, set)))();
-    uint32_t res = rdtscp() - start;
-    results[0] = res > UINT16_MAX ? UINT16_MAX : res;
+    uint64_t end = rdtsc();
+    uint64_t res = end - start;
+    return res > UINT16_MAX ? UINT16_MAX : res;
 }
 
 
-int l1i_repeatedprobe(l1ipp_t l1, int nrecords, uint16_t *results, int slot) {
-    assert(l1 != NULL);
-    assert(results != NULL);
-
-    if (nrecords == 0)
-        return 0;
-
-    int len = l1->nsets;
-
-    for (int i = 0; i < nrecords; /* Increment inside */) {
-        l1i_probe(l1, results);
-        results += len;
-        i++;
+void l1i_probeall(l1ipp_t l1, uint64_ts *results)
+{
+    for (int i = 0; i < l1->nsets; i++)
+    {
+        //TODO: handle cases when not all sets are tracked.
+        uint16_t set = l1->monitored[i];
+        uint64_t res = l1i_probe(l1, set);
+        if(results) //not null (for priming mostly)
+            results[set] = res;
     }
-    return nrecords;
+
+    return results;
 }
+
+//FUTURE TODO: add specific function for prime (without rdtsc,

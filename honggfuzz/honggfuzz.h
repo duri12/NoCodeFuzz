@@ -358,6 +358,11 @@ typedef enum {
     _HF_RS_SEND_DATA                 = 3,
 } runState_t;
 
+typedef struct{
+    l1ipp_t l1i;
+    //pht* pht;
+}scTools_t;
+
 typedef struct {
     honggfuzz_t* global;
     pid_t        pid;
@@ -381,6 +386,7 @@ typedef struct {
     unsigned     triesLeft;
     dynfile_t*   current;
     hwcnt_t      hwCnts;
+    scTools_t    scTools;
 
     //TODO: should be in different struct with a proper locks
     struct {
