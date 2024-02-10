@@ -1,3 +1,2 @@
 # NoCodeFuzz
 blackbox fuzzing
-A

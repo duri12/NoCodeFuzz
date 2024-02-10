@@ -533,11 +533,29 @@ int cmp(const void *a, const void *b) {
     return *(int64_t *) a - *(int64_t *) b;
 }
 
-float middle_mean(int64_t arr[], int64_t n) {
-    qsort(arr, n, sizeof(int64_t), cmp);
-    int mid = (n + 1) / 2;
-    if (n % 2) return (float) arr[mid - 1];
-    return (float) (arr[mid - 1] + arr[mid]) / 2;
+
+int compare_ints(const void *a, const void *b) {
+    int int_a = *(int*)a;
+    int int_b = *(int*)b;
+
+    return (int_a > int_b) - (int_a < int_b);
+}
+
+int middle_sum(int arr[], int n) {
+    // Check if the array is empty or has less than 3 elements
+    if (n == 0 || n < 3) {
+        return 0;
+    }
+    qsort(arr, n, sizeof(int), compare_ints);
+    int start = n * 0.25;
+    int end = n * 0.75;
+
+    int middle_sum = 0;
+    for (int i = start; i < end; i++) {
+        middle_sum += arr[i];
+    }
+
+    return middle_sum;
 }
 
 
@@ -588,7 +606,6 @@ static bool subproc_runNoFork(run_t *run)
         //TODO: check pht records (better in seperated code)
         start = rdtsc();
         MyFunction(password);
-
         end = rdtsc();
 
         //interprets values
@@ -600,8 +617,8 @@ static bool subproc_runNoFork(run_t *run)
 
     //TODO: fix this random code, and think if needed
     int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
-    float mean = middle_mean(instrCountArr, n);
-    int64_t instrCount = round(mean);
+    float mean = middle_sum(instrCountArr, n) /(n/2);
+    int64_t instrCount = floor(mean);
 
     //TODO: create vector signature
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT) {
