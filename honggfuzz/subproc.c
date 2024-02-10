@@ -600,6 +600,7 @@ static bool subproc_runNoFork(run_t *run)
     //int bpRecord[100] = {0}
 
     //THINK: do we really need the 10 iterations loop
+    /*
     for (int i = 0; i < 10; ++i)
     {
         //TODO: prepare all need - l1 cache
@@ -618,7 +619,11 @@ static bool subproc_runNoFork(run_t *run)
     int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
     float mean = middle_sum(instrCountArr, n) /(n/2);
     int64_t instrCount = floor(mean);
-
+     */
+    start = rdtsc();
+    MyFunction(password);
+    end = rdtsc();
+    int64_t instrCount = end - start;
 
     //TODO: create vector signature
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT) {
