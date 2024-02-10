@@ -535,18 +535,34 @@ int cmp(const void *a, const void *b) {
     return *(int64_t *) a - *(int64_t *) b;
 }
 
-float middle_mean(int64_t arr[], int64_t n) {
-    qsort(arr, n, sizeof(int64_t), cmp);
-    int mid = (n + 1) / 2;
-    if (n % 2) return (float) arr[mid - 1];
-    return (float) (arr[mid - 1] + arr[mid]) / 2;
+
+int compare_ints(const void *a, const void *b) {
+    int int_a = *(int*)a;
+    int int_b = *(int*)b;
+
+    return (int_a > int_b) - (int_a < int_b);
+}
+
+int middle_sum(int arr[], int n) {
+    // Check if the array is empty or has less than 3 elements
+    if (n == 0 || n < 3) {
+        return 0;
+    }
+    qsort(arr, n, sizeof(int), compare_ints);
+    int start = n * 0.25;
+    int end = n * 0.75;
+
+    int middle_sum = 0;
+    for (int i = start; i < end; i++) {
+        middle_sum += arr[i];
+    }
+
+    return middle_sum;
 }
 
 
 static bool subproc_runNoFork(run_t *run)
 {
-    //TODO: add warmup at first iteration of running code
-
     if (run->global->exe.persistent)
         subproc_New(run); /*should not run . here to skip unused error*/
     /*set up the environment*/
@@ -574,6 +590,7 @@ static bool subproc_runNoFork(run_t *run)
     }
 
 
+    unsigned cycles_low_start, cycles_high_start, cycles_low_end, cycles_high_end;
     uint64_t start, end;
 
     char password[1024];
@@ -582,7 +599,7 @@ static bool subproc_runNoFork(run_t *run)
 
     int64_t instrCountArr[10] = {0};
     uint64_t l1Cache[10] = {0};
-    uint64_t bpRecord[100] = {0}
+    //uint64_t bpRecord[100] = {0}
 
     //THINK: do we really need the 10 iterations loop
     for (int i = 0; i < 10; ++i)
@@ -614,10 +631,10 @@ static bool subproc_runNoFork(run_t *run)
         //TODO: check L1 cache
     }
 
-    //TODO: fix this random code, and think if needed
     int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
-    float mean = middle_mean(instrCountArr, n);
-    int64_t instrCount = round(mean);
+    float mean = middle_sum(instrCountArr, n) /(n/2);
+    int64_t instrCount = floor(mean);
+
 
     //TODO: create vector signature
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT) {
