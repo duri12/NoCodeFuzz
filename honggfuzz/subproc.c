@@ -594,7 +594,7 @@ static bool subproc_runNoFork(run_t *run)
 
     strncpy(password, (char *) run->dynfile->data, 8);
 
-    //int instrCountArr[10] = {0};
+    int instrCountArr[10] = {0};
     //uncommand when in use
     //int l1Cache[10] = {0};
     //int bpRecord[100] = {0}
