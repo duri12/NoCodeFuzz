@@ -8,6 +8,7 @@
 #include "l1i.h"
 #include "util.h"
 
+#define PAGE_SIZE 4096
 #define L1I_ASSOCIATIVITY 8
 #define L1I_CACHELINE 64
 
@@ -101,7 +102,6 @@ int l1i_nsets(l1ipp_t l1i) {
 }
 
 void l1i_randomise(l1ipp_t l1) {
-    char *mem = (char *)l1->memory;
     for (int i = 0; i < l1->nsets; i++) {
         int p = random() % (l1->nsets - i) + i;
         uint8_t t = l1->monitored[p];
@@ -133,8 +133,6 @@ void l1i_probeall(l1ipp_t l1, uint64_t *results)
         if(results) //not null (for priming mostly)
             results[set] = res;
     }
-
-    return results;
 }
 
 //FUTURE TODO: add specific function for prime (without rdtsc,
