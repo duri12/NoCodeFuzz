@@ -9,7 +9,7 @@
 #include "util.h"
 
 #define PAGE_SIZE 4096
-#define FUNC_SIZE 17
+#define FUNC_SIZE 16
 
 
 //NOTE: if you could make the length to be 16 instead of 17 - could help a lot
@@ -30,9 +30,8 @@ void write_probe(uint8_t* p,int i){
     p[i+11] =0x74;// je     e <func+0xe>
     p[i+12] =0x01;
     p[i+13] =0x90;// nop
-    p[i+14] =0x90;// nop
-    p[i+15] =0x5d;// pop    rbp
-    p[i+16] =0xc3;// ret
+    p[i+14] =0x5d;// pop    rbp
+    p[i+15] =0xc3;// ret
 }
 
 
