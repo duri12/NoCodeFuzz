@@ -21,6 +21,11 @@
 #
 
 # Common for all architectures
+define filter-out
+$(foreach v,$(2),$(if $(findstring $(1),$(v)),,$(v)))
+endef
+
+
 CC ?= gcc
 LD = $(CC)
 BIN := honggfuzz
