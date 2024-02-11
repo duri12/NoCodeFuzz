@@ -16,7 +16,7 @@ int l1i_getmonitoredset(l1ipp_t l1i, int *lines, int nlines);
 void l1i_randomise(l1ipp_t l1);
 
 uint64_t l1i_probe(l1ipp_t l1 , uint16_t set);
-void l1i_probeall(l1ipp_t l1, uint64_t *results)
+void l1i_probeall(l1ipp_t l1, uint64_t *results);
 
 
 
