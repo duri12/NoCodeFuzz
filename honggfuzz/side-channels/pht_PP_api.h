@@ -1,6 +1,7 @@
 #ifndef NOCODEFUZZ_PHT_PP_API_H
 #define NOCODEFUZZ_PHT_PP_API_H
 #include <stdint.h>
+
 struct phtpp{
     void *memory;
     int size;
