@@ -593,8 +593,6 @@ static bool subproc_runNoFork(run_t *run)
         return false;
     }
 
-
-    unsigned cycles_low_start, cycles_high_start, cycles_low_end, cycles_high_end;
     uint64_t start, end;
 
     char password[1024];
