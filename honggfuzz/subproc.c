@@ -558,7 +558,7 @@ float middle_mean(int64_t arr[], int n) {
     }
     int elements_num = end - start+1;
 
-    return middle / elements_num;
+    return (float)middle /elements_num;
 }
 
 
