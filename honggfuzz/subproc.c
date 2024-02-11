@@ -645,7 +645,7 @@ static bool subproc_runNoFork(run_t *run)
     }
 
 
-    uint64_t bpResult[10] ={0};
+    //uint64_t bpResult[10] ={0};
     for (int i = 0; i <10; ++i) {
         int64_t SNTsum = 0 ;
         int64_t STsum = 0 ;
@@ -654,10 +654,12 @@ static bool subproc_runNoFork(run_t *run)
             STsum += bpRecordST[i][j];
         }
         if ((SNTsum >PHT_THRESHOLD*10) && (STsum < PHT_THRESHOLD*10)){
-            bpResult[i] = 2;
+            LOG_D("snt")
+            //bpResult[i] = 2;
         }
         else if  ((SNTsum <PHT_THRESHOLD*10) && (STsum > PHT_THRESHOLD*10)){
-            bpResult[i] = 1;
+            LOG_D("st")
+            //bpResult[i] = 1;
         }
     }
     //TODO: add bpResult to the vector of the run
