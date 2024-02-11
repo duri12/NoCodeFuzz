@@ -49,7 +49,10 @@
 
 #include "side-channels/l1i.h"
 #include "side-channels/util.h"
+#include "side-channels/pht_PP_api.h"
 
+#define PHT_SAMPLE_SIZE 10
+#define PHT_THRESHOLD 300
 
 extern char **environ;
 
@@ -591,6 +594,7 @@ static bool subproc_runNoFork(run_t *run)
     }
 
 
+    unsigned cycles_low_start, cycles_high_start, cycles_low_end, cycles_high_end;
     uint64_t start, end;
 
     char password[1024];
@@ -599,12 +603,14 @@ static bool subproc_runNoFork(run_t *run)
 
     uint64_t instrCountArr[10] = {0};
     uint64_t l1Cache[10] = {0};
-    //uint64_t bpRecord[100] = {0}
+    uint64_t bpRecordST[10][PHT_SAMPLE_SIZE] = {0};
+    uint64_t bpRecordSNT[10][PHT_SAMPLE_SIZE] = {0};
+
 
     //THINK: do we really need the 10 iterations loop
     for (int i = 0; i < 10; ++i)
     {
-        /*TODO: prepare all need - pht
+        /*TODO: prepare all need - pht //done
          * 1. get option for creating branch at wanted location
          * 2. call randomize_pht
          * 3. train bp for wanted state
@@ -627,9 +633,37 @@ static bool subproc_runNoFork(run_t *run)
         //interprets values
         instrCountArr[i] = end - start;
 
+        //the PHT prime+probe
+        pht_prime(run->scTools.pht,0);
+        MyFunction(password);
+        pht_probe(run->scTools.pht,bpRecordSNT[i],1);
+        pht_prime(run->scTools.pht,1);
+        MyFunction(password);
+        pht_probe(run->scTools.pht,bpRecordST[i],0);
+
+
         //TODO: check pht record
         //TODO: check L1 cache
     }
+
+
+    uint64_t bpResult[10] ={0};
+    for (int i = 0; i <10; ++i) {
+        int64_t SNTsum = 0 ;
+        int64_t STsum = 0 ;
+        for (int j = 0; j < PHT_SAMPLE_SIZE; ++j) {
+            SNTsum += bpRecordSNT[i][j];
+            STsum += bpRecordST[i][j];
+        }
+        if ((SNTsum >PHT_THRESHOLD*10) && (STsum < PHT_THRESHOLD*10)){
+            bpResult[i] = 2;
+        }
+        else if  ((SNTsum <PHT_THRESHOLD*10) && (STsum > PHT_THRESHOLD*10)){
+            bpResult[i] = 1;
+        }
+    }
+    //TODO: add bpResult to the vector of the run
+
 
     int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
     float mean = middle_mean(instrCountArr, n);

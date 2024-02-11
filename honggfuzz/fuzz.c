@@ -626,7 +626,7 @@ static void* fuzz_threadNew(void* arg) {
 
     //NOTE: here initializing l1i sc tools structure
     run.scTools.l1i = l1i_prepare();
-    //TODO: add also for pht
+    run.scTools.pht =  pht_prepare(PHT_SAMPLE_SIZE);
 
     for (;;) {
         /* Check if dry run mode with verifier enabled */
