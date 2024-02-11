@@ -37,6 +37,7 @@
 #include <time.h>
 
 #include "libhfcommon/util.h"
+#include "side-channels/l1i.h"
 
 #define PROG_NAME    "honggfuzz"
 #define PROG_VERSION "2.6"
