@@ -5,20 +5,22 @@
 #include <assert.h>
 #include <strings.h>
 
-#include "util.h"
-#include <pht_PP_api.h>
+#include "pht_PP_api.h"
 
 #define PAGE_SIZE 4096
 #define FUNC_SIZE 17
 
-struct phtpp{
-    void *memory;
-    int size;
-};
 
 
-uint64_t start = 0;
-uint64_t end = 0;
+uint64_t rdtsc() {
+    /* Utility functions from https://github.com/IAIK/transientfail/ */
+    uint64_t a, d;
+    asm volatile("mfence");
+    asm volatile("rdtscp" : "=a"(a), "=d"(d)::"rcx");
+    a = (d << 32) | a;
+    asm volatile("mfence");
+    return a;
+}
 
 void write_probe(uint8_t* p,int i){
     p[i] =0x55;
@@ -54,8 +56,8 @@ phtpp_t pht_prepare(int probe_size){
 typedef void (*fptr1)(int);
 void pht_prime(phtpp_t pht){
     randomize_pht();
-    for(int i = 0;<pht->size; i++){
-        void *p = pht->memory[i*FUNC_SIZE];
+    for(int i = 0;i<pht->size; i++){
+        void *p = &pht->memory[i*FUNC_SIZE];
         (*((fptr1)p))(0);
         (*((fptr1)p))(0);
         (*((fptr1)p))(0);
@@ -63,9 +65,11 @@ void pht_prime(phtpp_t pht){
     }
 }
 
-void pht_probe(phtpp_t pht, uint16_t *results){
-    for(int i = 0;<pht->size; i++){
-        void *p = pht->memory[i*FUNC_SIZE];
+void pht_probe(phtpp_t pht, uint64_t *results){
+    uint64_t start = 0;
+    uint64_t end = 0;
+    for(int i = 0;i < pht->size; i++){
+        void *p = &pht->memory[i*FUNC_SIZE];
         (*((fptr1)p))(1);
         start = rdtsc();
         (*((fptr1)p))(1);
