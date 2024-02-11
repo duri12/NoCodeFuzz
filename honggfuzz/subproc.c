@@ -617,12 +617,12 @@ static bool subproc_runNoFork(run_t *run)
          * 3. probe wanted address
         */
         //NOTE: prime also can save results timing before victim access
-        l1i_probeall(run->scTools, NULL);//prime
+        l1i_probeall(run->scTools.l1i, NULL);//prime
         start = rdtsc();
         MyFunction(password);
 
         end = rdtsc();
-        l1i_probeall(run->scTools, l1Cache); //probe
+        l1i_probeall(run->scTools.l1i, l1Cache); //probe
 
         //interprets values
         instrCountArr[i] = end - start;
