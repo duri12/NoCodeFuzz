@@ -7,7 +7,7 @@ typedef struct l1ipp *l1ipp_t;
 
 l1ipp_t l1i_prepare();
 void l1i_release(l1ipp_t l1i);
-
+int l1i_nsets(l1ipp_t l1i);
 int l1i_monitor(l1ipp_t l1i, int line);
 int l1i_unmonitor(l1ipp_t l1i, int line);
 void l1i_monitorall(l1ipp_t l1i);
