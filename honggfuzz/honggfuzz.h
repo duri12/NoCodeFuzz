@@ -360,7 +360,7 @@ typedef enum {
 
 typedef struct{
     l1ipp_t l1i;
-    //pht* pht;
+    phtpp_t pht;
 }scTools_t;
 
 typedef struct {
