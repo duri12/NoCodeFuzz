@@ -626,7 +626,8 @@ static void* fuzz_threadNew(void* arg) {
 
     //NOTE: here initializing l1i sc tools structure
     run.scTools.l1i = l1i_prepare();
-    run.scTools.pht =  pht_prepare(PHT_SAMPLE_SIZE);
+    run.scTools.pht =  pht_prepare(10);
+    //TODO: create a constant for probe size
 
     for (;;) {
         /* Check if dry run mode with verifier enabled */
