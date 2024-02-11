@@ -634,10 +634,10 @@ static bool subproc_runNoFork(run_t *run)
         //the PHT prime+probe
         pht_prime(run->scTools.pht,0);
         MyFunction(password);
-        pht_probe(run->scTools.pht,bpRecordSNT[i],1);
+        pht_probe(run->scTools.pht,&bpRecordSNT[i][0],1);
         pht_prime(run->scTools.pht,1);
         MyFunction(password);
-        pht_probe(run->scTools.pht,bpRecordST[i],0);
+        pht_probe(run->scTools.pht,&bpRecordST[i][0],0);
 
 
         //TODO: check pht record
