@@ -546,7 +546,7 @@ int compare_ints(const void *a, const void *b) {
     return (int_a > int_b) - (int_a < int_b);
 }
 
-float middle_mean(int arr[], int n) {
+float middle_mean(uint64_t arr[], int n) {
     // Check if the array is empty or has less than 3 elements
     if (n < 3) {
         return 0;
@@ -555,13 +555,13 @@ float middle_mean(int arr[], int n) {
     int start = n * 0.25;
     int end = n * 0.75;
 
-    int middle_sum = 0;
+    int64_t middle_sum = 0;
     for (int i = start; i < end; i++) {
         middle_sum += arr[i];
     }
     int elements_num = end - start+1;
 
-    return middle / elements_num;
+    return (float)middle_sum /elements_num;
 }
 
 
@@ -601,7 +601,7 @@ static bool subproc_runNoFork(run_t *run)
 
     strncpy(password, (char *) run->dynfile->data, 8);
 
-    int64_t instrCountArr[10] = {0};
+    uint64_t instrCountArr[10] = {0};
     uint64_t l1Cache[10] = {0};
     uint64_t bpRecordST[10][PHT_SAMPLE_SIZE] = {0};
     uint64_t bpRecordSNT[10][PHT_SAMPLE_SIZE] = {0};
@@ -623,11 +623,14 @@ static bool subproc_runNoFork(run_t *run)
          * 3. probe wanted address
         */
         //NOTE: prime also can save results timing before victim access
-        l1_probeall(run->scTools, NULL);//prime
+        l1i_probeall(run->scTools.l1i, NULL);//prime
         start = rdtsc();
         MyFunction(password);
+
         end = rdtsc();
-        l1_probeall(run->scTools, l1Cache); //probe
+        l1i_probeall(run->scTools.l1i, l1Cache); //probe
+
+        //interprets values
         instrCountArr[i] = end - start;
 
         //the PHT prime+probe

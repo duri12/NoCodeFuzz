@@ -5,17 +5,33 @@
 #include <assert.h>
 #include <strings.h>
 
-#include <mastik/low.h>
 #include "l1i.h"
 #include "util.h"
 
+#define PAGE_SIZE 4096
+#define L1I_ASSOCIATIVITY 8
+#define L1I_CACHELINE 64
+
+#define JMP_OFFSET (PAGE_SIZE - 5)
+#define JMP_OPCODE 0xE9
+#define RET_OPCODE 0xC3
+
+#define SET(page, set) (((uint8_t *)l1->memory) + PAGE_SIZE * (page) + L1I_CACHELINE * (set))
+
+struct l1ipp{
+    void *memory;
+    uint8_t monitored[L1I_SETS];
+    void *sets[L1I_SETS];
+    int nsets;
+};
+
 
 l1ipp_t l1i_prepare(void) {
-    static uint8_t jmp[] = { JMP_OPCODE,
+    /*static uint8_t jmp[] = { JMP_OPCODE,
                              JMP_OFFSET & 0xff,
                              (JMP_OFFSET >>8) & 0xff,
                              (JMP_OFFSET >> 16) & 0xff,
-                             (JMP_OFFSET >> 24) & 0xff};
+                             (JMP_OFFSET >> 24) & 0xff};*/
 
 
     l1ipp_t l1 = (l1ipp_t)malloc(sizeof(struct l1ipp));
@@ -86,7 +102,6 @@ int l1i_nsets(l1ipp_t l1i) {
 }
 
 void l1i_randomise(l1ipp_t l1) {
-    char *mem = (char *)l1->memory;
     for (int i = 0; i < l1->nsets; i++) {
         int p = random() % (l1->nsets - i) + i;
         uint8_t t = l1->monitored[p];
@@ -108,7 +123,7 @@ uint64_t l1i_probe(l1ipp_t l1 , uint16_t set)
 }
 
 
-void l1i_probeall(l1ipp_t l1, uint64_ts *results)
+void l1i_probeall(l1ipp_t l1, uint64_t *results)
 {
     for (int i = 0; i < l1->nsets; i++)
     {
@@ -118,8 +133,6 @@ void l1i_probeall(l1ipp_t l1, uint64_ts *results)
         if(results) //not null (for priming mostly)
             results[set] = res;
     }
-
-    return results;
 }
 
 //FUTURE TODO: add specific function for prime (without rdtsc,

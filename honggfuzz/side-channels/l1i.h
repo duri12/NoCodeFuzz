@@ -7,7 +7,7 @@ typedef struct l1ipp *l1ipp_t;
 
 l1ipp_t l1i_prepare();
 void l1i_release(l1ipp_t l1i);
-
+int l1i_nsets(l1ipp_t l1i);
 int l1i_monitor(l1ipp_t l1i, int line);
 int l1i_unmonitor(l1ipp_t l1i, int line);
 void l1i_monitorall(l1ipp_t l1i);
@@ -16,7 +16,7 @@ int l1i_getmonitoredset(l1ipp_t l1i, int *lines, int nlines);
 void l1i_randomise(l1ipp_t l1);
 
 uint64_t l1i_probe(l1ipp_t l1 , uint16_t set);
-void l1i_probeall(l1ipp_t l1, uint64_t *results)
+void l1i_probeall(l1ipp_t l1, uint64_t *results);
 
 
 
