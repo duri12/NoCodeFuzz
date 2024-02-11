@@ -38,6 +38,7 @@
 
 #include "libhfcommon/util.h"
 #include "side-channels/l1i.h"
+#include "side-channels/pht_PP_api.h"
 
 #define PROG_NAME    "honggfuzz"
 #define PROG_VERSION "2.6"
