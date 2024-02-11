@@ -11,26 +11,15 @@
 #define PAGE_SIZE 4096
 #define FUNC_SIZE 16
 
+const uint8_t jumpArray[FUNC_SIZE] = {0x55,0x48,0x89,0xe5,0x89,
+                                       0x7d,0xfc,0x83,0x7d,0xfc,
+                                       0x00,0x74,0x01,0x90,0x5d,
+                                       0xc3};
 
-//BTW - why not using loop? or memcpy? looks pretty ugly
-//BTW: you could just send p+i as p.
-void write_probe(uint8_t* p,int i){
-    p[i] =0x55;  // push   rbp
-    p[i+1] =0x48;// mov    rbp,rsp
-    p[i+2] =0x89;
-    p[i+3] =0xe5;
-    p[i+4] =0x89;// mov    DWORD PTR [rbp-0x4],edi
-    p[i+5] =0x7d;
-    p[i+6] =0xfc;
-    p[i+7] =0x83;// cmp    DWORD PTR [rbp-0x4],0x0
-    p[i+8] =0x7d;
-    p[i+9] =0xfc;
-    p[i+10] =0x00;
-    p[i+11] =0x74;// je     e <func+0xe>
-    p[i+12] =0x01;
-    p[i+13] =0x90;// nop
-    p[i+14] =0x5d;// pop    rbp
-    p[i+15] =0xc3;// ret
+void write_probe(uint8_t* p){
+   for (int i = 0; i <FUNC_SIZE;i++){
+       p[i] =jumpArray[i];
+   }
 }
 
 
@@ -48,7 +37,7 @@ phtpp_t pht_prepare(int probe_size){
     uint8_t* p = pht->memory;
     for(int i =0;i < probe_size*FUNC_SIZE; i+=FUNC_SIZE)
     {
-        write_probe(p,i);
+        write_probe(p+i);
     }
     return pht;
 }
