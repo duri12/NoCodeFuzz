@@ -47,7 +47,7 @@ typedef void (*fptr1)(int);
 void pht_prime(phtpp_t pht,int starting_state){
     randomize_pht();
     for(int i = 0;i<pht->size; i++){
-        void *p = &(pht->memory+i*FUNC_SIZE);
+        void *p = (pht->memory+i*FUNC_SIZE);
         (*((fptr1)p))(starting_state);
         (*((fptr1)p))(starting_state);
         (*((fptr1)p))(starting_state);
@@ -60,7 +60,7 @@ void pht_probe(phtpp_t pht,int not_starting_state, uint64_t *results){
     uint64_t start = 0;
     uint64_t end = 0;
     for(int i = 0;i < pht->size; i++){
-        void *p = &(pht->memory+i*FUNC_SIZE);
+        void *p = (pht->memory+i*FUNC_SIZE);
         (*((fptr1)p))(not_starting_state);
         start = rdtsc();
         (*((fptr1)p))(not_starting_state);
