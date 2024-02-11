@@ -543,7 +543,7 @@ int compare_ints(const void *a, const void *b) {
     return (int_a > int_b) - (int_a < int_b);
 }
 
-float middle_mean(int arr[], int n) {
+float middle_mean(int64_t arr[], int n) {
     // Check if the array is empty or has less than 3 elements
     if (n < 3) {
         return 0;
@@ -552,7 +552,7 @@ float middle_mean(int arr[], int n) {
     int start = n * 0.25;
     int end = n * 0.75;
 
-    int middle_sum = 0;
+    int64_t middle_sum = 0;
     for (int i = start; i < end; i++) {
         middle_sum += arr[i];
     }
@@ -591,14 +591,13 @@ static bool subproc_runNoFork(run_t *run)
     }
 
 
-    unsigned cycles_low_start, cycles_high_start, cycles_low_end, cycles_high_end;
     uint64_t start, end;
 
     char password[1024];
 
     strncpy(password, (char *) run->dynfile->data, 8);
 
-    int64_t instrCountArr[10] = {0};
+    uint64_t instrCountArr[10] = {0};
     uint64_t l1Cache[10] = {0};
     //uint64_t bpRecord[100] = {0}
 
