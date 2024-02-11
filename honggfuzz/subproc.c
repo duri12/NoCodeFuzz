@@ -47,7 +47,7 @@
 #include "libhfcommon/log.h"
 #include "libhfcommon/util.h"
 
-#include "side-channels/l1i.h
+#include "side-channels/l1i.h"
 #include "side-channels/util.h"
 
 
@@ -543,7 +543,7 @@ int compare_ints(const void *a, const void *b) {
     return (int_a > int_b) - (int_a < int_b);
 }
 
-float middle_mean(int64_t arr[], int n) {
+float middle_mean(uint64_t arr[], int n) {
     // Check if the array is empty or has less than 3 elements
     if (n < 3) {
         return 0;
@@ -558,7 +558,7 @@ float middle_mean(int64_t arr[], int n) {
     }
     int elements_num = end - start+1;
 
-    return (float)middle /elements_num;
+    return (float)middle_sum /elements_num;
 }
 
 
@@ -617,12 +617,12 @@ static bool subproc_runNoFork(run_t *run)
          * 3. probe wanted address
         */
         //NOTE: prime also can save results timing before victim access
-        l1_probeall(run->scTools, NULL);//prime
+        l1i_probeall(run->scTools, NULL);//prime
         start = rdtsc();
         MyFunction(password);
 
         end = rdtsc();
-        l1_probeall(run->scTools, l1Cache); //probe
+        l1i_probeall(run->scTools, l1Cache); //probe
 
         //interprets values
         instrCountArr[i] = end - start;
