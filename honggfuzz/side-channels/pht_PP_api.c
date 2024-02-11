@@ -12,7 +12,6 @@
 #define FUNC_SIZE 16
 
 
-//NOTE: if you could make the length to be 16 instead of 17 - could help a lot
 //BTW - why not using loop? or memcpy? looks pretty ugly
 //BTW: you could just send p+i as p.
 void write_probe(uint8_t* p,int i){
