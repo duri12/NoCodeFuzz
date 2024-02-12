@@ -632,6 +632,7 @@ static bool subproc_runNoFork(run_t *run)
 
         //interprets values
         instrCountArr[i] = end - start;
+        LOG_I("instrCountArr[i] = %ld", instrCountArr[i])
         //the PHT prime+probe
         pht_prime(run->scTools.pht,0);
         MyFunction(password);
