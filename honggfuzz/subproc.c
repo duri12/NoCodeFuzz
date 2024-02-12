@@ -551,7 +551,7 @@ float middle_mean(uint64_t arr[], int n) {
     if (n < 3) {
         return 0;
     }
-    qsort(arr, n, sizeof(int), compare_ints);
+    qsort(arr, n, sizeof(int),sizeof(arr[0]), compare_ints);
     int start = n * 0.25;
     int end = n * 0.75;
 
@@ -668,7 +668,7 @@ static bool subproc_runNoFork(run_t *run)
 
 
     int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
-    float mean = middle_mean(&instrCountArr, n);
+    float mean = middle_mean(instrCountArr, n);
     int64_t instrCount = floor(mean);
 
 
