@@ -492,3 +492,5 @@ netbsd/unwind.o: libhfcommon/common.h libhfcommon/log.h
 posix/arch.o: arch.h honggfuzz.h libhfcommon/util.h fuzz.h
 posix/arch.o: libhfcommon/common.h libhfcommon/files.h libhfcommon/common.h
 posix/arch.o: libhfcommon/log.h report.h sanitizers.h subproc.h
+side-channels/pht_pp_api.o: side-channels/util.h
+side-channels/l1i.o: side-channels/util.h
