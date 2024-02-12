@@ -559,6 +559,7 @@ float middle_mean(uint64_t arr[], int n) {
     for (int i = start; i < end; i++) {
         middle_sum += arr[i];
     }
+    LOG_I("sum: %ld", middle_sum);
     int elements_num = end - start+1;
 
     return (float)middle_sum /elements_num;
@@ -664,9 +665,7 @@ static bool subproc_runNoFork(run_t *run)
 
 
     int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
-    LOG_I("n = %d", n);
     float mean = middle_mean(instrCountArr, n);
-    LOG_I("mean = %f",mean);
     int64_t instrCount = floor(mean);
 
 
