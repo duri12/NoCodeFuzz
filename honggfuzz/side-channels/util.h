@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 
-uint8_t temp = 0; /* Used so compiler won’t optimize out some of the loops */
+static uint8_t temp = 0; /* Used so compiler won’t optimize out some of the loops */
 
 
 
