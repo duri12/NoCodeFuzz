@@ -559,9 +559,7 @@ float middle_mean(uint64_t arr[], int n) {
     uint64_t middle_sum = 0;
     for (int i = start; i < end; i++) {
         middle_sum += arr[i];
-        LOG_I("value: %ld", arr[i]);
     }
-    LOG_I("sum: %ld", middle_sum);
     int elements_num = end - start+1;
 
     return (float)middle_sum /elements_num;
@@ -632,7 +630,6 @@ static bool subproc_runNoFork(run_t *run)
 
         //interprets values
         instrCountArr[i] = end - start;
-        LOG_I("instrCountArr[i] = %ld", instrCountArr[i])
         //the PHT prime+probe
         pht_prime(run->scTools.pht,0);
         MyFunction(password);
