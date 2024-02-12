@@ -20,7 +20,7 @@
 
 #ifndef TEMP_UNOP
 #define  TEMP_UNOP
-uint8_t temp = 0; /* Used so compiler won’t optimize out some of the loops */
+    uint8_t temp = 0; /* Used so compiler won’t optimize out some of the loops */
 #endif
 
 
