@@ -1,24 +1,7 @@
-#include <assert.h>
-#include <unistd.h>
-#include <time.h>
-#include <fcntl.h>
-#include <sys/file.h>
-#include <sys/time.h>
-#include <sys/syscall.h>
-#include <linux/perf_event.h>
-#include <sys/ioctl.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <signal.h>
-#include <setjmp.h>
-#include <sched.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <pthread.h>
 #include "util.h"
-uint8_t temp1 = 0; /* Used so compiler won’t optimize out some of the loops */
 
 
+/* Utility functions from https://github.com/IAIK/transientfail/ */
 void mfence() {
     /* Utility functions from https://github.com/IAIK/transientfail/ */
     __asm__ volatile("mfence");
@@ -43,5 +26,3 @@ uint64_t rdtsc() {
     __asm__ volatile("mfence");
     return a;
 }
-
-
