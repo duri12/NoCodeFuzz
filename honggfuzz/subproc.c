@@ -629,7 +629,6 @@ static bool subproc_runNoFork(run_t *run)
 
         //interprets values
         instrCountArr[i] = end - start;
-        LOG_I("time:%ld", end -start);
         //the PHT prime+probe
         pht_prime(run->scTools.pht,0);
         MyFunction(password);
@@ -665,7 +664,9 @@ static bool subproc_runNoFork(run_t *run)
 
 
     int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
+    LOG_I("n = %d", n);
     float mean = middle_mean(instrCountArr, n);
+    LOG_I("mean = %f",mean);
     int64_t instrCount = floor(mean);
 
 
