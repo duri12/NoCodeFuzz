@@ -668,7 +668,7 @@ static bool subproc_runNoFork(run_t *run)
 
 
     int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
-    float mean = middle_mean(instrCountArr, n);
+    float mean = middle_mean(&instrCountArr, n);
     int64_t instrCount = floor(mean);
 
 
