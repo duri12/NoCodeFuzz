@@ -554,12 +554,12 @@ float middle_mean(uint64_t arr[], int n) {
     qsort(arr, n, sizeof(int), compare_ints);
     int start = n * 0.25;
     int end = n * 0.75;
-    LOG_I("start: %d", start);
-    LOG_I("end: %d", end);
 
-    int64_t middle_sum = 0;
+
+    uint64_t middle_sum = 0;
     for (int i = start; i < end; i++) {
         middle_sum += arr[i];
+        LOG_I("value: %ld", arr[i]);
     }
     LOG_I("sum: %ld", middle_sum);
     int elements_num = end - start+1;
