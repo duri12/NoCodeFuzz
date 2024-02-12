@@ -18,8 +18,10 @@
 #include <stdlib.h>
 #include <pthread.h>
 
- uint8_t temp = 0; /* Used so compiler won’t optimize out some of the loops */
-
+#ifndef TEMP_UNOP
+#define  TEMP_UNOP
+uint8_t temp = 0; /* Used so compiler won’t optimize out some of the loops */
+#endif
 
 
 extern int randomize_pht();
