@@ -551,7 +551,7 @@ float middle_mean(uint64_t arr[], int n) {
     if (n < 3) {
         return 0;
     }
-    qsort(arr, n, sizeof(uint64_t t), compare_ints);
+    qsort(arr, n, sizeof(uint64_t), compare_ints);
     int start = n * 0.25;
     int end = n * 0.75;
 
