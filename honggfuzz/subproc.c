@@ -624,13 +624,12 @@ static bool subproc_runNoFork(run_t *run)
         l1i_probeall(run->scTools.l1i, NULL);//prime
         start = rdtsc();
         MyFunction(password);
-
         end = rdtsc();
         l1i_probeall(run->scTools.l1i, l1Cache); //probe
 
         //interprets values
         instrCountArr[i] = end - start;
-
+        LOG_I("time:%ld", end -start);
         //the PHT prime+probe
         pht_prime(run->scTools.pht,0);
         MyFunction(password);
