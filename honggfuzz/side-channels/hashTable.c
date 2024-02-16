@@ -51,10 +51,10 @@ Histogram internalHistogramCreate(int size, int keySize)
 
     return d;
 }
-
+//TODO: replace with size
 Histogram HistogramCreate(void)
 {
-    return internalHistogramCreate(INITIAL_SIZE);
+    return internalHistogramCreate(INITIAL_SIZE,10+64);
 }
 
 void HistogramDestroy(Histogram d)
@@ -176,7 +176,6 @@ HistogramDelete(Histogram d, const char *key)
             /* got it */
             e = *prev;
             *prev = e->next;
-
             free(e->key);
             free(e);
 

@@ -216,7 +216,8 @@ static void fuzz_perfFeedback(run_t* run) {
 
     rmb();
 
-
+    /*
+     * NOTE: no need anymore
     //TODO: get all data together
     int representation = run->hwCnts.cpuInstrCnt;
     //filled all data
@@ -265,10 +266,12 @@ static void fuzz_perfFeedback(run_t* run) {
             arr[i] = arr[i + offset];
         }
         run->global->feedback.hwCnts.historyCurrSize = size-offset;
-    }
+    }*/
+    uint8_t* currScSignature = run->hwCnts.scSignature;
+    uint8_t res = run->global->feedback.hwCnts.scSignatureHistogram.HistogramSearch(currScSignature);
+
     /* Any increase in coverage (edge, pc, cmp, hw) counters forces adding input to the corpus */
-    if((distance > threshold) ||((distance==-1) && (run->hwCnts.newBBCnt > 0 || softNewPC > 0 || softNewEdge > 0 || softNewCmp > 0 ||
-        diff_instrCnt < 0 || diff_cpuBranchCnt < 0)))
+    if(!res || diff_instrCnt>0)
     {
         if (diff_instrCnt < 0) {
             run->global->feedback.hwCnts.cpuInstrCnt = run->hwCnts.cpuInstrCnt;
@@ -327,6 +330,11 @@ static void fuzz_perfFeedback(run_t* run) {
         run->dynfile->cov[2] = run->hwCnts.cpuInstrCnt + run->hwCnts.cpuBranchCnt;
         run->dynfile->cov[3] = run->dynfile->size ? (64 - util_Log2(run->dynfile->size)) : 64;
         run->dynfile->distance = distance;
+
+        if(!res)
+        {
+            run->global->feedback.hwCnts.scSignatureHistogram.HistogramInsert(currScSignature,1);
+        }
         //NOTE: here it creates new inputs according to results.
         //only if was an increasing in cov
         input_addDynamicInput(run);

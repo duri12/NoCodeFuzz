@@ -13,7 +13,7 @@ Histogram HistogramCreate(void);
 void HistogramDestroy(Histogram);
 
 /* insert a new key-value pair into an existing Histogram */
-void HistogramInsert(Histogram, const char *key, const char *value);
+void HistogramInsert(Histogram, const char *key, int value);
 
 /* return the most recently inserted value associated with a key */
 /* or 0 if no matching key is present */
