@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdint.h>
 #include "l1i.h"
+#include "util.h"
 
 volatile uint64_t a;
 
