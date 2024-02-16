@@ -365,6 +365,7 @@ int main(int argc, char** argv) {
     hfuzz.feedback.hwCnts.historyCurrSize = 0;
 
     //TODO: init histogram
+    hfuzz.feedback.hwCnts.scSignatureHistogram = Histogram();
 
     char tmstr[64];
     util_getLocalTime("%F.%H.%M.%S", tmstr, sizeof(tmstr), time(NULL));

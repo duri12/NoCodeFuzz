@@ -337,6 +337,12 @@ static void fuzz_perfFeedback(run_t* run) {
         {
             HistogramInsert(run->global->feedback.hwCnts.scSignatureHistogram,currScSignature,1);
         }
+        else
+        {
+            //TODO: should be in correct places
+            free(run->global->feedback.hwCnts.scSignatureHistogram)
+            run->global->feedback.hwCnts.scSignatureHistogram = 0;
+        }
         //NOTE: here it creates new inputs according to results.
         //only if was an increasing in cov
         input_addDynamicInput(run);
