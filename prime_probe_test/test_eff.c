@@ -131,7 +131,7 @@ int main(int c, char **v) {
                 l1Cache[i][j] =1;
             else
                 l1Cache[i][j] =0;
-            printf("[set %d]-> %lu\n",j,l1Cache[i][j]);
+            printf("[%d]--[set %d]-> %lu\n",i,j,l1Cache[i][j]);
         }
     }
 
