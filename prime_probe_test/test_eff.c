@@ -30,6 +30,9 @@ void MyFunction(char *password) {
                 : "rdx", "rbx", "cc", "memory"
                 );
         NOP16();
+        NOP16();
+        NOP16();
+        NOP16();
         if (password[1] == 'A') {
             __asm__ __volatile__
                     (
@@ -44,6 +47,9 @@ void MyFunction(char *password) {
                     :
                     : "rdx", "rbx", "cc", "memory"
                     );
+            NOP16();
+            NOP16();
+            NOP16();
             NOP16();
             if (password[2] == 'S') {
                 __asm__ __volatile__
@@ -60,6 +66,9 @@ void MyFunction(char *password) {
                         : "rdx", "rbx", "cc", "memory"
                         );
                 NOP16();
+                NOP16();
+                NOP16();
+                NOP16();
                 if (password[3] == 's') {
                     __asm__ __volatile__
                             (
@@ -74,6 +83,9 @@ void MyFunction(char *password) {
                             :
                             : "rdx", "rbx", "cc", "memory"
                             );
+                    NOP16();
+                    NOP16();
+                    NOP16();
                     NOP16();
                     if (password[4] == '1') {
                         __asm__ __volatile__
@@ -90,10 +102,16 @@ void MyFunction(char *password) {
                                 : "rdx", "rbx", "cc", "memory"
                                 );
                         NOP16();
+                        NOP16();
+                        NOP16();
+                        NOP16();
                         if (password[5] == '!') {
                             //printf("found the password");
                             //printf("the input was %s",password);
                             //sleep(10);
+                            NOP16();
+                            NOP16();
+                            NOP16();
                             NOP16();
                         }
                     }
