@@ -6,16 +6,98 @@
 
 #include <l1i.h>
 
-uint16_t res[400];
 
-volatile int a;
+void MyFunction(char *password) {
 
-void func(int x){
-    x++;
+    if (password[6] != '\0')
+        return;
+
+    if (password[0] == 'P') {
+        __asm__ __volatile__
+                (
+                "pause;"
+                "movq $0, %%rdx;"
+                "movq $0x10, %%rbx;"
+                "l2%=:"
+                "inc %%rdx;"
+                "cmpq %%rdx, %%rbx;"
+                "jg l2%=;"
+                :
+                :
+                : "rdx", "rbx", "cc", "memory"
+                );
+        if (password[1] == 'A') {
+            __asm__ __volatile__
+                    (
+                    "pause;"
+                    "movq $0, %%rdx;"
+                    "movq $0x10, %%rbx;"
+                    "l3%=:"
+                    "inc %%rdx;"
+                    "cmpq %%rdx, %%rbx;"
+                    "jg l3%=;"
+                    :
+                    :
+                    : "rdx", "rbx", "cc", "memory"
+                    );
+            if (password[2] == 'S') {
+                __asm__ __volatile__
+                        (
+                        "pause;"
+                        "movq $0, %%rdx;"
+                        "movq $0x10, %%rbx;"
+                        "l4%=:"
+                        "inc %%rdx;"
+                        "cmpq %%rdx, %%rbx;"
+                        "jg l4%=;"
+                        :
+                        :
+                        : "rdx", "rbx", "cc", "memory"
+                        );
+                if (password[3] == 's') {
+                    __asm__ __volatile__
+                            (
+                            "pause;"
+                            "movq $0, %%rdx;"
+                            "movq $0x10, %%rbx;"
+                            "l5%=:"
+                            "inc %%rdx;"
+                            "cmpq %%rdx, %%rbx;"
+                            "jg l5%=;"
+                            :
+                            :
+                            : "rdx", "rbx", "cc", "memory"
+                            );
+                    if (password[4] == '1') {
+                        __asm__ __volatile__
+                                (
+                                "pause;"
+                                "movq $0, %%rdx;"
+                                "movq $0x10, %%rbx;"
+                                "l6%=:"
+                                "inc %%rdx;"
+                                "cmpq %%rdx, %%rbx;"
+                                "jg l6%=;"
+                                :
+                                :
+                                : "rdx", "rbx", "cc", "memory"
+                                );
+                        if (password[5] == '!') {
+                            LOG_I("found the password");
+                            LOG_I("the input was %s",password);
+                            sleep(10);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
-
 int main(int c, char **v) {
+    char password[8][7]={"AAAAAA","PBAAAA","P","PABAAA","PASAAA","PASsAA",
+                         "PASs1A","PASs1!"};
+    uint64_t l1Cache[10][8] = {0};
     int map[64];
     int rmap[64];
     srandom(time(NULL));
@@ -29,20 +111,20 @@ int main(int c, char **v) {
     for (int i = 0; i < 1024*1024*1024; i++) //clean the cache
         a+=i;
 
-    /*
-    for (int i = 0; i < 64; i++) {
-        printf("%2d ", rmap[i]);
-        map[rmap[i]] = i;
+    for (int i = 0; i < 8; ++i) {
+        l1i_probeall(l1,NULL);
+        l1i_probeall(l1,NULL);
+        l1i_probeall(l1,NULL);
+        l1i_probeall(l1,NULL);
+        MyFunction(password[i]);
+        l1i_probeall(l1,l1Cache[i]);
     }
-    putchar('\n');
-    */
-    for (int i = 0; i < 400; i++)
-        res[i][0] = 1;
-    for (int i = 0; i < 400; i++)
-        l1i_probe(l1, &res[i] , 6);
-    for (int i = 0; i < 400; i++) {
-            printf("%u ", res[i]);
+
+    for (int i  = 0; i <8;i++) {
+        printf("tryed %s - got :\n",password[i]);
+
     }
+
     return 0;
 }
 
