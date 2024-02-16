@@ -56,7 +56,7 @@ static inline void lfence() {
 }
 
 static inline void walk(void *p, int count) {
-    if (p == NULL)
+    if (p == 0)
         return;
     asm volatile(
     "movq %0, %%rsi\n"

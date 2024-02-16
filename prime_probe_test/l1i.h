@@ -2,7 +2,7 @@
 #define __L1I_H__ 1
 
 #define L1I_SETS 64
-
+#include <stdint.h>
 typedef struct l1ipp *l1ipp_t;
 
 l1ipp_t l1i_prepare();
