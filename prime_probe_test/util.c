@@ -26,21 +26,3 @@ uint64_t rdtsc() {
     __asm__ volatile("mfence");
     return a;
 }
-#define NOP16() \
-    __asm__ __volatile__ ( \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t")
