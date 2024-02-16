@@ -1,5 +1,5 @@
 #ifndef NOCODEFUZZ_SC_UTIL_H
-#define NOCODEFUZZ_SC_UTIL_H
+#define NOCODEFUZZ_SC_UTIL_H 1
 
 #include <assert.h>
 #include <unistd.h>
@@ -55,4 +55,5 @@ static inline void additional_ops() {
 #define AT_START taken_branch(0);
 #define AT12 AT AT AT AT AT AT AT AT AT AT AT AT; // 12 taken branch
 #define AT100 AT12 AT12 AT12 AT12 AT12 AT12 AT12 AT12 AT AT AT AT;
+
 #endif
