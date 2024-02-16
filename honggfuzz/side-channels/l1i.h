@@ -18,6 +18,10 @@ void l1i_randomise(l1ipp_t l1);
 uint64_t l1i_probe(l1ipp_t l1 , uint16_t set);
 void l1i_probeall(l1ipp_t l1, uint64_t *results);
 
+enum L1IPrediction {
+    NOT_ACCESSED,
+    ACCESSED
+};
 
 
 #endif // __L1I_H__

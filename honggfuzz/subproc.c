@@ -51,8 +51,12 @@
 #include "side-channels/util.h"
 #include "side-channels/pht_PP_api.h"
 
+//TODO: should not be here - need to be decided at different place (and also be dynamic)
+#define L1I_SAMPLE_SIZE 64
+#define L1I_THRESHOLD 250
 #define PHT_SAMPLE_SIZE 10
 #define PHT_THRESHOLD 300
+
 
 extern char **environ;
 
@@ -601,9 +605,10 @@ static bool subproc_runNoFork(run_t *run)
     strncpy(password, (char *) run->dynfile->data, 8);
 
     uint64_t instrCountArr[10] = {0};
-    uint64_t l1Cache[10] = {0};
-    uint64_t bpRecordST[10][PHT_SAMPLE_SIZE] = {0};
-    uint64_t bpRecordSNT[10][PHT_SAMPLE_SIZE] = {0};
+    uint64_t l1Cache[10][L1_SAMPLE_SIZE]= {0};
+
+    uint64_t bpRecordTProbe[10][PHT_SAMPLE_SIZE]= {0};
+    uint64_t bpRecordNTProbe[10][PHT_SAMPLE_SIZE] = {0};
 
 
     //THINK: do we really need the 10 iterations loop
@@ -622,43 +627,75 @@ static bool subproc_runNoFork(run_t *run)
          * 3. probe wanted address
         */
         //NOTE: prime also can save results timing before victim access
+
         l1i_probeall(run->scTools.l1i, NULL);//prime
         start = rdtsc();
         MyFunction(password);
         end = rdtsc();
-        l1i_probeall(run->scTools.l1i, l1Cache); //probe
+        l1i_probeall(run->scTools.l1i, l1Cache[i]); //probe
 
         //interprets values
         instrCountArr[i] = end - start;
         //the PHT prime+probe
         pht_prime(run->scTools.pht,0);
         MyFunction(password);
-        pht_probe(run->scTools.pht,1,&bpRecordSNT[i][0]);
+        pht_probe(run->scTools.pht,1,bpRecordTProbe[i]);
+
         pht_prime(run->scTools.pht,1);
         MyFunction(password);
-        pht_probe(run->scTools.pht,0,&bpRecordST[i][0]);
-
+        pht_probe(run->scTools.pht,0,bpRecordNTProbe[i]);
 
         //TODO: check pht record
         //TODO: check L1 cache
     }
 
+    //create signature for l1i
+    uint64_t tmp[10] ={0};
+    uint8_t l1iResult[L1I_SAMPLE_SIZE] = {0};
+    for (int set = 0; set <L1I_SAMPLE_SIZE; ++set)
+    {
+        for(i=0;i< 10; i++)
+        {
+            tmp[i] = l1Cache[i][set];
+        }
+        float res = middle_mean(tmp,10);
+        l1iResult[set] = res >L1I_THRESHOLD: ACCESSED else NOT ACCESSED;
+    }
 
-    //uint64_t bpResult[10] ={0};
-    for (int i = 0; i <10; ++i) {
-        int64_t SNTsum = 0 ;
-        int64_t STsum = 0 ;
-        for (int j = 0; j < PHT_SAMPLE_SIZE; ++j) {
-            SNTsum += bpRecordSNT[i][j];
-            STsum += bpRecordST[i][j];
+    //create signature for pht
+    uint64_t tmpT[10] ={0};
+    uint64_t tmpNT[10] ={0};
+    uint8_t bpResult[PHT_SAMPLE_SIZE] = {0};
+
+    for (int pht_index = 0; pht_index <PHT_SAMPLE_SIZE; ++pht_index)
+    {
+        for(i=0;i< 10; i++)
+        {
+            tmpT[i] = bpRecordTProbe[i][pht_index];
+            tmpT[i] = bpRecordNTProbe[i][pht_index];
         }
-        if ((SNTsum >PHT_THRESHOLD*10) && (STsum < PHT_THRESHOLD*10)){
-            LOG_D("snt")
-            //bpResult[i] = 2;
+
+        float taken = middle_mean(tmpSNT,10);
+        float notTaken = middle_mean(tmpST, 10);
+        /*
+         * We are checking twice for handling cases of branch not exist and also to force consistency
+         * If branch is taken -> we want hit in taken probe & miss in notTaken Probe
+         * If branch is not taken -> we want miss in taken and hit in notTaken
+         * otherwise - no branch was jumped or pure logic :(.
+         */
+        // hit & miss
+        if (taken < PHT_THRESHOLD && notTaken > PHT_THRESHOLD)
+        {
+            bpResult[i] = TAKEN;
         }
-        else if  ((SNTsum <PHT_THRESHOLD*10) && (STsum > PHT_THRESHOLD*10)){
-            LOG_D("st")
-            //bpResult[i] = 1;
+        // miss & hit
+        else if (taken > PHT_THRESHOLD && notTaken < PHT_THRESHOLD)
+        {
+            bpResult[i] = NOT_TAKEN;
+        }
+        else
+        {
+            bpResult[i] = NO_BRANCH
         }
     }
     //TODO: add bpResult to the vector of the run
@@ -670,7 +707,8 @@ static bool subproc_runNoFork(run_t *run)
 
 
     //TODO: create vector signature
-    if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT) {
+    if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT)
+    {
         run->hwCnts.cpuInstrCnt = instrCount;
     }
 

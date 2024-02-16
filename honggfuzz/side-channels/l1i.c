@@ -25,8 +25,9 @@ struct l1ipp{
     int nsets;
 };
 
-
-l1ipp_t l1i_prepare(void) {
+//TODO: allow to set which sets to track
+l1ipp_t l1i_prepare(void)
+{
     /*static uint8_t jmp[] = { JMP_OPCODE,
                              JMP_OFFSET & 0xff,
                              (JMP_OFFSET >>8) & 0xff,
