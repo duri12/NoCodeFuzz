@@ -3,7 +3,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <assert.h>
-
+#include <string.h>
+#include <stdint.h>
 #include <l1i.h>
 
 
