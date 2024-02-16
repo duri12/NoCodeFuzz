@@ -99,7 +99,7 @@ void MyFunction(char *password) {
 }
 
 int main(int c, char **v) {
-    char password[8][7]={"AAAAAA","PBAAAA","P","PABAAA","PASAAA","PASsAA",
+    char password[8][6]={"AAAAAA","PBAAAA","PABAAA","PASAAA","PASsAA",
                          "PASs1A","PASs1!"};
     uint64_t l1Cache[8][64] = {0};
     int map[64];
