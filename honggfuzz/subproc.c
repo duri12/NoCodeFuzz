@@ -57,6 +57,8 @@
 #define PHT_SAMPLE_SIZE 10
 #define PHT_THRESHOLD 300
 
+#define NUM_OF_RUNS 10 //NOTE: just for now
+
 
 extern char **environ;
 
@@ -604,15 +606,15 @@ static bool subproc_runNoFork(run_t *run)
 
     strncpy(password, (char *) run->dynfile->data, 8);
 
-    uint64_t instrCountArr[10] = {0};
-    uint64_t l1Cache[10][L1_SAMPLE_SIZE]= {0};
+    uint64_t instrCountArr[NUM_OF_RUNS] = {0};
+    uint64_t l1Cache[NUM_OF_RUNS][L1_SAMPLE_SIZE]= {0};
 
-    uint64_t bpRecordTProbe[10][PHT_SAMPLE_SIZE]= {0};
-    uint64_t bpRecordNTProbe[10][PHT_SAMPLE_SIZE] = {0};
+    uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE]= {0};
+    uint64_t bpRecordNTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE] = {0};
 
 
     //THINK: do we really need the 10 iterations loop
-    for (int i = 0; i < 10; ++i)
+    for (int i = 0; i < NUM_OF_RUNS; ++i)
     {
         /*TODO: prepare all need - pht //done
          * 1. get option for creating branch at wanted location
@@ -650,21 +652,21 @@ static bool subproc_runNoFork(run_t *run)
     }
 
     //create signature for l1i
-    uint64_t tmp[10] ={0};
+    uint64_t tmp[NUM_OF_RUNS] ={0};
     uint8_t l1iResult[L1I_SAMPLE_SIZE] = {0};
     for (int set = 0; set <L1I_SAMPLE_SIZE; ++set)
     {
-        for(i=0;i< 10; i++)
+        for(i=0;i< NUM_OF_RUNS; i++)
         {
             tmp[i] = l1Cache[i][set];
         }
-        float res = middle_mean(tmp,10);
-        l1iResult[set] = res >L1I_THRESHOLD: ACCESSED else NOT ACCESSED;
+        float res = middle_mean(tmp,NUM_OF_RUNS);
+        l1iResult[set] = res >L1I_THRESHOLD: ACCESSED else NOT_ACCESSED;
     }
 
     //create signature for pht
-    uint64_t tmpT[10] ={0};
-    uint64_t tmpNT[10] ={0};
+    uint64_t tmpT[NUM_OF_RUNS] ={0};
+    uint64_t tmpNT[NUM_OF_RUNS] ={0};
     uint8_t bpResult[PHT_SAMPLE_SIZE] = {0};
 
     for (int pht_index = 0; pht_index <PHT_SAMPLE_SIZE; ++pht_index)
@@ -672,11 +674,11 @@ static bool subproc_runNoFork(run_t *run)
         for(i=0;i< 10; i++)
         {
             tmpT[i] = bpRecordTProbe[i][pht_index];
-            tmpT[i] = bpRecordNTProbe[i][pht_index];
+            tmpNT[i] = bpRecordNTProbe[i][pht_index];
         }
 
-        float taken = middle_mean(tmpSNT,10);
-        float notTaken = middle_mean(tmpST, 10);
+        float taken = middle_mean(tmpT,10);
+        float notTaken = middle_mean(tmpNT, 10);
         /*
          * We are checking twice for handling cases of branch not exist and also to force consistency
          * If branch is taken -> we want hit in taken probe & miss in notTaken Probe
@@ -710,6 +712,12 @@ static bool subproc_runNoFork(run_t *run)
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT)
     {
         run->hwCnts.cpuInstrCnt = instrCount;
+        uint8_t * signature = malloc(sizeof(uint8_t)*(PHT_SAMPLE_SIZE+L1I_SAMPLE_SIZE));
+        //TODO: remember to free this (at the end or after some time)
+        size_t l1iOffset = L1I_SAMPLE_SIZE*sizeof(uint8_t);
+        memcpy(signature, l1iResult, l1iOffset);
+        memcpy(signature+l1iOffset, bpResult, PHT_SAMPLE_SIZE*sizeof(uint8_t));
+        run->hwCnts->scSignature = signature;
     }
 
     int64_t diffUSecs = util_timeNowUSecs() - run->timeStartedUSecs;

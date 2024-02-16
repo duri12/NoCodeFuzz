@@ -133,7 +133,8 @@ typedef struct {
     int*         historyWindow;
     int          historyCurrSize;
     int          historyMaxSize;
-
+    uint8_t      scSignature;
+    Histogram    scSignatureHistogram;
 } hwcnt_t;
 
 typedef enum {
@@ -301,6 +302,7 @@ typedef struct {
         uint64_t        maxCov[4];
         dynFileMethod_t dynFileMethod;
         hwcnt_t         hwCnts;
+
     } feedback;
     struct {
         size_t mutationsCnt;
@@ -395,6 +397,8 @@ typedef struct {
         /* For Linux code */
         uint8_t* perfMmapBuf;
         uint8_t* perfMmapAux;
+        /** NOTE: sent here the signature of bp+l1i**/
+        uint8_t* scSignature;
         int      cpuInstrFd;
         int      cpuBranchFd;
         int      cpuIptBtsFd;

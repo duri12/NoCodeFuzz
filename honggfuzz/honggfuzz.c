@@ -364,6 +364,8 @@ int main(int argc, char** argv) {
     hfuzz.feedback.hwCnts.historyWindow = (int*)malloc(sizeof(int) * hfuzz.feedback.hwCnts.historyMaxSize);
     hfuzz.feedback.hwCnts.historyCurrSize = 0;
 
+    //TODO: init histogram
+
     char tmstr[64];
     util_getLocalTime("%F.%H.%M.%S", tmstr, sizeof(tmstr), time(NULL));
     LOG_I("Start time:'%s' bin:'%s', input:'%s', output:'%s', persistent:%s, stdin:%s, "
