@@ -7,19 +7,12 @@
 #include <string.h>
 #include "xxhash.h"
 
-#include "Histogram.h"
+#include "hashTable.h"
 
 struct elt {
     struct elt *next;
-    char *key;
+    uint8_t* key;
     int value;
-};
-
-struct Histogram {
-    int size;           /* size of the pointer table */
-    int n;              /* number of elements stored */
-    struct elt **table;
-    int keySize;
 };
 
 #define INITIAL_SIZE (1024)
@@ -78,12 +71,12 @@ void HistogramDestroy(Histogram d)
 
 #define MULTIPLIER (97)
 
-static unsigned long hash_function(const char *s, int len)
+static unsigned long hash_function(uint8_t* s, int len)
 {
     XXH64_hash_t seed = 0;
     XXH64_hash_t hash = XXH64(s, len, seed);
 
-    return h;
+    return hash;
 }
 
 static void grow(Histogram d)
@@ -93,7 +86,7 @@ static void grow(Histogram d)
     int i;
     struct elt *e;
 
-    d2 = internalHistogramCreate(d->size * GROWTH_FACTOR);
+    d2 = internalHistogramCreate(d->size * GROWTH_FACTOR, d->keySize);
 
     for(i = 0; i < d->size; i++) {
         for(e = d->table[i]; e != 0; e = e->next) {
@@ -117,7 +110,7 @@ static void grow(Histogram d)
 
 /* insert a new key-value pair into an existing Histogramionary */
 //NOTICE: key here won't be any str
-void HistogramInsert(Histogram d, const char *key, int value)
+void HistogramInsert(Histogram d, uint8_t *key, int value)
 {
     struct elt *e;
     unsigned long h;
@@ -132,7 +125,7 @@ void HistogramInsert(Histogram d, const char *key, int value)
     e->key = key;
     e->value = value;
 
-    h = hash_function(key) % d->size;
+    h = hash_function(key,d->keySize) % d->size;
 
     e->next = d->table[h];
     d->table[h] = e;
@@ -147,12 +140,12 @@ void HistogramInsert(Histogram d, const char *key, int value)
 
 /* return the most recently inserted value associated with a key */
 /* or 0 if no matching key is present */
-int HistogramSearch(Histogram d, const char *key)
+int HistogramSearch(Histogram d, uint8_t *key)
 {
     struct elt *e;
 
-    for(e = d->table[hash_function(key) % d->size]; e != 0; e = e->next) {
-        if(!memcmp(e->key, key,d.keySize)) {
+    for(e = d->table[hash_function(key,d->keySize) % d->size]; e != 0; e = e->next) {
+        if(!memcmp(e->key, key,d->keySize)) {
             /* got it */
             return e->value;
         }
@@ -164,12 +157,12 @@ int HistogramSearch(Histogram d, const char *key)
 /* delete the most recently inserted record with the given key */
 /* if there is no such record, has no effect */
 void
-HistogramDelete(Histogram d, const char *key)
+HistogramDelete(Histogram d, uint8_t *key)
 {
     struct elt **prev;          /* what to change when elt is deleted */
     struct elt *e;              /* what to delete */
 
-    for(prev = &(d->table[hash_function(key) % d->size]);
+    for(prev = &(d->table[hash_function(key,d->keySize) % d->size]);
         *prev != 0;
         prev = &((*prev)->next)) {
         if(!memcmp((*prev)->key, key,d->keySize)) {

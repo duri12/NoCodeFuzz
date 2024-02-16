@@ -1,3 +1,6 @@
+#ifndef NOCODEFUZZ_SC_UTIL_H
+#define NOCODEFUZZ_SC_UTIL_H
+
 #include <assert.h>
 #include <unistd.h>
 #include <time.h>

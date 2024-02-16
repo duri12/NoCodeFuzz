@@ -607,7 +607,7 @@ static bool subproc_runNoFork(run_t *run)
     strncpy(password, (char *) run->dynfile->data, 8);
 
     uint64_t instrCountArr[NUM_OF_RUNS] = {0};
-    uint64_t l1Cache[NUM_OF_RUNS][L1_SAMPLE_SIZE]= {0};
+    uint64_t l1Cache[NUM_OF_RUNS][L1I_SAMPLE_SIZE]= {0};
 
     uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE]= {0};
     uint64_t bpRecordNTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE] = {0};
@@ -656,12 +656,12 @@ static bool subproc_runNoFork(run_t *run)
     uint8_t l1iResult[L1I_SAMPLE_SIZE] = {0};
     for (int set = 0; set <L1I_SAMPLE_SIZE; ++set)
     {
-        for(i=0;i< NUM_OF_RUNS; i++)
+        for(size_t i=0;i< NUM_OF_RUNS; i++)
         {
             tmp[i] = l1Cache[i][set];
         }
         float res = middle_mean(tmp,NUM_OF_RUNS);
-        l1iResult[set] = res >L1I_THRESHOLD: ACCESSED else NOT_ACCESSED;
+        l1iResult[set] = res >L1I_THRESHOLD ? ACCESSED : NOT_ACCESSED;
     }
 
     //create signature for pht
@@ -671,7 +671,7 @@ static bool subproc_runNoFork(run_t *run)
 
     for (int pht_index = 0; pht_index <PHT_SAMPLE_SIZE; ++pht_index)
     {
-        for(i=0;i< 10; i++)
+        for(size_t i=0;i< 10; i++)
         {
             tmpT[i] = bpRecordTProbe[i][pht_index];
             tmpNT[i] = bpRecordNTProbe[i][pht_index];
@@ -688,16 +688,16 @@ static bool subproc_runNoFork(run_t *run)
         // hit & miss
         if (taken < PHT_THRESHOLD && notTaken > PHT_THRESHOLD)
         {
-            bpResult[i] = TAKEN;
+            bpResult[pht_index] = TAKEN;
         }
         // miss & hit
         else if (taken > PHT_THRESHOLD && notTaken < PHT_THRESHOLD)
         {
-            bpResult[i] = NOT_TAKEN;
+            bpResult[pht_index] = NOT_TAKEN;
         }
         else
         {
-            bpResult[i] = NO_BRANCH
+            bpResult[pht_index] = NO_BRANCH;
         }
     }
     //TODO: add bpResult to the vector of the run
@@ -717,7 +717,7 @@ static bool subproc_runNoFork(run_t *run)
         size_t l1iOffset = L1I_SAMPLE_SIZE*sizeof(uint8_t);
         memcpy(signature, l1iResult, l1iOffset);
         memcpy(signature+l1iOffset, bpResult, PHT_SAMPLE_SIZE*sizeof(uint8_t));
-        run->hwCnts->scSignature = signature;
+        run->hwCnts.scSignature = signature;
     }
 
     int64_t diffUSecs = util_timeNowUSecs() - run->timeStartedUSecs;

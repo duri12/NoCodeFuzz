@@ -4,7 +4,14 @@
 
 #ifndef OS_PROJECT_HASHTABLE_H
 #define OS_PROJECT_HASHTABLE_H
-typedef struct Histogram *Histogram;
+
+struct Histogram {
+    int size;           /* size of the pointer table */
+    int n;              /* number of elements stored */
+    struct elt **table;
+    int keySize;
+};
+typedef struct Histogram* Histogram;
 
 /* create a new empty Histogram */
 Histogram HistogramCreate(void);
@@ -13,14 +20,14 @@ Histogram HistogramCreate(void);
 void HistogramDestroy(Histogram);
 
 /* insert a new key-value pair into an existing Histogram */
-void HistogramInsert(Histogram, const char *key, int value);
+void HistogramInsert(Histogram, uint8_t *key, int value);
 
 /* return the most recently inserted value associated with a key */
 /* or 0 if no matching key is present */
-const char *HistogramSearch(Histogram, const char *key);
+int HistogramSearch(Histogram, uint8_t *key);
 
 /* delete the most recently inserted record with the given key */
 /* if there is no such record, has no effect */
-void HistogramDelete(Histogram, const char *key);
+void HistogramDelete(Histogram, uint8_t *key);
 
 #endif //OS_PROJECT_HASHTABLE_H

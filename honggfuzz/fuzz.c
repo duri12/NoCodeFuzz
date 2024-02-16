@@ -215,6 +215,7 @@ static void fuzz_perfFeedback(run_t* run) {
     }
 
     rmb();
+    int distance = -1;
 
     /*
      * NOTE: no need anymore
@@ -269,7 +270,7 @@ static void fuzz_perfFeedback(run_t* run) {
     int64_t diff_cpuBranchCnt = (int64_t)run->global->feedback.hwCnts.cpuBranchCnt - run->hwCnts.cpuBranchCnt;
 
     uint8_t* currScSignature = run->hwCnts.scSignature;
-    uint8_t res = run->global->feedback.hwCnts.scSignatureHistogram.HistogramSearch(currScSignature);
+    int res = HistogramSearch(run->global->feedback.hwCnts.scSignatureHistogram,currScSignature);
 
     /* Any increase in coverage (edge, pc, cmp, hw) counters forces adding input to the corpus */
     if(!res)//|| diff_instrCnt>0)
@@ -334,7 +335,7 @@ static void fuzz_perfFeedback(run_t* run) {
 
         if(!res)
         {
-            run->global->feedback.hwCnts.scSignatureHistogram.HistogramInsert(currScSignature,1);
+            HistogramInsert(run->global->feedback.hwCnts.scSignatureHistogram,currScSignature,1);
         }
         //NOTE: here it creates new inputs according to results.
         //only if was an increasing in cov

@@ -39,6 +39,7 @@
 #include "libhfcommon/util.h"
 #include "side-channels/l1i.h"
 #include "side-channels/pht_PP_api.h"
+#include "side-channels/hashTable.h"
 
 #define PROG_NAME    "honggfuzz"
 #define PROG_VERSION "2.6"
@@ -133,7 +134,7 @@ typedef struct {
     int*         historyWindow;
     int          historyCurrSize;
     int          historyMaxSize;
-    uint8_t      scSignature;
+    uint8_t*      scSignature;
     Histogram    scSignatureHistogram;
 } hwcnt_t;
 
