@@ -47,7 +47,7 @@ Histogram internalHistogramCreate(int size, int keySize)
 //TODO: replace with size
 Histogram HistogramCreate(void)
 {
-    return internalHistogramCreate(INITIAL_SIZE,10+64);
+    return internalHistogramCreate(INITIAL_SIZE,3);
 }
 
 void HistogramDestroy(Histogram d)
@@ -145,7 +145,7 @@ int HistogramSearch(Histogram d, uint8_t *key)
     struct elt *e;
 
     for(e = d->table[hash_function(key,d->keySize) % d->size]; e != 0; e = e->next) {
-        if(!memcmp(e->key, key,d->keySize, d->keySize)) {
+        if(!memcmp(e->key, key,d->keySize)) {
             /* got it */
             return e->value;
         }

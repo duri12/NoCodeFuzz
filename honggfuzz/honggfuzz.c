@@ -363,7 +363,7 @@ int main(int argc, char** argv) {
     hfuzz.feedback.hwCnts.historyMaxSize = 10000;
     hfuzz.feedback.hwCnts.historyWindow = (int*)malloc(sizeof(int) * hfuzz.feedback.hwCnts.historyMaxSize);
     hfuzz.feedback.hwCnts.historyCurrSize = 0;
-אבל
+
     //TODO: init histogram
     hfuzz.feedback.hwCnts.scSignatureHistogram = HistogramCreate();
 
