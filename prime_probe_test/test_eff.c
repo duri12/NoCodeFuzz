@@ -115,7 +115,7 @@ int main(int c, char **v) {
     for (int i = 0; i < 1024*1024*1024; i++) //clean the cache
         a+=i;
 
-    for (int i = 0; i < 8; ++i) {
+    for (int i = 0; i < 7; ++i) {
         l1i_probeall(l1,NULL);
         l1i_probeall(l1,NULL);
         l1i_probeall(l1,NULL);
