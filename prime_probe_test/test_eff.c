@@ -127,7 +127,11 @@ int main(int c, char **v) {
     for (int i  = 0; i <8;i++) {
         printf("tryed %s - got :\n",password[i]);
         for (int j = 0; j <64;j++) {
-            printf("[set %d]-> %llu\n",j,l1Cache[i][j]);
+            if(l1Cache[i][j] > 315)
+                l1Cache[i][j] =1;
+            else
+                l1Cache[i][j] =0;
+            printf("[set %d]-> %lu\n",j,l1Cache[i][j]);
         }
     }
 
