@@ -26,7 +26,7 @@ uint64_t rdtsc() {
     __asm__ volatile("mfence");
     return a;
 }
-static inline void nop_16() {
+void nop_16() {
     asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");
     asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");
 }
