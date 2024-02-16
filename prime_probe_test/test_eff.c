@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include "l1i.h"
 
+volatile uint64_t a;
 
 void MyFunction(char *password) {
 
@@ -84,8 +85,8 @@ void MyFunction(char *password) {
                                 : "rdx", "rbx", "cc", "memory"
                                 );
                         if (password[5] == '!') {
-                            LOG_I("found the password");
-                            LOG_I("the input was %s",password);
+                            printf("found the password");
+                            printf("the input was %s",password);
                             sleep(10);
                         }
                     }
@@ -123,8 +124,8 @@ int main(int c, char **v) {
 
     for (int i  = 0; i <8;i++) {
         printf("tryed %s - got :\n",password[i]);
-        for (int j = 0; j <64){
-            printf("[set %d]-> %d\n",j,l1Cache[i]][j]);
+        for (int j = 0; j <64;j++) {
+            printf("[set %d]-> %llu\n",j,l1Cache[i][j]);
         }
     }
 
