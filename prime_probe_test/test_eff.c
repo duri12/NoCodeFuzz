@@ -99,9 +99,9 @@ void MyFunction(char *password) {
 }
 
 int main(int c, char **v) {
-    char password[8][6]={"AAAAAA","PBAAAA","PABAAA","PASAAA","PASsAA",
+    char password[7][7]={"AAAAAA","PBAAAA","PABAAA","PASAAA","PASsAA",
                          "PASs1A","PASs1!"};
-    uint64_t l1Cache[8][64] = {0};
+    uint64_t l1Cache[7][64] = {0};
     int map[64];
     int rmap[64];
     srandom(time(NULL));
@@ -124,7 +124,7 @@ int main(int c, char **v) {
         l1i_probeall(l1,l1Cache[i]);
     }
 
-    for (int i  = 0; i <8;i++) {
+    for (int i  = 0; i <7;i++) {
         printf("tryed %s - got :\n",password[i]);
         for (int j = 0; j <64;j++) {
             if(l1Cache[i][j] > 315)
