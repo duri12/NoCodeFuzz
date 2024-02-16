@@ -252,8 +252,6 @@ static void fuzz_perfFeedback(run_t* run) {
         arr[run->global->feedback.hwCnts.historyCurrSize++] = representation;
     }
 
-    int64_t diff_instrCnt = (int64_t)run->global->feedback.hwCnts.cpuInstrCnt - run->hwCnts.cpuInstrCnt;
-    int64_t diff_cpuBranchCnt = (int64_t)run->global->feedback.hwCnts.cpuBranchCnt - run->hwCnts.cpuBranchCnt;
 
     int threshold = 60;
     if(distance > threshold)
@@ -267,11 +265,14 @@ static void fuzz_perfFeedback(run_t* run) {
         }
         run->global->feedback.hwCnts.historyCurrSize = size-offset;
     }*/
+    int64_t diff_instrCnt = (int64_t)run->global->feedback.hwCnts.cpuInstrCnt - run->hwCnts.cpuInstrCnt;
+    int64_t diff_cpuBranchCnt = (int64_t)run->global->feedback.hwCnts.cpuBranchCnt - run->hwCnts.cpuBranchCnt;
+
     uint8_t* currScSignature = run->hwCnts.scSignature;
     uint8_t res = run->global->feedback.hwCnts.scSignatureHistogram.HistogramSearch(currScSignature);
 
     /* Any increase in coverage (edge, pc, cmp, hw) counters forces adding input to the corpus */
-    if(!res || diff_instrCnt>0)
+    if(!res)//|| diff_instrCnt>0)
     {
         if (diff_instrCnt < 0) {
             run->global->feedback.hwCnts.cpuInstrCnt = run->hwCnts.cpuInstrCnt;
