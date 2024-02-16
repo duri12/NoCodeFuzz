@@ -1,3 +1,5 @@
+#ifndef _UTIL_
+#define _UTIL_
 #include <assert.h>
 #include <unistd.h>
 #include <time.h>
