@@ -34,7 +34,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
-
+#include "side-channels/hashTable.h"
 #if defined(__FreeBSD__)
 #include <sys/procctl.h>
 #endif
