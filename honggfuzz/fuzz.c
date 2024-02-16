@@ -340,7 +340,7 @@ static void fuzz_perfFeedback(run_t* run) {
         else
         {
             //TODO: should be in correct places
-            free(run->global->feedback.hwCnts.scSignatureHistogram)
+            free(run->global->feedback.hwCnts.scSignatureHistogram);
             run->global->feedback.hwCnts.scSignatureHistogram = 0;
         }
         //NOTE: here it creates new inputs according to results.
