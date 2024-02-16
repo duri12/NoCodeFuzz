@@ -85,8 +85,8 @@ void MyFunction(char *password) {
                                 : "rdx", "rbx", "cc", "memory"
                                 );
                         if (password[5] == '!') {
-                            printf("found the password");
-                            printf("the input was %s",password);
+                            //printf("found the password");
+                            //printf("the input was %s",password);
                             sleep(10);
                         }
                     }
