@@ -145,7 +145,7 @@ int HistogramSearch(Histogram d, uint8_t *key)
     struct elt *e;
 
     for(e = d->table[hash_function(key,d->keySize) % d->size]; e != 0; e = e->next) {
-        if(!memcmp(e->key, key,d->keySize)) {
+        if(!memcmp(e->key, key,d->keySize, d->keySize)) {
             /* got it */
             return e->value;
         }

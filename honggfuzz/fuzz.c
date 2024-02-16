@@ -335,10 +335,12 @@ static void fuzz_perfFeedback(run_t* run) {
 
         if(!res)
         {
+            LOG_I("was a change in signature\n");
             HistogramInsert(run->global->feedback.hwCnts.scSignatureHistogram,currScSignature,1);
         }
         else
         {
+            LOG_I("no change in signature: found %x"\n,run->global->feedback.hwCnts.scSignatureHistogram );
             //TODO: should be in correct places
             free(run->global->feedback.hwCnts.scSignatureHistogram);
             run->global->feedback.hwCnts.scSignatureHistogram = 0;
