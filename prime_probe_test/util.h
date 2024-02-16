@@ -30,7 +30,7 @@ void flush(void *p);
 void maccess(void *p);
 
 uint64_t rdtsc();
-void nop_16();
+
 /*
 static inline void nop_16() {
   asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");
