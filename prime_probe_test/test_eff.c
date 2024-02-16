@@ -97,7 +97,7 @@ void MyFunction(char *password) {
 int main(int c, char **v) {
     char password[8][7]={"AAAAAA","PBAAAA","P","PABAAA","PASAAA","PASsAA",
                          "PASs1A","PASs1!"};
-    uint64_t l1Cache[10][8] = {0};
+    uint64_t l1Cache[8][64] = {0};
     int map[64];
     int rmap[64];
     srandom(time(NULL));
@@ -122,7 +122,9 @@ int main(int c, char **v) {
 
     for (int i  = 0; i <8;i++) {
         printf("tryed %s - got :\n",password[i]);
-
+        for (int j = 0; j <64){
+            printf("[set %d]-> %d\n",j,l1Cache[i]][j]);
+        }
     }
 
     return 0;
