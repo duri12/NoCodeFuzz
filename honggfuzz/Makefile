@@ -197,7 +197,7 @@ ifeq ($(COMPILER),gcc)
 endif
 
 SRCS := $(COMMON_SRCS) $(ARCH_SRCS) $(SCTOOLS_SRCS)
-OBJS := $(SRCS:.c=.o) side-channels/randomiz_pht.o
+OBJS := $(SRCS:.c=.o) side-channels/randomize_pht.o
 
 LHFUZZ_SRCS := $(sort $(wildcard libhfuzz/*.c))
 LHFUZZ_OBJS := $(LHFUZZ_SRCS:.c=.o)
@@ -492,3 +492,5 @@ netbsd/unwind.o: libhfcommon/common.h libhfcommon/log.h
 posix/arch.o: arch.h honggfuzz.h libhfcommon/util.h fuzz.h
 posix/arch.o: libhfcommon/common.h libhfcommon/files.h libhfcommon/common.h
 posix/arch.o: libhfcommon/log.h report.h sanitizers.h subproc.h
+side-channels/pht_pp_api.o: side-channels/util.h
+side-channels/l1i.o: side-channels/util.h

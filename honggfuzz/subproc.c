@@ -458,10 +458,10 @@ static void MyFunction(char *password) {
         "pause;"
         "movq $0, %%rdx;"
         "movq $0x10, %%rbx;"
-        "l2:"
+        "l2%=:"
         "inc %%rdx;"
         "cmpq %%rdx, %%rbx;"
-        "jg l2;"
+        "jg l2%=;"
         :
         :
         : "rdx", "rbx", "cc", "memory"
@@ -472,10 +472,10 @@ static void MyFunction(char *password) {
             "pause;"
             "movq $0, %%rdx;"
             "movq $0x10, %%rbx;"
-            "l3:"
+            "l3%=:"
             "inc %%rdx;"
             "cmpq %%rdx, %%rbx;"
-            "jg l3;"
+            "jg l3%=;"
             :
             :
             : "rdx", "rbx", "cc", "memory"
@@ -486,10 +486,10 @@ static void MyFunction(char *password) {
                 "pause;"
                 "movq $0, %%rdx;"
                 "movq $0x10, %%rbx;"
-                "l4:"
+                "l4%=:"
                 "inc %%rdx;"
                 "cmpq %%rdx, %%rbx;"
-                "jg l4;"
+                "jg l4%=;"
                 :
                 :
                 : "rdx", "rbx", "cc", "memory"
@@ -500,10 +500,10 @@ static void MyFunction(char *password) {
                     "pause;"
                     "movq $0, %%rdx;"
                     "movq $0x10, %%rbx;"
-                    "l5:"
+                    "l5%=:"
                     "inc %%rdx;"
                     "cmpq %%rdx, %%rbx;"
-                    "jg l5;"
+                    "jg l5%=;"
                     :
                     :
                     : "rdx", "rbx", "cc", "memory"
@@ -514,10 +514,10 @@ static void MyFunction(char *password) {
                         "pause;"
                         "movq $0, %%rdx;"
                         "movq $0x10, %%rbx;"
-                        "l6:"
+                        "l6%=:"
                         "inc %%rdx;"
                         "cmpq %%rdx, %%rbx;"
-                        "jg l6;"
+                        "jg l6%=;"
                         :
                         :
                         : "rdx", "rbx", "cc", "memory"
@@ -551,11 +551,12 @@ float middle_mean(uint64_t arr[], int n) {
     if (n < 3) {
         return 0;
     }
-    qsort(arr, n, sizeof(int), compare_ints);
+    qsort(arr, n, sizeof(uint64_t), compare_ints);
     int start = n * 0.25;
     int end = n * 0.75;
 
-    int64_t middle_sum = 0;
+
+    uint64_t middle_sum = 0;
     for (int i = start; i < end; i++) {
         middle_sum += arr[i];
     }
@@ -624,20 +625,18 @@ static bool subproc_runNoFork(run_t *run)
         l1i_probeall(run->scTools.l1i, NULL);//prime
         start = rdtsc();
         MyFunction(password);
-
         end = rdtsc();
         l1i_probeall(run->scTools.l1i, l1Cache); //probe
 
         //interprets values
         instrCountArr[i] = end - start;
-
         //the PHT prime+probe
         pht_prime(run->scTools.pht,0);
         MyFunction(password);
-        pht_probe(run->scTools.pht,bpRecordSNT[i],1);
+        pht_probe(run->scTools.pht,1,&bpRecordSNT[i][0]);
         pht_prime(run->scTools.pht,1);
         MyFunction(password);
-        pht_probe(run->scTools.pht,bpRecordST[i],0);
+        pht_probe(run->scTools.pht,0,&bpRecordST[i][0]);
 
 
         //TODO: check pht record
@@ -645,7 +644,7 @@ static bool subproc_runNoFork(run_t *run)
     }
 
 
-    uint64_t bpResult[10] ={0};
+    //uint64_t bpResult[10] ={0};
     for (int i = 0; i <10; ++i) {
         int64_t SNTsum = 0 ;
         int64_t STsum = 0 ;
@@ -654,10 +653,12 @@ static bool subproc_runNoFork(run_t *run)
             STsum += bpRecordST[i][j];
         }
         if ((SNTsum >PHT_THRESHOLD*10) && (STsum < PHT_THRESHOLD*10)){
-            bpResult[i] = 2;
+            LOG_D("snt")
+            //bpResult[i] = 2;
         }
         else if  ((SNTsum <PHT_THRESHOLD*10) && (STsum > PHT_THRESHOLD*10)){
-            bpResult[i] = 1;
+            LOG_D("st")
+            //bpResult[i] = 1;
         }
     }
     //TODO: add bpResult to the vector of the run
