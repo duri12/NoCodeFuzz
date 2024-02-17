@@ -670,8 +670,8 @@ static bool subproc_runNoFork(run_t *run)
 
     char printS[100];
     for (int i = 0; i <64; ++i) {
-        snprintf(printS,sizeof(printS),"[SET %d]-->%ul",i,l1Cache[2][i]);
-        LOG_I(printS);
+        snprintf(printS,sizeof(printS),"[SET %d]-->%lu",i,l1Cache[2][i]);
+        LOG_I("%s",printS);
     }
     //TODO: create vector signature
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT) {
