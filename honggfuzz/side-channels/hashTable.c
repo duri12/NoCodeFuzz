@@ -7,7 +7,7 @@
 #include <string.h>
 #include "xxhash.h"
 
-#include "Histogram.h"
+#include "hashTable.h"
 
 struct elt {
     struct elt *next;
