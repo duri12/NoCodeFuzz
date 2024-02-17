@@ -87,7 +87,7 @@ int main(int c, char **v) {
         printf("tryed %s - got :\n",password[i]);
         for (int j = 0; j <64;j++) {
 
-            if(l1Cache[0][i][j] +l1Cache[1][i][j] > 315*2)
+            if(l1Cache[0][i][j] +l1Cache[1][i][j] > 313*2)
                 l1Cache[0][i][j] =1;
             else
                 l1Cache[0][i][j] =0;
