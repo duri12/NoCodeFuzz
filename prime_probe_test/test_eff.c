@@ -84,12 +84,12 @@ int main(int c, char **v) {
     for (int i  = 0; i <7;i++) {
         printf("tryed %s - got :\n",password[i]);
         for (int j = 0; j <64;j++) {
-            /*
-            if(l1Cache[i][j] > 317)
+
+            if(l1Cache[i][j] > 310)
                 l1Cache[i][j] =1;
             else
                 l1Cache[i][j] =0;
-            */
+
              printf("[%d]--[set %d]-> %lu\n",i,j,l1Cache[i][j]);
         }
     }
