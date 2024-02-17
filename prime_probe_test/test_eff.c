@@ -58,7 +58,7 @@ void MyFunction(char *password) {
 int main(int c, char **v) {
     char password[7][7]={"AAAAAA","PBAAAA","PABAAA","PASAAA","PASsAA",
                          "PASs1A","PASs1!"};
-    uint64_t l1Cache[2][7][64] = {0};
+    uint64_t l1Cache[3][7][64] = {0};
     int map[64];
     int rmap[64];
     srandom(time(NULL));
@@ -71,7 +71,7 @@ int main(int c, char **v) {
 
     for (int i = 0; i < 1024*1024*1024; i++) //clean the cache
         a+=i;
-    for (int j = 0; j < 2; ++j) {
+    for (int j = 0; j < 3; ++j) {
         for (int i = 0; i < 7; ++i) {
             l1i_probeall(l1,NULL);
             l1i_probeall(l1,NULL);
@@ -87,7 +87,7 @@ int main(int c, char **v) {
         printf("tryed %s - got :\n",password[i]);
         for (int j = 0; j <64;j++) {
 
-            if(l1Cache[0][i][j] +l1Cache[1][i][j] > 313*2)
+            if(l1Cache[0][i][j] +l1Cache[1][i][j] +l1Cache[2][i][j]> 314*3)
                 l1Cache[0][i][j] =1;
             else
                 l1Cache[0][i][j] =0;
