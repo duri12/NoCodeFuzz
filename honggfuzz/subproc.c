@@ -653,11 +653,11 @@ static bool subproc_runNoFork(run_t *run)
             STsum += bpRecordST[i][j];
         }
         if ((SNTsum >PHT_THRESHOLD*10) && (STsum < PHT_THRESHOLD*10)){
-            LOG_D("snt")
+            LOG_D("snt");
             //bpResult[i] = 2;
         }
         else if  ((SNTsum <PHT_THRESHOLD*10) && (STsum > PHT_THRESHOLD*10)){
-            LOG_D("st")
+            LOG_D("st");
             //bpResult[i] = 1;
         }
     }
@@ -668,10 +668,10 @@ static bool subproc_runNoFork(run_t *run)
     float mean = middle_mean(instrCountArr, n);
     int64_t instrCount = floor(mean);
 
-    char printS[100]
+    char printS[100];
     for (int i = 0; i <64; ++i) {
         snprintf(printS,sizeof(printS),"[SET %d]-->%ul",i,l1Cache[2][i]);
-        LOG_I(prints);
+        LOG_I(printS);
     }
     //TODO: create vector signature
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT) {
