@@ -76,7 +76,6 @@ int main(int c, char **v) {
             l1i_probeall(l1,NULL);
             l1i_probeall(l1,NULL);
             l1i_probeall(l1,NULL);
-            l1i_probeall(l1,NULL);
             MyFunction(password[i]);
             l1i_probeall(l1,l1Cache[j][i]);
         }
