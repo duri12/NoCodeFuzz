@@ -601,7 +601,7 @@ static bool subproc_runNoFork(run_t *run)
     strncpy(password, (char *) run->dynfile->data, 8);
 
     uint64_t instrCountArr[10] = {0};
-    uint64_t l1Cache[10] = {0};
+    uint64_t l1Cache[10][64] = {0};
     uint64_t bpRecordST[10][PHT_SAMPLE_SIZE] = {0};
     uint64_t bpRecordSNT[10][PHT_SAMPLE_SIZE] = {0};
 
@@ -623,11 +623,12 @@ static bool subproc_runNoFork(run_t *run)
         */
         //NOTE: prime also can save results timing before victim access
         l1i_probeall(run->scTools.l1i, NULL);//prime
+        MyFunction(password);
+        l1i_probeall(run->scTools.l1i, l1Cache[i]); //probe
+
         start = rdtsc();
         MyFunction(password);
         end = rdtsc();
-        l1i_probeall(run->scTools.l1i, l1Cache); //probe
-
         //interprets values
         instrCountArr[i] = end - start;
         //the PHT prime+probe
@@ -642,7 +643,6 @@ static bool subproc_runNoFork(run_t *run)
         //TODO: check pht record
         //TODO: check L1 cache
     }
-
 
     //uint64_t bpResult[10] ={0};
     for (int i = 0; i <10; ++i) {
@@ -668,7 +668,11 @@ static bool subproc_runNoFork(run_t *run)
     float mean = middle_mean(instrCountArr, n);
     int64_t instrCount = floor(mean);
 
-
+    char printS[100]
+    for (int i = 0; i <64; ++i) {
+        snprintf(printS,sizeof(printS),"[SET %d]-->%ul",i,l1Cache[2][i]);
+        LOG_I(prints);
+    }
     //TODO: create vector signature
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT) {
         run->hwCnts.cpuInstrCnt = instrCount;
