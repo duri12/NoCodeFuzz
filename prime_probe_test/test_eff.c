@@ -18,13 +18,15 @@ void MyFunction(char *password) {
         NOP16();
         NOP16();
         NOP16();
+        NOP16();
         if (password[1] == 'A') {
             NOP16();
             NOP16();
             NOP16();
             NOP16();
+            NOP16();
             if (password[2] == 'S') {
-
+                NOP16();
                 NOP16();
                 NOP16();
                 NOP16();
@@ -34,7 +36,9 @@ void MyFunction(char *password) {
                     NOP16();
                     NOP16();
                     NOP16();
+                    NOP16();
                     if (password[4] == '1') {
+                        NOP16();
                         NOP16();
                         NOP16();
                         NOP16();
@@ -43,6 +47,7 @@ void MyFunction(char *password) {
                             //printf("found the password");
                             //printf("the input was %s",password);
                             //sleep(10);
+                            NOP16();
                             NOP16();
                             NOP16();
                             NOP16();
