@@ -80,7 +80,6 @@ int main(int c, char **v) {
         for (int i = 0; i < 7; ++i) {
             l1i_probeall(l1,NULL);
             l1i_probeall(l1,NULL);
-            l1i_probeall(l1,NULL);
             MyFunction(password[i]);
             l1i_probeall(l1,l1Cache[j][i]);
         }
