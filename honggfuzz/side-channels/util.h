@@ -87,7 +87,6 @@
         "nop\n\t" \
         "nop\n\t")
 
-/*
 
 extern int randomize_pht();
 
