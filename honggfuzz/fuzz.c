@@ -337,7 +337,7 @@ static void fuzz_perfFeedback(run_t* run) {
             LOG_I("was a change in signature\n");
             for (int i = 0; i < 64; i++)
             {
-                LOG_I("item %d: %d\n", i, (char) scSignature[i]);
+                LOG_I("item %d: %d\n", i, (char) currScSignature[i]);
             }
             HistogramInsert(run->global->feedback.hwCnts.scSignatureHistogram,currScSignature,1);
         }
