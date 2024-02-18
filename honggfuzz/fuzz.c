@@ -333,9 +333,12 @@ static void fuzz_perfFeedback(run_t* run) {
         run->dynfile->cov[3] = run->dynfile->size ? (64 - util_Log2(run->dynfile->size)) : 64;
         run->dynfile->distance = distance;
 
-        if(!res)
-        {
+        if(!res) {
             LOG_I("was a change in signature\n");
+            for (int i = 0; i < 64; i++)
+            {
+                LOG_I("item %d: %d\n", i, (char) scSignature[i]);
+            }
             HistogramInsert(run->global->feedback.hwCnts.scSignatureHistogram,currScSignature,1);
         }
         else
