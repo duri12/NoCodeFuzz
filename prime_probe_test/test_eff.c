@@ -41,12 +41,13 @@ int main(int c, char **v) {
     for (int i  = 0; i <7;i++) {
         printf("tryed %s - got :\n",password[i]);
         for (int j = 0; j <64;j++) {
-
+            /*
             if(l1Cache[0][i][j] +l1Cache[1][i][j] +l1Cache[2][i][j]> 314*3)
                 l1Cache[0][i][j] =1;
             else
                 l1Cache[0][i][j] =0;
-
+            */
+            l1Cache[0][i][j] =l1Cache[0][i][j] +l1Cache[1][i][j] +l1Cache[2][i][j];
              printf("[%d]--[set %d]-> %lu\n",i,j,l1Cache[0][i][j]);
         }
     }
