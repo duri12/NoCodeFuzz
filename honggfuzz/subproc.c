@@ -538,6 +538,8 @@ static bool subproc_runNoFork(run_t *run)
         */
         //NOTE: prime also can save results timing before victim access
         l1i_probeall(run->scTools.l1i, NULL);//prime
+        l1i_probeall(run->scTools.l1i, NULL);//prime
+        l1i_probeall(run->scTools.l1i, NULL);//prime
         MyFunction(password);
         l1i_probeall(run->scTools.l1i, l1Cache[i]); //probe
 
