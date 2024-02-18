@@ -31,7 +31,7 @@ void maccess(void *p);
 
 uint64_t rdtsc();
 
-#define NOP16() \
+#define NOP_65() \
     __asm__ __volatile__ ( \
         "nop\n\t" \
         "nop\n\t" \
@@ -48,7 +48,57 @@ uint64_t rdtsc();
         "nop\n\t" \
         "nop\n\t" \
         "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
         "nop\n\t")
+
 /*
 static inline void nop_16() {
   asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");
