@@ -47,7 +47,7 @@ Histogram internalHistogramCreate(int size, int keySize)
 //TODO: replace with size
 Histogram HistogramCreate(void)
 {
-    return internalHistogramCreate(INITIAL_SIZE,3);
+    return internalHistogramCreate(INITIAL_SIZE,64);
 }
 
 void HistogramDestroy(Histogram d)

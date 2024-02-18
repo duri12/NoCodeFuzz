@@ -19,6 +19,74 @@
 #include <stdlib.h>
 #include <pthread.h>
 
+#define NOP_65() \
+    __asm__ __volatile__ ( \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t" \
+        "nop\n\t")
+
 
 
 extern int randomize_pht();

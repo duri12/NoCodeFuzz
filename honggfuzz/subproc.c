@@ -55,7 +55,7 @@
 #define L1I_SAMPLE_SIZE 64
 #define L1I_THRESHOLD 250
 #define PHT_SAMPLE_SIZE 10
-#define PHT_THRESHOLD 300
+#define PHT_THRESHOLD 275
 
 #define NUM_OF_RUNS 10 //NOTE: just for now
 
@@ -453,93 +453,6 @@ static bool subproc_New(run_t *run) {
 }
 
 
-static void MyFunction(char *password) {
-
-    if (password[6] != '\0')
-        return;
-
-    if (password[0] == 'P') {
-        __asm__ __volatile__
-        (
-        "pause;"
-        "movq $0, %%rdx;"
-        "movq $0x10, %%rbx;"
-        "l2%=:"
-        "inc %%rdx;"
-        "cmpq %%rdx, %%rbx;"
-        "jg l2%=;"
-        :
-        :
-        : "rdx", "rbx", "cc", "memory"
-        );
-        if (password[1] == 'A') {
-            __asm__ __volatile__
-            (
-            "pause;"
-            "movq $0, %%rdx;"
-            "movq $0x10, %%rbx;"
-            "l3%=:"
-            "inc %%rdx;"
-            "cmpq %%rdx, %%rbx;"
-            "jg l3%=;"
-            :
-            :
-            : "rdx", "rbx", "cc", "memory"
-            );
-            if (password[2] == 'S') {
-                __asm__ __volatile__
-                (
-                "pause;"
-                "movq $0, %%rdx;"
-                "movq $0x10, %%rbx;"
-                "l4%=:"
-                "inc %%rdx;"
-                "cmpq %%rdx, %%rbx;"
-                "jg l4%=;"
-                :
-                :
-                : "rdx", "rbx", "cc", "memory"
-                );
-                if (password[3] == 's') {
-                    __asm__ __volatile__
-                    (
-                    "pause;"
-                    "movq $0, %%rdx;"
-                    "movq $0x10, %%rbx;"
-                    "l5%=:"
-                    "inc %%rdx;"
-                    "cmpq %%rdx, %%rbx;"
-                    "jg l5%=;"
-                    :
-                    :
-                    : "rdx", "rbx", "cc", "memory"
-                    );
-                    if (password[4] == '1') {
-                        __asm__ __volatile__
-                        (
-                        "pause;"
-                        "movq $0, %%rdx;"
-                        "movq $0x10, %%rbx;"
-                        "l6%=:"
-                        "inc %%rdx;"
-                        "cmpq %%rdx, %%rbx;"
-                        "jg l6%=;"
-                        :
-                        :
-                        : "rdx", "rbx", "cc", "memory"
-                        );
-                        if (password[5] == '!') {
-                            LOG_I("found the password");
-                            LOG_I("the input was %s",password);
-                            sleep(10);
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
 int cmp(const void *a, const void *b) {
     return *(int64_t *) a - *(int64_t *) b;
 }
@@ -631,10 +544,14 @@ static bool subproc_runNoFork(run_t *run)
         //NOTE: prime also can save results timing before victim access
 
         l1i_probeall(run->scTools.l1i, NULL);//prime
+        l1i_probeall(run->scTools.l1i, NULL);//prime
+        l1i_probeall(run->scTools.l1i, NULL);//prime
+        MyFunction(password);
+        l1i_probeall(run->scTools.l1i, l1Cache[i]); //probe
+
         start = rdtsc();
         MyFunction(password);
         end = rdtsc();
-        l1i_probeall(run->scTools.l1i, l1Cache[i]); //probe
 
         //interprets values
         instrCountArr[i] = end - start;
