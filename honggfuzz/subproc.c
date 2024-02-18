@@ -513,7 +513,7 @@ static bool subproc_runNoFork(run_t *run)
     char password[1024];
 
     //strncpy(password, (char *) run->dynfile->data, 8);
-    strncpy(password, "PBBBBB", 8);
+    strncpy(password, "PABBBB", 8);
 
     uint64_t instrCountArr[10] = {0};
     uint64_t l1Cache[10][64] = {0};
