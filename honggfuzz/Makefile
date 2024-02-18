@@ -197,7 +197,7 @@ ifeq ($(COMPILER),gcc)
 endif
 
 SRCS := $(COMMON_SRCS) $(ARCH_SRCS) $(SCTOOLS_SRCS)
-OBJS := $(SRCS:.c=.o) side-channels/randomize_pht.o
+OBJS := $(SRCS:.c=.o) side-channels/randomize_pht.o side-channels/myFuntion.o
 
 LHFUZZ_SRCS := $(sort $(wildcard libhfuzz/*.c))
 LHFUZZ_OBJS := $(LHFUZZ_SRCS:.c=.o)
