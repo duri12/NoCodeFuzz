@@ -512,7 +512,8 @@ static bool subproc_runNoFork(run_t *run)
 
     char password[1024];
 
-    strncpy(password, (char *) run->dynfile->data, 8);
+    //strncpy(password, (char *) run->dynfile->data, 8);
+    strncpy(password, "AAAAAA", 8);
 
     uint64_t instrCountArr[10] = {0};
     uint64_t l1Cache[10][64] = {0};
@@ -584,7 +585,11 @@ static bool subproc_runNoFork(run_t *run)
 
     char printS[100];
     for (int i = 0; i <64; ++i) {
-        snprintf(printS,sizeof(printS),"[SET %d]-->%lu",i,(l1Cache[2][i] +l1Cache[0][i]+l1Cache[1][i]));
+        if(l1Cache[2][i] +l1Cache[0][i]+l1Cache[1][i]> 900)
+            l1Cache[0][i] =1;
+        else
+            l1Cache[0][i] =0;
+        snprintf(printS,sizeof(printS),"[SET %d]-->%lu",i,l1Cache[0][i]);
         LOG_I("%s",printS);
     }
     //TODO: create vector signature
