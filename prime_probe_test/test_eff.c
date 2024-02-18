@@ -45,8 +45,8 @@ int main(int c, char **v) {
                 l1Cache[0][i][j] =1;
             else
                 l1Cache[0][i][j] =0;
-            l1Cache[0][i][j] =l1Cache[0][i][j] +l1Cache[1][i][j] +l1Cache[2][i][j];
-             printf("[%d]--[set %d]-> %lu\n",i,j,l1Cache[0][i][j]);
+            //l1Cache[0][i][j] =l1Cache[0][i][j] +l1Cache[1][i][j] +l1Cache[2][i][j];
+            printf("[%d]--[set %d]-> %lu\n",i,j,l1Cache[0][i][j]);
         }
     }
 
