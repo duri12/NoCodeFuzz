@@ -99,6 +99,25 @@ uint64_t rdtsc();
         "nop\n\t" \
         "nop\n\t")
 
+#define RANDOM_INSTRUCTIONS \
+    asm("mov ecx, 0xABCDEF01"); \
+    asm("xor edx, edx"); \
+    asm("add eax, ecx"); \
+    asm("sub ebx, eax"); \
+    asm("mov esi, edx"); \
+    asm("mov edi, ebx"); \
+    asm("shl esi, 4"); \
+    asm("shr edi, 4"); \
+    asm("mov eax, esi"); \
+    asm("mov ebx, edi"); \
+    asm("sub ecx, edx"); \
+    asm("xor edx, edx"); \
+    asm("add eax, ecx"); \
+    asm("sub ebx, eax"); \
+    asm("mov esi, edx"); \
+    asm("mov edi, ebx"); \
+    asm("shl esi, 4"); \
+    asm("shr edi, 4");
 /*
 static inline void nop_16() {
   asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");
