@@ -100,24 +100,25 @@ uint64_t rdtsc();
         "nop\n\t")
 
 #define RANDOM_INSTRUCTIONS() \
-    asm("mov ecx, 0xABCDEF01"); \
-    asm("xor edx, edx"); \
-    asm("add eax, ecx"); \
-    asm("sub ebx, eax"); \
-    asm("mov esi, edx"); \
-    asm("mov edi, ebx"); \
-    asm("shl esi, 4"); \
-    asm("shr edi, 4"); \
-    asm("mov eax, esi"); \
-    asm("mov ebx, edi"); \
-    asm("sub ecx, edx"); \
-    asm("xor edx, edx"); \
-    asm("add eax, ecx"); \
-    asm("sub ebx, eax"); \
-    asm("mov esi, edx"); \
-    asm("mov edi, ebx"); \
-    asm("shl esi, 4"); \
-    asm("shr edi, 4");
+    "mov ecx, 0xABCDEF01; " \
+    "xor edx, edx; " \
+    "add eax, ecx; " \
+    "sub ebx, eax; " \
+    "mov esi, edx; " \
+    "mov edi, ebx; " \
+    "shl esi, 4; " \
+    "shr edi, 4; " \
+    "mov eax, esi; " \
+    "mov ebx, edi; " \
+    "sub ecx, edx; " \
+    "xor edx, edx; " \
+    "add eax, ecx; " \
+    "sub ebx, eax; " \
+    "mov esi, edx; " \
+    "mov edi, ebx; " \
+    "shl esi, 4; " \
+    "shr edi, 4; "
+
 /*
 static inline void nop_16() {
   asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");
