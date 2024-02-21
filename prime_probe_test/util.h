@@ -99,7 +99,7 @@ uint64_t rdtsc();
         "nop\n\t" \
         "nop\n\t")
 
-#define RANDOM_INSTRUCTIONS \
+#define RANDOM_INSTRUCTIONS() \
     asm("mov ecx, 0xABCDEF01"); \
     asm("xor edx, edx"); \
     asm("add eax, ecx"); \
