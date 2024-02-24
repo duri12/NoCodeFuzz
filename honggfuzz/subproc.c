@@ -53,7 +53,7 @@
 
 //TODO: should not be here - need to be decided at different place (and also be dynamic)
 #define L1I_SAMPLE_SIZE 64
-#define L1I_THRESHOLD 250
+#define L1I_THRESHOLD 10
 #define PHT_SAMPLE_SIZE 10
 #define PHT_THRESHOLD 275
 
@@ -521,6 +521,7 @@ static bool subproc_runNoFork(run_t *run)
 
     uint64_t instrCountArr[NUM_OF_RUNS] = {0};
     uint64_t l1Cache[NUM_OF_RUNS][L1I_SAMPLE_SIZE]= {0};
+    uint64_t l1CacheBase[NUM_OF_RUNS][L1I_SAMPLE_SIZE]= {0};
 
     uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE]= {0};
     uint64_t bpRecordNTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE] = {0};
@@ -545,7 +546,10 @@ static bool subproc_runNoFork(run_t *run)
 
         l1i_probeall(run->scTools.l1i, NULL);//prime
         l1i_probeall(run->scTools.l1i, NULL);//prime
+        l1i_probeall(run->scTools.l1i, l1CacheBase[i]);//base
         l1i_probeall(run->scTools.l1i, NULL);//prime
+        l1i_probeall(run->scTools.l1i, NULL);//prime
+
         MyFunction(password);
         l1i_probeall(run->scTools.l1i, l1Cache[i]); //probe
 
@@ -575,7 +579,7 @@ static bool subproc_runNoFork(run_t *run)
     {
         for(size_t i=0;i< NUM_OF_RUNS; i++)
         {
-            tmp[i] = l1Cache[i][set];
+            tmp[i] = l1CacheBase[i][set]>  l1Cache[i][set] ? 0 : l1Cache[i][set] - l1CacheBase[i][set];
         }
         float res = middle_mean(tmp,NUM_OF_RUNS);
         l1iResult[set] = res >L1I_THRESHOLD ? ACCESSED : NOT_ACCESSED;
