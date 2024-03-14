@@ -23,7 +23,6 @@
  */
 
 #include "fuzz.h"
-#define _GNU_SOURCE
 #include <dlfcn.h> // For dynamic symbol resolution
 #include <errno.h>
 #include <fcntl.h>
@@ -36,6 +35,9 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <sys/types.h>
+#include <sys/mman.h>
+#include <assert.h>
+#include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -603,7 +605,6 @@ static void unprotect(void *address, size_t len)
     size_t aligned_size = len + (address - aligned_addr);
     aligned_size = (aligned_size + page_size - 1) & ~(page_size - 1); // Ensure the size covers the end symbol, rounded up to a page boundary
 
-    printf("%p - %p\n", aligned_addr, aligned_size  + aligned_addr);
     if (mprotect(aligned_addr, aligned_size, PROT_READ | PROT_WRITE | PROT_EXEC) == -1) {
         perror("mprotect");
         exit(EXIT_FAILURE);
