@@ -41,7 +41,7 @@ do { \
 } while(0);
 
 extern int randomize_pht();
-
+/*
 static inline void nop_16() {
   asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");
   asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");
@@ -55,7 +55,7 @@ static inline void additional_ops() {
   nop_16();
   nop_16();
 }
-
+*/
 
 // Utilities for two-level predictor based attack
 
