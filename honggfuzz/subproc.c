@@ -621,18 +621,18 @@ static bool subproc_runNoFork(run_t *run)
 
     //int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
     //float mean = middle_mean(instrCountArr, n);
-    int64_t instrCount = 0;//floor(mean);
+    //int64_t instrCount = 0;//floor(mean);
 
 
     //TODO: create vector signature
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT)
     {
         run->hwCnts.cpuInstrCnt = instrCount;
-        uint8_t * signature = malloc(sizeof(uint8_t)*(PHT_SAMPLE_SIZE+L1I_SAMPLE_SIZE));
+        uint8_t * signature = malloc(sizeof(uint8_t)*(PHT_SAMPLE_SIZE));
         //TODO: remember to free this (at the end or after some time)
-        size_t l1iOffset = L1I_SAMPLE_SIZE*sizeof(uint8_t);
-        memcpy(signature, l1iResult, l1iOffset);
-        memcpy(signature+l1iOffset, bpResult, PHT_SAMPLE_SIZE*sizeof(uint8_t));
+        //size_t l1iOffset = L1I_SAMPLE_SIZE*sizeof(uint8_t);
+        //memcpy(signature, l1iResult, l1iOffset);
+        memcpy(signature, bpResult, PHT_SAMPLE_SIZE*sizeof(uint8_t));
         run->hwCnts.scSignature = signature;
     }
 
