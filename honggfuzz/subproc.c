@@ -563,7 +563,7 @@ static bool subproc_runNoFork(run_t *run)
         //the PHT prime+probe
         randomize_pht();
         pht_prime(run->scTools.pht);
-        MyFunction(password);
+        MyFunction("PASs1!");
         pht_probe(run->scTools.pht,bpRecordTProbe[i]);
         //pht_prime(run->scTools.pht,1);
         //MyFunction(password);
@@ -602,6 +602,7 @@ static bool subproc_runNoFork(run_t *run)
          * otherwise - no branch was jumped or pure logic :(.
          */
         // hit & miss
+        LOG_I("%llu",bpRecordTProbe[0][pht_index]);
         if(bpRecordTProbe[0][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][pht_index] < PHT_THRESHOLD)
         {
             bpResult[pht_index] = 1;
