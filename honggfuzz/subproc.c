@@ -564,9 +564,11 @@ static bool subproc_runNoFork(run_t *run)
         //the PHT prime+probe
         randomize_pht();
         pht_prime(run->scTools.pht);
+        LOG_I("aaaaaaaaaaaaa");
         MyFunction(password);
+        LOG_I("bbbbbbbbbbbbbbbbb");
         pht_probe(run->scTools.pht,bpRecordTProbe[i]);
-
+        LOG_I("cccccccccccccccccc");
         //pht_prime(run->scTools.pht,1);
         //MyFunction(password);
         //pht_probe(run->scTools.pht,0,bpRecordNTProbe[i]);
