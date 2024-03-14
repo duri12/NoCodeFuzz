@@ -339,7 +339,7 @@ static void fuzz_perfFeedback(run_t* run) {
 
         if(!res) {
             LOG_I("was a change in signature\n");
-            for (int i = 0; i < 512; i++)
+            for (int i = 0; i < 20; i++)
             {
                 LOG_I("item %d: %d\n", i, (char) currScSignature[i]);
             }

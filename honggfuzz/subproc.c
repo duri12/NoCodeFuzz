@@ -54,10 +54,10 @@
 //TODO: should not be here - need to be decided at different place (and also be dynamic)
 #define L1I_SAMPLE_SIZE 64
 #define L1I_THRESHOLD 10
-#define PHT_SAMPLE_SIZE 512
+#define PHT_SAMPLE_SIZE 20
 #define PHT_THRESHOLD 120
 
-#define NUM_OF_RUNS 2 //NOTE: just for now
+#define NUM_OF_RUNS 3 //NOTE: just for now
 
 
 extern char **environ;
@@ -603,14 +603,10 @@ static bool subproc_runNoFork(run_t *run)
          */
         // hit & miss
         LOG_I("%lu",bpRecordTProbe[0][pht_index]);
-        if(bpRecordTProbe[0][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][pht_index] < PHT_THRESHOLD)
+        if(bpRecordTProbe[0][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][pht_index] < PHT_THRESHOLD
+        && bpRecordTProbe[2][pht_index] < PHT_THRESHOLD )
         {
             bpResult[pht_index] = 1;
-        }
-        // miss & hit
-        else if (bpRecordTProbe[0][pht_index] >= PHT_THRESHOLD && bpRecordTProbe[1][pht_index] >= PHT_THRESHOLD)
-        {
-            bpResult[pht_index] = 0;
         }
         else
         {
