@@ -519,8 +519,7 @@ static bool subproc_runNoFork(run_t *run)
 
     strncpy(password, (char *) run->dynfile->data, 8);
 
-    uint64_t instrCountArr[NUM_OF_RUNS] = {0};
-    instrCountArr[1] = 1;
+    //uint64_t instrCountArr[NUM_OF_RUNS] = {0};
     //uint64_t l1Cache[NUM_OF_RUNS][L1I_SAMPLE_SIZE]= {0};
     //uint64_t l1CacheBase[NUM_OF_RUNS][L1I_SAMPLE_SIZE]= {0};
 
@@ -625,7 +624,7 @@ static bool subproc_runNoFork(run_t *run)
 
     //int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
     //float mean = middle_mean(instrCountArr, n);
-    //int64_t instrCount = floor(mean);
+    int64_t instrCount = 0;//floor(mean);
 
 
     //TODO: create vector signature
