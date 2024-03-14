@@ -574,7 +574,7 @@ static bool subproc_runNoFork(run_t *run)
     }
     //create signature for l1i
     //uint64_t tmp[NUM_OF_RUNS] ={0};
-    uint8_t l1iResult[L1I_SAMPLE_SIZE] = {0};
+    //uint8_t l1iResult[L1I_SAMPLE_SIZE] = {0};
     /*
     for (int set = 0; set <L1I_SAMPLE_SIZE; ++set)
     {
@@ -621,7 +621,7 @@ static bool subproc_runNoFork(run_t *run)
 
     //int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
     //float mean = middle_mean(instrCountArr, n);
-    //int64_t instrCount = 0;//floor(mean);
+    int64_t instrCount = 0;//floor(mean);
 
 
     //TODO: create vector signature
