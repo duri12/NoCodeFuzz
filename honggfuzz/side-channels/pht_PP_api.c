@@ -14,7 +14,7 @@
 
 const uint8_t jumpArray[FUNC_SIZE] = {0x55,0x48,0x89,0xe5,0x89,
                                        0x7d,0xfc,0x83,0x7d,0xfc,
-                                       0x00,0x74,0x01,0x90,0x5d,
+                                       0x00,0x75,0x01,0x90,0x5d,
                                        0xc3};
 /*
 0:  55                      push   ebp
@@ -22,7 +22,7 @@ const uint8_t jumpArray[FUNC_SIZE] = {0x55,0x48,0x89,0xe5,0x89,
 2:  89 e5                   mov    ebp,esp
 4:  89 7d fc                mov    DWORD PTR [ebp-0x4],edi
 7:  83 7d fc 00             cmp    DWORD PTR [ebp-0x4],0x0
-b:  74 01                   je    0xe
+b:  75 01                   jne    0xe
 d:  90                      nop
 e:  5d                      pop    ebp
 f:  c3                      ret
