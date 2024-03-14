@@ -3,12 +3,12 @@
 #include <stdint.h>
 
 struct phtpp{
-    void *memory;
+    char *memory;
     int size;
 };
 
 typedef struct phtpp *phtpp_t;
-phtpp_t pht_prepare(int probe_size);
+struct phtpp pht_prepare(int probe_size);
 void pht_prime(phtpp_t pht);
 void pht_probe(phtpp_t pht, uint64_t *results);
 void pht_release(phtpp_t pht);
