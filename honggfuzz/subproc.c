@@ -605,18 +605,18 @@ static bool subproc_runNoFork(run_t *run)
          * otherwise - no branch was jumped or pure logic :(.
          */
         // hit & miss
-        if(bpRecordTProbe[0] < PHT_THRESHOLD && bpRecordTProbe[1] < PHT_THRESHOLD)
+        if(bpRecordTProbe[0][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][pht_index] < PHT_THRESHOLD)
         {
-            bpResult[pht_index] = TAKEN;
+            bpResult[pht_index] = 1;
         }
         // miss & hit
-        else if (bpRecordTProbe[0] >= PHT_THRESHOLD && bpRecordTProbe[1] >= PHT_THRESHOLD)
+        else if (bpRecordTProbe[0][pht_index] >= PHT_THRESHOLD && bpRecordTProbe[1][pht_index] >= PHT_THRESHOLD)
         {
-            bpResult[pht_index] = NOT_TAKEN;
+            bpResult[pht_index] = 0;
         }
         else
         {
-            bpResult[pht_index] = NOT_TAKEN;
+            bpResult[pht_index] = 0;
         }
     }
     //TODO: add bpResult to the vector of the run
