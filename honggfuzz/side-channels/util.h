@@ -21,7 +21,7 @@ extern void *ignore_me;
 
 #define CONDITIONAL_JUMP_TO_LABEL(i, start_label) \
 do { \
-    asm goto ( \
+    __asm__ goto ( \
         "xor %%rax, %%rax\n\t" \
         "lea 1f(%%rip), %%rbx\n\t" \
         "lea ignore_me(%%rip), %%rcx\n\t" \
