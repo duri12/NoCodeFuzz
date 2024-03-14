@@ -603,7 +603,7 @@ static bool subproc_runNoFork(run_t *run)
          */
         // hit & miss
         LOG_I("--------------------------------");
-        LOG_I("%lu",bpRecordTProbe[0][pht_index]);
+        LOG_I("%lu",bpRecordTProbe[0][0]);
         LOG_I("%lu",bpRecordTProbe[1][pht_index]);
         LOG_I("%lu",bpRecordTProbe[2][pht_index]);
         LOG_I("--------------------------------");
