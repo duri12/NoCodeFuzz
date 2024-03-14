@@ -602,7 +602,7 @@ static bool subproc_runNoFork(run_t *run)
          * otherwise - no branch was jumped or pure logic :(.
          */
         // hit & miss
-        LOG_I("%llu",bpRecordTProbe[0][pht_index]);
+        LOG_I("%lu",bpRecordTProbe[0][pht_index]);
         if(bpRecordTProbe[0][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][pht_index] < PHT_THRESHOLD)
         {
             bpResult[pht_index] = 1;
