@@ -526,7 +526,6 @@ static bool subproc_runNoFork(run_t *run)
     uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE]= {0};
     //uint64_t bpRecordNTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE] = {0};
 
-    LOG_I("STARTING PROBE");
     //THINK: do we really need the 10 iterations loop
     for (int i = 0; i < NUM_OF_RUNS; ++i)
     {
@@ -564,11 +563,8 @@ static bool subproc_runNoFork(run_t *run)
         //the PHT prime+probe
         randomize_pht();
         pht_prime(run->scTools.pht);
-        LOG_I("aaaaaaaaaaaaa");
         MyFunction(password);
-        LOG_I("bbbbbbbbbbbbbbbbb");
         pht_probe(run->scTools.pht,bpRecordTProbe[i]);
-        LOG_I("cccccccccccccccccc");
         //pht_prime(run->scTools.pht,1);
         //MyFunction(password);
         //pht_probe(run->scTools.pht,0,bpRecordNTProbe[i]);
@@ -576,7 +572,6 @@ static bool subproc_runNoFork(run_t *run)
         //TODO: check pht record
         //TODO: check L1 cache
     }
-    LOG_I("finished Probe");
     //create signature for l1i
     //uint64_t tmp[NUM_OF_RUNS] ={0};
     uint8_t l1iResult[L1I_SAMPLE_SIZE] = {0};
