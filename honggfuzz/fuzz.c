@@ -23,7 +23,8 @@
  */
 
 #include "fuzz.h"
-
+#define _GNU_SOURCE
+#include <dlfcn.h> // For dynamic symbol resolution
 #include <errno.h>
 #include <fcntl.h>
 #include <inttypes.h>
@@ -51,6 +52,7 @@
 #include "subproc.h"
 #include "side-channels/l1i.h"
 
+#define NUM_OF_ENTRIES 512
 static time_t termTimeStamp = 0;
 
 bool fuzz_isTerminating(void) {
@@ -589,6 +591,29 @@ static void fuzz_fuzzLoopSocket(run_t* run) {
 
     report_saveReport(run);
 }
+static void unprotect(void *address, size_t len)
+{
+    // Calculate the page size
+    long page_size = sysconf(_SC_PAGESIZE);
+
+    // Align the start address to the page boundary
+    void* aligned_addr = (void*)((uintptr_t)address & ~(page_size - 1));
+
+    // Adjust size for the new alignment
+    size_t aligned_size = len + (address - aligned_addr);
+    aligned_size = (aligned_size + page_size - 1) & ~(page_size - 1); // Ensure the size covers the end symbol, rounded up to a page boundary
+
+    printf("%p - %p\n", aligned_addr, aligned_size  + aligned_addr);
+    if (mprotect(aligned_addr, aligned_size, PROT_READ | PROT_WRITE | PROT_EXEC) == -1) {
+        perror("mprotect");
+        exit(EXIT_FAILURE);
+    }
+}
+
+extern char pht_prepare_end;
+extern char pht_probe_end;
+extern char victim_end;
+
 
 static void* fuzz_threadNew(void* arg) {
     honggfuzz_t* hfuzz  = (honggfuzz_t*)arg;
@@ -647,7 +672,16 @@ static void* fuzz_threadNew(void* arg) {
 
     //NOTE: here initializing l1i sc tools structure
     run.scTools.l1i = l1i_prepare();
-    run.scTools.pht =  pht_prepare(10);
+    unprotect(&randomize_pht, 3000000); // actually only R+X
+    unprotect(&pht_prime, (uintptr_t)&pht_prepare_end - (uintptr_t)&pht_prepare); // R+W+X
+    unprotect(&pht_probe, (uintptr_t)&pht_probe_end - (uintptr_t)&pht_probe ); // actually only R+X
+
+    /*
+     * Threshold latency between correct prediction and mis-prediction
+     * This is used in the inference stage of the attacker
+     */
+
+    run.scTools.pht pht = pht_prepare(NUM_OF_ENTRIES);
     //TODO: create a constant for probe size
 
     for (;;) {
@@ -689,6 +723,7 @@ static void* fuzz_threadNew(void* arg) {
     }
 
     l1i_release(run.scTools.l1i);
+    pht_release(run.scTools.pht);
     size_t j = ATOMIC_PRE_INC(run.global->threads.threadsFinished);
     LOG_I("Terminating thread no. #%" PRId32 ", left: %zu", fuzzNo, hfuzz->threads.threadsMax - j);
     return NULL;

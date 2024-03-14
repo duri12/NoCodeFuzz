@@ -54,10 +54,10 @@
 //TODO: should not be here - need to be decided at different place (and also be dynamic)
 #define L1I_SAMPLE_SIZE 64
 #define L1I_THRESHOLD 10
-#define PHT_SAMPLE_SIZE 10
-#define PHT_THRESHOLD 275
+#define PHT_SAMPLE_SIZE 512
+#define PHT_THRESHOLD 120
 
-#define NUM_OF_RUNS 10 //NOTE: just for now
+#define NUM_OF_RUNS 2 //NOTE: just for now
 
 
 extern char **environ;
@@ -513,18 +513,18 @@ static bool subproc_runNoFork(run_t *run)
         return false;
     }
 
-    uint64_t start, end;
+    //uint64_t start, end;
 
     char password[1024];
 
     strncpy(password, (char *) run->dynfile->data, 8);
 
     uint64_t instrCountArr[NUM_OF_RUNS] = {0};
-    uint64_t l1Cache[NUM_OF_RUNS][L1I_SAMPLE_SIZE]= {0};
-    uint64_t l1CacheBase[NUM_OF_RUNS][L1I_SAMPLE_SIZE]= {0};
+    //uint64_t l1Cache[NUM_OF_RUNS][L1I_SAMPLE_SIZE]= {0};
+    //uint64_t l1CacheBase[NUM_OF_RUNS][L1I_SAMPLE_SIZE]= {0};
 
     uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE]= {0};
-    uint64_t bpRecordNTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE] = {0};
+    //uint64_t bpRecordNTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE] = {0};
 
 
     //THINK: do we really need the 10 iterations loop
@@ -543,7 +543,7 @@ static bool subproc_runNoFork(run_t *run)
          * 3. probe wanted address
         */
         //NOTE: prime also can save results timing before victim access
-
+        /*
         l1i_probeall(run->scTools.l1i, NULL);//prime
         l1i_probeall(run->scTools.l1i, NULL);//prime
         l1i_probeall(run->scTools.l1i, l1CacheBase[i]);//base
@@ -556,25 +556,27 @@ static bool subproc_runNoFork(run_t *run)
         start = rdtsc();
         MyFunction(password);
         end = rdtsc();
-
+        */
         //interprets values
-        instrCountArr[i] = end - start;
+        //instrCountArr[i] = end - start;
         //the PHT prime+probe
-        pht_prime(run->scTools.pht,0);
+        randomize_pht();
+        pht_prime(run->scTools.pht);
         MyFunction(password);
-        pht_probe(run->scTools.pht,1,bpRecordTProbe[i]);
+        pht_probe(run->scTools.pht,bpRecordTProbe[i]);
 
-        pht_prime(run->scTools.pht,1);
-        MyFunction(password);
-        pht_probe(run->scTools.pht,0,bpRecordNTProbe[i]);
+        //pht_prime(run->scTools.pht,1);
+        //MyFunction(password);
+        //pht_probe(run->scTools.pht,0,bpRecordNTProbe[i]);
 
         //TODO: check pht record
         //TODO: check L1 cache
     }
 
     //create signature for l1i
-    uint64_t tmp[NUM_OF_RUNS] ={0};
+    //uint64_t tmp[NUM_OF_RUNS] ={0};
     uint8_t l1iResult[L1I_SAMPLE_SIZE] = {0};
+    /*
     for (int set = 0; set <L1I_SAMPLE_SIZE; ++set)
     {
         for(size_t i=0;i< NUM_OF_RUNS; i++)
@@ -584,22 +586,16 @@ static bool subproc_runNoFork(run_t *run)
         float res = middle_mean(tmp,NUM_OF_RUNS);
         l1iResult[set] = res >L1I_THRESHOLD ? ACCESSED : NOT_ACCESSED;
     }
-
+    */
     //create signature for pht
-    uint64_t tmpT[NUM_OF_RUNS] ={0};
-    uint64_t tmpNT[NUM_OF_RUNS] ={0};
+    //uint64_t tmpT[NUM_OF_RUNS] ={0};
+    //uint64_t tmpNT[NUM_OF_RUNS] ={0};
     uint8_t bpResult[PHT_SAMPLE_SIZE] = {0};
 
     for (int pht_index = 0; pht_index <PHT_SAMPLE_SIZE; ++pht_index)
     {
-        for(size_t i=0;i< 10; i++)
-        {
-            tmpT[i] = bpRecordTProbe[i][pht_index];
-            tmpNT[i] = bpRecordNTProbe[i][pht_index];
-        }
 
-        float taken = middle_mean(tmpT,10);
-        float notTaken = middle_mean(tmpNT, 10);
+
         /*
          * We are checking twice for handling cases of branch not exist and also to force consistency
          * If branch is taken -> we want hit in taken probe & miss in notTaken Probe
@@ -607,26 +603,26 @@ static bool subproc_runNoFork(run_t *run)
          * otherwise - no branch was jumped or pure logic :(.
          */
         // hit & miss
-        if (taken < PHT_THRESHOLD && notTaken > PHT_THRESHOLD)
+        if(bpRecordTProbe[0] < PHT_THRESHOLD && bpRecordTProbe[1] < PHT_THRESHOLD)
         {
             bpResult[pht_index] = TAKEN;
         }
         // miss & hit
-        else if (taken > PHT_THRESHOLD && notTaken < PHT_THRESHOLD)
+        else if (bpRecordTProbe[0] >= PHT_THRESHOLD && bpRecordTProbe[1] >= PHT_THRESHOLD)
         {
             bpResult[pht_index] = NOT_TAKEN;
         }
         else
         {
-            bpResult[pht_index] = NO_BRANCH;
+            bpResult[pht_index] = NOT_TAKEN;
         }
     }
     //TODO: add bpResult to the vector of the run
 
 
-    int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
-    float mean = middle_mean(instrCountArr, n);
-    int64_t instrCount = floor(mean);
+    //int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
+    //float mean = middle_mean(instrCountArr, n);
+    //int64_t instrCount = floor(mean);
 
 
     //TODO: create vector signature
