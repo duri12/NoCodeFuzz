@@ -682,7 +682,7 @@ static void* fuzz_threadNew(void* arg) {
      * This is used in the inference stage of the attacker
      */
 
-    run.scTools.pht  = pht_prepare(NUM_OF_ENTRIES);
+    run.scTools.pht  = pht_prepare(512);
     //TODO: create a constant for probe size
 
     for (;;) {
