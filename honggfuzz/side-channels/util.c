@@ -1,28 +1,23 @@
 #include "util.h"
+#include <x86intrin.h>
 
-
-/* Utility functions from https://github.com/IAIK/transientfail/ */
 void mfence() {
-    /* Utility functions from https://github.com/IAIK/transientfail/ */
-    __asm__ volatile("mfence");
+    _mm_mfence();
 }
 
 void flush(void *p) {
-    /* Utility functions from https://github.com/IAIK/transientfail/ */
-    __asm__ volatile("clflush 0(%0)\n" : : "c"(p) : "rax");
+    _mm_clflush(p);
 }
 
 void maccess(void *p) {
-    /* Utility functions from https://github.com/IAIK/transientfail/ */
     __asm__ volatile("movq (%0), %%rax\n" : : "c"(p) : "rax");
 }
 
 uint64_t rdtsc() {
-    /* Utility functions from https://github.com/IAIK/transientfail/ */
-    uint64_t a, d;
-    __asm__ volatile("mfence");
-    __asm__ volatile("rdtscp" : "=a"(a), "=d"(d) :: "rcx");
-    a = (d << 32) | a;
-    __asm__ volatile("mfence");
+    uint64_t a;
+    unsigned int c;
+    _mm_mfence();
+    a = _rdtscp(&c);
+    _mm_mfence();
     return a;
 }

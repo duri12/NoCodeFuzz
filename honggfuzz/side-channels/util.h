@@ -1,6 +1,3 @@
-#ifndef NOCODEFUZZ_SC_UTIL_H
-#define NOCODEFUZZ_SC_UTIL_H 1
-
 #include <assert.h>
 #include <unistd.h>
 #include <time.h>
@@ -18,88 +15,33 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <x86intrin.h>
 
-#define NOP_65() \
-    __asm__ __volatile__ ( \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t" \
-        "nop\n\t")
+extern void *ignore_me;
 
+#define CONDITIONAL_JUMP_TO_LABEL(i, start_label) \
+do { \
+    asm goto ( \
+        "xor %%rax, %%rax\n\t" \
+        "lea 1f(%%rip), %%rbx\n\t" \
+        "lea ignore_me(%%rip), %%rcx\n\t" \
+        "decl %0\n\t" \
+        "cmovzq %%rbx, %%rcx\n\t" \
+        "movl $0, (%%rcx)\n\t" \
+        "cpuid\n\t" \
+        ".byte 0xe9\n\t" \
+        "1:\n\t" \
+        ".long %l[" #start_label "] - . - 4\n\t" \
+        "movl $(%l[" #start_label "] - .), 1b(%%rip)\n\t" \
+        : "+r" (i) \
+        : \
+        : "rax", "rbx", "rcx", "rdx", "cc", "memory" \
+        : start_label                             \
+    ); \
+} while(0);
 
 extern int randomize_pht();
 
-
-void mfence();
-
-void flush(void *p);
-
-void maccess(void *p);
-
-uint64_t rdtsc();
-
-/*
 static inline void nop_16() {
   asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");
   asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");asm("nop");
@@ -114,7 +56,7 @@ static inline void additional_ops() {
   nop_16();
 }
 
-*/
+
 // Utilities for two-level predictor based attack
 
 #define FORCE_INLINE __attribute__((always_inline)) inline
@@ -123,4 +65,4 @@ static inline void additional_ops() {
 #define AT12 AT AT AT AT AT AT AT AT AT AT AT AT; // 12 taken branch
 #define AT100 AT12 AT12 AT12 AT12 AT12 AT12 AT12 AT12 AT AT AT AT;
 
-#endif
+extern uint64_t rdtsc();
