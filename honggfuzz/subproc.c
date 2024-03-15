@@ -612,11 +612,11 @@ static bool subproc_runNoFork(run_t *run)
         if(bpRecordTProbe[0][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][pht_index] < PHT_THRESHOLD
         && bpRecordTProbe[2][pht_index] < PHT_THRESHOLD )
         {
-            bpResult[pht_index] = 1;
+            bpResult[pht_index-492] = 1;
 	}
 	else
         {
-            bpResult[pht_index] = 0;
+            bpResult[pht_index-492] = 0;
         }
     }
     //TODO: add bpResult to the vector of the run
