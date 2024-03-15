@@ -518,7 +518,7 @@ static bool subproc_runNoFork(run_t *run)
     char password[1024];
 
     strncpy(password, (char *) run->dynfile->data, 8);
-
+    password[6] = '\0';
     //uint64_t instrCountArr[NUM_OF_RUNS] = {0};
     //uint64_t l1Cache[NUM_OF_RUNS][L1I_SAMPLE_SIZE]= {0};
     //uint64_t l1CacheBase[NUM_OF_RUNS][L1I_SAMPLE_SIZE]= {0};
@@ -563,14 +563,12 @@ static bool subproc_runNoFork(run_t *run)
         //the PHT prime+probe
         randomize_pht();
         pht_prime(run->scTools.pht);
-        MyFunction("PASs1!");
-        pht_probe(run->scTools.pht,bpRecordTProbe[i]);
+        MyFunction(password);
+        pht_probe(run->scTools.pht, bpRecordTProbe[i]);
         //pht_prime(run->scTools.pht,1);
         //MyFunction(password);
         //pht_probe(run->scTools.pht,0,bpRecordNTProbe[i]);
 
-        //TODO: check pht record
-        //TODO: check L1 cache
     }
     //create signature for l1i
     //uint64_t tmp[NUM_OF_RUNS] ={0};
@@ -590,8 +588,8 @@ static bool subproc_runNoFork(run_t *run)
     //uint64_t tmpT[NUM_OF_RUNS] ={0};
     //uint64_t tmpNT[NUM_OF_RUNS] ={0};
     uint8_t bpResult[20] = {0};
-    LOG_I("%p",&run->scTools.pht->memory);
-    for (int pht_index = 491; pht_index <512; ++pht_index)
+    //LOG_I("%p",&run->scTools.pht->memory);
+    for (int pht_index = 39; pht_index <46; ++pht_index)
     {
 
 
@@ -602,25 +600,28 @@ static bool subproc_runNoFork(run_t *run)
          * otherwise - no branch was jumped or pure logic :(.
          */
         // hit & miss
-        LOG_I("--------------------------------");
-        LOG_I("%lu",bpRecordTProbe[0][pht_index]);
-        LOG_I("%lu",bpRecordTProbe[1][pht_index]);
-        LOG_I("%lu",bpRecordTProbe[2][pht_index]);
-        LOG_I("--------------------------------");
+        //LOG_I("--------------------------------%d",pht_index);
+        //LOG_I("%lu",bpRecordTProbe[0][pht_index]);
+        //LOG_I("%lu",bpRecordTProbe[1][pht_index]);
+        //LOG_I("%lu",bpRecordTProbe[2][pht_index]);
+        //LOG_I("--------------------------------");
 
 
         if(bpRecordTProbe[0][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][pht_index] < PHT_THRESHOLD
         && bpRecordTProbe[2][pht_index] < PHT_THRESHOLD )
         {
-            bpResult[pht_index-491] = 1;
-        }
-        else
+            bpResult[pht_index-39] = 1;
+            LOG_I("entered: %c",password[pht_index-39]);
+
+	}
+	else
         {
-            bpResult[pht_index-491] = 0;
+            bpResult[pht_index-39] = 0;
         }
     }
     //TODO: add bpResult to the vector of the run
 
+    LOG_I("--------------------------------");
 
     //int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
     //float mean = middle_mean(instrCountArr, n);
