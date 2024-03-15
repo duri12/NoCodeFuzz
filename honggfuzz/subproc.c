@@ -591,7 +591,7 @@ static bool subproc_runNoFork(run_t *run)
     //uint64_t tmpNT[NUM_OF_RUNS] ={0};
     uint8_t bpResult[20] = {0};
     //LOG_I("%p",&run->scTools.pht->memory);
-    for (int pht_index = 492; pht_index <512; ++pht_index)
+    for (int pht_index = 0; pht_index <20; ++pht_index)
     {
 
 
@@ -612,11 +612,11 @@ static bool subproc_runNoFork(run_t *run)
         if(bpRecordTProbe[0][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][pht_index] < PHT_THRESHOLD
         && bpRecordTProbe[2][pht_index] < PHT_THRESHOLD )
         {
-            bpResult[pht_index-492] = 1;
+            bpResult[pht_index] = 1;
 	}
 	else
         {
-            bpResult[pht_index-492] = 0;
+            bpResult[pht_index] = 0;
         }
     }
     //TODO: add bpResult to the vector of the run
