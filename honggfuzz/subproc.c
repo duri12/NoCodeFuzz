@@ -57,7 +57,7 @@
 #define PHT_SAMPLE_SIZE 512
 #define PHT_THRESHOLD 120
 
-#define NUM_OF_RUNS 3 //NOTE: just for now
+#define NUM_OF_RUNS 2 //NOTE: just for now
 
 
 extern char **environ;
@@ -635,7 +635,7 @@ static bool subproc_runNoFork(run_t *run)
 
 
         if(bpRecordTProbe[0][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][pht_index] < PHT_THRESHOLD
-        && bpRecordTProbe[2][pht_index] < PHT_THRESHOLD )
+        /*&& bpRecordTProbe[2][pht_index] < PHT_THRESHOLD*/ )
         {
             bpResult[pht_index-2] = 1;
 	}
