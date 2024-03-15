@@ -571,7 +571,7 @@ static bool subproc_runNoFork(run_t *run)
 
     }
     if(password[0] == 'P')
-        LOG_I("P in input");
+        LOG_I("entered: %c",password[pht_index]);
     //create signature for l1i
     //uint64_t tmp[NUM_OF_RUNS] ={0};
     //uint8_t l1iResult[L1I_SAMPLE_SIZE] = {0};
@@ -613,8 +613,6 @@ static bool subproc_runNoFork(run_t *run)
         && bpRecordTProbe[2][pht_index] < PHT_THRESHOLD )
         {
             bpResult[pht_index] = 1;
-            LOG_I("entered: %c",password[pht_index]);
-
 	}
 	else
         {
