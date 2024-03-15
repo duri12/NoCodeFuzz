@@ -513,13 +513,13 @@ static bool subproc_runNoFork(run_t *run)
         return false;
     }
 
-    //uint64_t start, end;
+    uint64_t start, end;
 
     char password[1024];
 
     strncpy(password, (char *) run->dynfile->data, 8);
     password[6] = '\0';
-    //uint64_t instrCountArr[NUM_OF_RUNS] = {0};
+    uint64_t instrCountArr[NUM_OF_RUNS] = {0};
     //uint64_t l1Cache[NUM_OF_RUNS][L1I_SAMPLE_SIZE]= {0};
     //uint64_t l1CacheBase[NUM_OF_RUNS][L1I_SAMPLE_SIZE]= {0};
 
@@ -553,13 +553,13 @@ static bool subproc_runNoFork(run_t *run)
 
         MyFunction(password);
         l1i_probeall(run->scTools.l1i, l1Cache[i]); //probe
-
+        */
         start = rdtsc();
         MyFunction(password);
         end = rdtsc();
-        */
+
         //interprets values
-        //instrCountArr[i] = end - start;
+        instrCountArr[i] = end - start;
         //the PHT prime+probe
         randomize_pht();
         pht_prime(run->scTools.pht);
@@ -626,9 +626,9 @@ static bool subproc_runNoFork(run_t *run)
 
     //LOG_I("--------------------------------");
 
-    //int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
-    //float mean = middle_mean(instrCountArr, n);
-    int64_t instrCount = 0;//floor(mean);
+    int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
+    float mean = middle_mean(instrCountArr, n);
+    int64_t instrCount = floor(mean);
 
 
     //TODO: create vector signature
