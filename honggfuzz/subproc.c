@@ -591,7 +591,7 @@ static bool subproc_runNoFork(run_t *run)
     //uint64_t tmpNT[NUM_OF_RUNS] ={0};
     uint8_t bpResult[20] = {0};
     //LOG_I("%p",&run->scTools.pht->memory);
-    for (int pht_index = 0; pht_index <20; ++pht_index)
+    for (int pht_index = 492; pht_index <512; ++pht_index)
     {
 
 
