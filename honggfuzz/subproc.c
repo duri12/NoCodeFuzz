@@ -570,9 +570,11 @@ static bool subproc_runNoFork(run_t *run)
         //pht_probe(run->scTools.pht,0,bpRecordNTProbe[i]);
 
     }
-    if(password[0] == 'P')
+    if(password[0] == 'P'){
         password[6] = '\0';
         LOG_I("entered: %s",password);
+    }
+
     //create signature for l1i
     //uint64_t tmp[NUM_OF_RUNS] ={0};
     //uint8_t l1iResult[L1I_SAMPLE_SIZE] = {0};
