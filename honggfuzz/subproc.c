@@ -689,12 +689,7 @@ static bool subproc_runNoFork(run_t *run)
         MyFunction(password);
         l1i_probeall(run->scTools.l1i, l1Cache[i]); //probe
         */
-        start = rdtsc();
-        MyFunction(password);
-        end = rdtsc();
 
-        //interprets values
-        instrCountArr[i] = end - start;
         //the PHT prime+probe
         randomize_pht();
         pht_prime(run->scTools.pht);
