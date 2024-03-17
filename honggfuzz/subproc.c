@@ -648,7 +648,7 @@ static bool subproc_runNoFork(run_t *run)
         return false;
     }
 
-    uint64_t start, end;
+    //uint64_t start, end;
 
     char password[1024];
 
@@ -753,9 +753,9 @@ static bool subproc_runNoFork(run_t *run)
 
     //LOG_I("--------------------------------");
 
-    int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
-    float mean = middle_mean(instrCountArr, n);
-    int64_t instrCount = floor(mean)/10;
+    //int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
+    //float mean = middle_mean(instrCountArr, n);
+    int64_t instrCount = 0;//floor(mean)/10;
 
 
     //TODO: create vector signature
