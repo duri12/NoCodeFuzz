@@ -642,6 +642,7 @@ static bool subproc_runNoFork(run_t *run)
     * This might fail in Docker, as Docker blocks __NR_personality. Consequently
     * it's just a debug warning
     */
+
     arch_prepare(run);
 
     if (run->global->feedback.dynFileMethod == _HF_DYNFILE_NONE) {
