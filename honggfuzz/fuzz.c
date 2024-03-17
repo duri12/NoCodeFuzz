@@ -338,17 +338,17 @@ static void fuzz_perfFeedback(run_t* run) {
         run->dynfile->distance = distance;
 
         if(!res) {
-            LOG_I("was a change in signature\n");
+            //LOG_I("was a change in signature");
 
             for (int i = 0; i < 20; i++)
             {
-                LOG_I("item %d: %d\n", i, (char) currScSignature[i]);
+                //LOG_I("item %d: %d", i, (char) currScSignature[i]);
             }
             HistogramInsert(run->global->feedback.hwCnts.scSignatureHistogram,currScSignature,1);
         }
         else
         {
-            LOG_I("no change in signature: found %p\n",(void*)run->global->feedback.hwCnts.scSignatureHistogram );
+            //LOG_I("no change in signature: found %p",(void*)run->global->feedback.hwCnts.scSignatureHistogram );
             //TODO: should be in correct places
             free(run->global->feedback.hwCnts.scSignatureHistogram);
             run->global->feedback.hwCnts.scSignatureHistogram = 0;
