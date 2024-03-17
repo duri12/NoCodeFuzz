@@ -20,21 +20,9 @@ void MyFunction(char *password) {
     asm("nop");
     asm("nop");
     asm("nop");
+    asm("nop");
     if (password[6]!='\0')
         return;
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
-    asm("nop");
     asm("nop");
     asm("nop");
     if (password[0] == 'P') {
