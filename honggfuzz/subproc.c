@@ -830,9 +830,9 @@ static bool subproc_runNoFork(run_t *run)
     //create signature for pht
     //uint64_t tmpT[NUM_OF_RUNS] ={0};
     //uint64_t tmpNT[NUM_OF_RUNS] ={0};
-    uint8_t bpResult[20] = {0};
+    uint8_t bpResult[PHT_SAMPLE_SIZE] = {0};
     //LOG_I("%p",&run->scTools.pht->memory);
-    for (int pht_index = 2; pht_index <22; ++pht_index)
+    for (int pht_index = 0; pht_index <PHT_SAMPLE_SIZE; ++pht_index)
     {
 
 
@@ -853,11 +853,11 @@ static bool subproc_runNoFork(run_t *run)
         if(bpRecordTProbe[0][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][pht_index] < PHT_THRESHOLD
         /*&& bpRecordTProbe[2][pht_index] < PHT_THRESHOLD*/ )
         {
-            bpResult[pht_index-2] = 1;
+            bpResult[pht_index] = 1;
 	    }
 	    else
         {
-            bpResult[pht_index-2] = 0;
+            bpResult[pht_index] = 0;
         }
     }
     //TODO: add bpResult to the vector of the run
@@ -873,23 +873,23 @@ static bool subproc_runNoFork(run_t *run)
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT)
     {
         run->hwCnts.cpuInstrCnt = instrCount;
-        uint8_t * signature = malloc(sizeof(uint8_t)*(20));
+        uint8_t * signature = malloc(sizeof(uint8_t)*(PHT_SAMPLE_SIZE));
         //TODO: remember to free this (at the end or after some time)
         //size_t l1iOffset = L1I_SAMPLE_SIZE*sizeof(uint8_t);
         //memcpy(signature, l1iResult, l1iOffset);
-        memcpy(signature, bpResult, 20*sizeof(uint8_t));
+        memcpy(signature, bpResult, PHT_SAMPLE_SIZE*sizeof(uint8_t));
         run->hwCnts.scSignature = signature;
 
 
-        int res = HistogramSearch(run->global->feedback.hwCnts.scSignatureHistogram,signature);
-        if(!res){
-            for (int pht_index = 2; pht_index < 22; ++pht_index)
-            {
-                LOG_I("Entry #%d", pht_index - 2);
-                LOG_I("    [0]: %lu", bpRecordTProbe[0][pht_index]);
-                LOG_I("    [1]: %lu", bpRecordTProbe[1][pht_index]);
-            }
-        }
+        //int res = HistogramSearch(run->global->feedback.hwCnts.scSignatureHistogram,signature);
+        //if(!res){
+        //   for (int pht_index = 2; pht_index < 22; ++pht_index)
+        //    {
+        //        LOG_I("Entry #%d", pht_index - 2);
+        //        LOG_I("    [0]: %lu", bpRecordTProbe[0][pht_index]);
+        //        LOG_I("    [1]: %lu", bpRecordTProbe[1][pht_index]);
+        //    }
+        //}
     }
 
     int64_t diffUSecs = util_timeNowUSecs() - run->timeStartedUSecs;

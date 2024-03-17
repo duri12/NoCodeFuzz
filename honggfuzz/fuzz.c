@@ -54,7 +54,7 @@
 #include "subproc.h"
 #include "side-channels/l1i.h"
 
-#define NUM_OF_ENTRIES 20
+#define NUM_OF_ENTRIES 512
 static time_t termTimeStamp = 0;
 
 bool fuzz_isTerminating(void) {
@@ -340,9 +340,9 @@ static void fuzz_perfFeedback(run_t* run) {
         if(!res) {
             //LOG_I("was a change in signature");
 
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < NUM_OF_ENTRIES; i++)
             {
-                //LOG_I("item %d: %d", i, (char) currScSignature[i]);
+                LOG_I("item %d: %d", i, (char) currScSignature[i]);
             }
             HistogramInsert(run->global->feedback.hwCnts.scSignatureHistogram,currScSignature,1);
         }
