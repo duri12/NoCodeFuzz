@@ -289,16 +289,10 @@ static void fuzz_perfFeedback(run_t* run) {
         run->global->feedback.hwCnts.softCntPc += softNewPC;
         run->global->feedback.hwCnts.softCntEdge += softNewEdge;
         run->global->feedback.hwCnts.softCntCmp += softNewCmp;
-
-        LOG_I("Sz:%zu Tm:%" _HF_NONMON_SEP PRIu64 "us (i/b/h/e/p/c) New:%" PRIu64 "/%" PRIu64
-              "/%" PRIu64 "/%" PRIu64 "/%" PRIu64 "/%" PRIu64 ", Cur:%" PRIu64 "/%" PRIu64
-              "/%" PRIu64 "/%" PRIu64 "/%" PRIu64 "/%" PRIu64,
-            run->dynfile->size, util_timeNowUSecs() - run->timeStartedUSecs,
-            run->hwCnts.cpuInstrCnt, run->hwCnts.cpuBranchCnt, run->hwCnts.newBBCnt, softNewEdge,
-            softNewPC, softNewCmp, run->hwCnts.cpuInstrCnt, run->hwCnts.cpuBranchCnt,
-            run->global->feedback.hwCnts.bbCnt, run->global->feedback.hwCnts.softCntEdge,
-            run->global->feedback.hwCnts.softCntPc, run->global->feedback.hwCnts.softCntCmp);
         LOG_I("the input was %s", run->dynfile->data);
+        LOG_I("Size:%zu Time:%" _HF_NONMON_SEP PRIu64
+            run->dynfile->size, util_timeNowUSecs() - run->timeStartedUSecs,);
+
         if (run->global->io.statsFileName) {
             const time_t curr_sec      = time(NULL);
             const time_t elapsed_sec   = curr_sec - run->global->timing.timeStart;
