@@ -484,6 +484,72 @@ float middle_mean(uint64_t arr[], int n) {
     return (float)middle_sum /elements_num;
 }
 
+void stam_buffer(){
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+}
 
 static bool subproc_runNoFork(run_t *run)
 {
