@@ -9,8 +9,34 @@
 void MyFunction(char *password) __attribute__ ((section(".MyFunction"))); // The section name to use
 __attribute__((optimize("O0")))
 void MyFunction(char *password) {
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
     if (password[6]!='\0')
         return;
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
+    asm("nop");
     if (password[0] == 'P') {
         asm("nop");
         if (password[1] == 'A') {
