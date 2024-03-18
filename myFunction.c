@@ -99,7 +99,6 @@ void MyFunction(char *password) {
                         asm("nop");
                         asm("nop");
                         asm("nop");
-                        asm("nop");
                         if (password[5] == '!') {
                             printf("found the password\n");
                             printf("the input was %s\n", password);
