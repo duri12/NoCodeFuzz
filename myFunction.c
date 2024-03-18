@@ -12,10 +12,6 @@ void MyFunction(char *password) __attribute__ ((section(".MyFunction"))); // The
 __attribute__((optimize("O0")))
 void MyFunction(char *password) {
 
-    asm("nop\n\t"
-        "nop\n\t"
-        "nop\n\t"
-        "nop\n\t":::);
     if (password[0] == 'P') {
         asm("nop":::);
         if (password[1] == 'A') {
