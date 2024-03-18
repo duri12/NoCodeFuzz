@@ -726,7 +726,7 @@ static bool subproc_runNoFork(run_t *run)
         memcpy(signature, bpResult, PHT_SAMPLE_SIZE*sizeof(uint8_t));
         run->hwCnts.scSignature = signature;
 
-
+        /*
         int res = HistogramSearch(run->global->feedback.hwCnts.scSignatureHistogram,signature);
         if(!res){
            for (int pht_index = 0; pht_index < 100; ++pht_index)
@@ -736,6 +736,7 @@ static bool subproc_runNoFork(run_t *run)
                 LOG_I("    [1]: %lu", bpRecordTProbe[1][pht_index]);
             }
         }
+         */
     }
 
     int64_t diffUSecs = util_timeNowUSecs() - run->timeStartedUSecs;
