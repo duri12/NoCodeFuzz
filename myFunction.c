@@ -12,7 +12,7 @@ void MyFunction(char *password) {
 
     //if (password[6]!='\0')
     //    return;
-    asm("nop");
+    //asm("nop");
 
     if (password[0] == 'P') {
         asm("nop");
@@ -71,10 +71,6 @@ void MyFunction(char *password) {
                     asm("nop");
                     asm("nop");
                     if (password[4] == '1') {
-                        asm("nop");
-                        asm("nop");
-                        asm("nop");
-                        asm("nop");
                         asm("nop");
                         asm("nop");
                         asm("nop");
