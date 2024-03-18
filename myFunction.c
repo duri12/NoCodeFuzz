@@ -27,13 +27,73 @@ void MyFunction(char *password) {
 
     if (password[0] == 'P') {
         asm("nop");
+        asm("nop");
+        asm("nop");
+        asm("nop");
+        asm("nop");
+        asm("nop");
+        asm("nop");
+        asm("nop");
+        asm("nop");
+        asm("nop");
+        asm("nop");
+        asm("nop");
+        asm("nop");
         if (password[1] == 'A') {
+            asm("nop");
+            asm("nop");
+            asm("nop");
+            asm("nop");
+            asm("nop");
+            asm("nop");
+            asm("nop");
+            asm("nop");
+            asm("nop");
+            asm("nop");
+            asm("nop");
+            asm("nop");
             asm("nop");
             if (password[2] == 'S') {
                 asm("nop");
+                asm("nop");
+                asm("nop");
+                asm("nop");
+                asm("nop");
+                asm("nop");
+                asm("nop");
+                asm("nop");
+                asm("nop");
+                asm("nop");
+                asm("nop");
+                asm("nop");
+                asm("nop");
                 if (password[3] == 's') {
                     asm("nop");
+                    asm("nop");
+                    asm("nop");
+                    asm("nop");
+                    asm("nop");
+                    asm("nop");
+                    asm("nop");
+                    asm("nop");
+                    asm("nop");
+                    asm("nop");
+                    asm("nop");
+                    asm("nop");
+                    asm("nop");
                     if (password[4] == '1') {
+                        asm("nop");
+                        asm("nop");
+                        asm("nop");
+                        asm("nop");
+                        asm("nop");
+                        asm("nop");
+                        asm("nop");
+                        asm("nop");
+                        asm("nop");
+                        asm("nop");
+                        asm("nop");
+                        asm("nop");
                         asm("nop");
                         if (password[5] == '!') {
                             printf("found the password\n");
