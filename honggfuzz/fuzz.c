@@ -291,7 +291,7 @@ static void fuzz_perfFeedback(run_t* run) {
         run->global->feedback.hwCnts.softCntCmp += softNewCmp;
         LOG_I("the input was %s", run->dynfile->data);
         //LOG_I("Size:%zu Time:%" _HF_NONMON_SEP PRIu64,
-            run->dynfile->size, util_timeNowUSecs() - run->timeStartedUSecs);
+        //    run->dynfile->size, util_timeNowUSecs() - run->timeStartedUSecs);
 
         if (run->global->io.statsFileName) {
             const time_t curr_sec      = time(NULL);
