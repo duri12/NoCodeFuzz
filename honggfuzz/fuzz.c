@@ -290,7 +290,7 @@ static void fuzz_perfFeedback(run_t* run) {
         run->global->feedback.hwCnts.softCntEdge += softNewEdge;
         run->global->feedback.hwCnts.softCntCmp += softNewCmp;
         LOG_I("the input was %s", run->dynfile->data);
-        LOG_I("Size:%zu Time:%" _HF_NONMON_SEP PRIu64,
+        //LOG_I("Size:%zu Time:%" _HF_NONMON_SEP PRIu64,
             run->dynfile->size, util_timeNowUSecs() - run->timeStartedUSecs);
 
         if (run->global->io.statsFileName) {
@@ -336,7 +336,9 @@ static void fuzz_perfFeedback(run_t* run) {
 
             for (int i = 0; i < NUM_OF_ENTRIES; i++)
             {
-                LOG_I("item %d: %d", i, (char) currScSignature[i]);
+                if((char) currScSignature[i] == 1){
+                    LOG_I("item %d: %d", i, (char) currScSignature[i]);
+                }
             }
             HistogramInsert(run->global->feedback.hwCnts.scSignatureHistogram,currScSignature,1);
         }
