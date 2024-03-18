@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdint.h>
 //#include "util.h"
+void CreateSeg();
 void MyFunction(char *password) __attribute__ ((section(".MyFunction"))); // The section name to use
 
 __attribute__((optimize("O0")))
@@ -27,11 +28,17 @@ void MyFunction(char *password) {
                         asm("nop":::);
                         if (password[5] == '!')
                         {
-                            asm("nop":::);
+                            printf("found password");
+                            CreateSeg()
                         }
                     }
                 }
             }
         }
     }
+}
+
+void CreateSeg(){
+    int *ptr =NULL;
+    printf("%d",*ptr);
 }
