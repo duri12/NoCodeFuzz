@@ -83,7 +83,32 @@ void MyFunction(char *password) {
                     asm("nop");
                     if (password[4] == '1') {
                         asm("nop");
+                        asm("nop");
+                        asm("nop");
+                        asm("nop");
+                        asm("nop");
+                        asm("nop");
+                        asm("nop");
+                        asm("nop");
+                        asm("nop");
+                        asm("nop");
+                        asm("nop");
+                        asm("nop");
+                        asm("nop");
                         if (password[5] == '!') {
+                            asm("nop");
+                            asm("nop");
+                            asm("nop");
+                            asm("nop");
+                            asm("nop");
+                            asm("nop");
+                            asm("nop");
+                            asm("nop");
+                            asm("nop");
+                            asm("nop");
+                            asm("nop");
+                            asm("nop");
+                            asm("nop");
                             printf("found the password\n");
                             printf("the input was %s\n", password);
                             //sleep(10);
