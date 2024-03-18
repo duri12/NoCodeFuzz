@@ -60,7 +60,6 @@ void MyFunction(char *password) {
                 asm("nop");
                 asm("nop");
                 asm("nop");
-                asm("nop");
                 if (password[3] == 's') {
                     asm("nop");
                     asm("nop");
