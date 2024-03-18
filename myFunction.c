@@ -74,17 +74,8 @@ void MyFunction(char *password) {
                     asm("nop");
                     asm("nop");
                     asm("nop");
-                    asm("nop");
-                    asm("nop");
-                    asm("nop");
-                    asm("nop");
-                    asm("nop");
+
                     if (password[4] == '1') {
-                        asm("nop");
-                        asm("nop");
-                        asm("nop");
-                        asm("nop");
-                        asm("nop");
                         asm("nop");
                         asm("nop");
                         asm("nop");
