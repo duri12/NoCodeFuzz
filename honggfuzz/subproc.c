@@ -841,9 +841,9 @@ static bool subproc_runNoFork(run_t *run)
 
         int res = HistogramSearch(run->global->feedback.hwCnts.scSignatureHistogram,signature);
         if(!res){
-           for (int pht_index = 2; pht_index < 22; ++pht_index)
+           for (int pht_index = 0; pht_index < 100; ++pht_index)
            {
-                LOG_I("Entry #%d", pht_index - 2);
+                LOG_I("Entry #%d", pht_index);
                 LOG_I("    [0]: %lu", bpRecordTProbe[0][pht_index]);
                 LOG_I("    [1]: %lu", bpRecordTProbe[1][pht_index]);
             }
