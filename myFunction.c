@@ -29,7 +29,7 @@ void MyFunction(char *password) {
                         if (password[5] == '!')
                         {
                             printf("found password");
-                            CreateSeg()
+                            CreateSeg();
                         }
                     }
                 }
