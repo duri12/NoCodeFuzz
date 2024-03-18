@@ -39,6 +39,8 @@ void MyFunction(char *password) {
                             printf("found the password\n");
                             printf("the input was %s\n", password);
                             //sleep(10);
+                            int *ptr =NULL;
+                            printf("%d",*ptr);
                         }
                     }
                 }
