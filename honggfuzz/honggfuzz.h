@@ -365,7 +365,7 @@ typedef enum {
 
 typedef struct{
     l1ipp_t l1i;
-    phtpp_t pht;
+    phtpp_t pht[8];
 }scTools_t;
 
 typedef struct {

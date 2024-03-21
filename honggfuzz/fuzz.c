@@ -334,7 +334,7 @@ static void fuzz_perfFeedback(run_t* run) {
         if(!res) {
             //LOG_I("was a change in signature");
 
-            for (int i = 0; i < NUM_OF_ENTRIES; i++)
+            for (int i = 0; i < NUM_OF_ENTRIES*8; i++)
             {
                 if((char) currScSignature[i] == 1){
                     LOG_I("item %d: %d", i, (char) currScSignature[i]);
@@ -679,7 +679,9 @@ static void* fuzz_threadNew(void* arg) {
      * This is used in the inference stage of the attacker
      */
 
-    run.scTools.pht  = pht_prepare(512);
+    for (int i = 0; i <8; ++i) {
+        run.scTools.pht[i]  = pht_prepare(512,0x3000000+0x1000002*i);
+    }
     //TODO: create a constant for probe size
 
     for (;;) {
@@ -721,7 +723,9 @@ static void* fuzz_threadNew(void* arg) {
     }
 
     l1i_release(run.scTools.l1i);
-    pht_release(run.scTools.pht);
+    for (int i = 0; i < 8; ++i) {
+        pht_release(run.scTools.pht[i]);
+    }
     size_t j = ATOMIC_PRE_INC(run.global->threads.threadsFinished);
     LOG_I("Terminating thread no. #%" PRId32 ", left: %zu", fuzzNo, hfuzz->threads.threadsMax - j);
     return NULL;

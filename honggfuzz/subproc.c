@@ -56,7 +56,7 @@
 #define L1I_THRESHOLD 10
 #define PHT_SAMPLE_SIZE 512
 #define PHT_THRESHOLD 120
-
+#define PHT_ARRAY_SIZE 8
 #define NUM_OF_RUNS 2 //NOTE: just for now
 
 
@@ -840,7 +840,7 @@ static bool subproc_runNoFork(run_t *run)
     //uint64_t l1Cache[NUM_OF_RUNS][L1I_SAMPLE_SIZE]= {0};
     //uint64_t l1CacheBase[NUM_OF_RUNS][L1I_SAMPLE_SIZE]= {0};
 
-    uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE]= {0};
+    uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE][PHT_ARRAY_SIZE]= {0};
     //uint64_t bpRecordNTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE] = {0};
 
     //THINK: do we really need the 10 iterations loop
@@ -873,10 +873,13 @@ static bool subproc_runNoFork(run_t *run)
         */
 
         //the PHT prime+probe
-        randomize_pht();
-        pht_prime(run->scTools.pht);
-        MyFunction(password);
-        pht_probe(run->scTools.pht, bpRecordTProbe[i]);
+        for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
+            randomize_pht();
+            pht_prime(run->scTools.pht[j]);
+            MyFunction(password);
+            pht_probe(run->scTools.pht[j], bpRecordTProbe[i][j]);
+        }
+
         //pht_prime(run->scTools.pht,1);
         //MyFunction(password);
         //pht_probe(run->scTools.pht,0,bpRecordNTProbe[i]);
@@ -901,9 +904,9 @@ static bool subproc_runNoFork(run_t *run)
     //create signature for pht
     //uint64_t tmpT[NUM_OF_RUNS] ={0};
     //uint64_t tmpNT[NUM_OF_RUNS] ={0};
-    uint8_t bpResult[PHT_SAMPLE_SIZE] = {0};
+    uint8_t bpResult[PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE] = {0};
     //LOG_I("%p",&run->scTools.pht->memory);
-    for (int pht_index = 0; pht_index <PHT_SAMPLE_SIZE; ++pht_index)
+    for (int pht_index = 0; pht_index <PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE; pht_index+=PHT_ARRAY_SIZE)
     {
 
 
@@ -920,16 +923,18 @@ static bool subproc_runNoFork(run_t *run)
         //LOG_I("%lu",bpRecordTProbe[2][pht_index]);
         //LOG_I("--------------------------------");
 
-
-        if(bpRecordTProbe[0][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][pht_index] < PHT_THRESHOLD
-        /*&& bpRecordTProbe[2][pht_index] < PHT_THRESHOLD*/ )
-        {
-            bpResult[pht_index] = 1;
-	    }
-	    else
-        {
-            bpResult[pht_index] = 0;
+        for (int i = 0; i <PHT_ARRAY_SIZE; ++i) {
+            if(bpRecordTProbe[0][pht_index][i] < PHT_THRESHOLD && bpRecordTProbe[1][pht_index][i] < PHT_THRESHOLD
+                /*&& bpRecordTProbe[2][pht_index] < PHT_THRESHOLD*/ )
+            {
+                bpResult[pht_index+i] = 1;
+            }
+            else
+            {
+                bpResult[pht_index+i] = 0;
+            }
         }
+
     }
     //TODO: add bpResult to the vector of the run
 
@@ -944,11 +949,11 @@ static bool subproc_runNoFork(run_t *run)
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT)
     {
         run->hwCnts.cpuInstrCnt = instrCount;
-        uint8_t * signature = malloc(sizeof(uint8_t)*(PHT_SAMPLE_SIZE));
+        uint8_t * signature = malloc(sizeof(uint8_t)*(PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE));
         //TODO: remember to free this (at the end or after some time)
         //size_t l1iOffset = L1I_SAMPLE_SIZE*sizeof(uint8_t);
         //memcpy(signature, l1iResult, l1iOffset);
-        memcpy(signature, bpResult, PHT_SAMPLE_SIZE*sizeof(uint8_t));
+        memcpy(signature, bpResult, PHT_ARRAY_SIZE*PHT_SAMPLE_SIZE*sizeof(uint8_t));
         run->hwCnts.scSignature = signature;
 
         /*
