@@ -29,7 +29,7 @@ LD = $(CC)
 BIN := honggfuzz
 HFUZZ_CC_BIN := hfuzz_cc/hfuzz-cc
 HFUZZ_CC_SRCS := hfuzz_cc/hfuzz-cc.c
-COMMON_CFLAGS := -std=c11 -I/usr/local/include -D_GNU_SOURCE -Wall -Wextra -Werror -Wno-format-truncation -Wno-override-init -I.
+COMMON_CFLAGS := -std=c11 -I/usr/local/include -D_GNU_SOURCE -Wall -Wextra  -Wno-format-truncation -Wno-override-init -I.
 COMMON_LDFLAGS := -pthread -L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib -lm
 COMMON_SRCS := $(sort $(wildcard *.c))
 SCTOOLS_SRCS := $(sort $(wildcard side-channels/*.c))
