@@ -33,7 +33,7 @@ void pht_release(phtpp_t pht){
     free(pht);
 }
 
-phtpp_t pht_prepare(int probe_size,void* where){ //0x3000000
+phtpp_t pht_prepare(int probe_size,void where){ //0x3000000
     phtpp_t pht = (phtpp_t)malloc(sizeof(struct phtpp));
     pht->memory = mmap(where, FUNC_SIZE*probe_size, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
     pht->size = probe_size;
