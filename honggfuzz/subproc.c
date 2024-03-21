@@ -840,11 +840,11 @@ static bool subproc_runNoFork(run_t *run)
     //uint64_t l1Cache[NUM_OF_RUNS][L1I_SAMPLE_SIZE]= {0};
     //uint64_t l1CacheBase[NUM_OF_RUNS][L1I_SAMPLE_SIZE]= {0};
 
-    uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE]= {0};
+    uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_ARRAY_SIZE][PHT_SAMPLE_SIZE]= {0};
     //uint64_t bpRecordNTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE] = {0};
 
     //THINK: do we really need the 10 iterations loop
-    for (int i = 0; i < NUM_OF_RUNS; i+=PHT_ARRAY_SIZE)
+    for (int i = 0; i < NUM_OF_RUNS; i++)
     {
         /*TODO: prepare all need - pht //done
          *
@@ -877,7 +877,7 @@ static bool subproc_runNoFork(run_t *run)
             randomize_pht();
             pht_prime(run->scTools.pht[j]);
             MyFunction(password);
-            pht_probe(run->scTools.pht[j], bpRecordTProbe[i+j]);
+            pht_probe(run->scTools.pht[j], bpRecordTProbe[i][j]);
         }
 
         //pht_prime(run->scTools.pht,1);
@@ -924,7 +924,7 @@ static bool subproc_runNoFork(run_t *run)
         //LOG_I("--------------------------------");
 
         for (int i = 0; i <PHT_ARRAY_SIZE; ++i) {
-            if(bpRecordTProbe[0][pht_index+i] < PHT_THRESHOLD && bpRecordTProbe[1][pht_index+i] < PHT_THRESHOLD
+            if(bpRecordTProbe[0][i][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][i][pht_index] < PHT_THRESHOLD
                 /*&& bpRecordTProbe[2][pht_index] < PHT_THRESHOLD*/ )
             {
                 bpResult[pht_index+i] = 1;
