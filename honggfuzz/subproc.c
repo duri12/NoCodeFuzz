@@ -929,7 +929,6 @@ static bool subproc_runNoFork(run_t *run)
                 /*&& bpRecordTProbe[2][pht_index] < PHT_THRESHOLD*/ )
             {
                 bpResult[pht_index+i] = 1;
-                printf("%s\n",password);
             }
             else
             {
