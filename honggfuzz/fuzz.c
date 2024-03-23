@@ -680,7 +680,6 @@ static void* fuzz_threadNew(void* arg) {
      */
 
     for (int i = 0; i <8; ++i) {
-        printf("place [%d] is at :%lu\n",i,(int64_t)(0x3000000+0x1000002*i));
         run.scTools.pht[i]  = pht_prepare(512,(void*)(int64_t)(0x3000000+0x1000002*i));
     }
     //TODO: create a constant for probe size
