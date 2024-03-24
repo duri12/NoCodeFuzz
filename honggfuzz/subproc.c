@@ -836,7 +836,6 @@ static bool subproc_runNoFork(run_t *run)
 
     for (int i = 0; i < NUM_OF_RUNS; i++)
     {
-        randomize_pht();
         for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
             randomize_pht();
             pht_prime(run->scTools.pht[j]);

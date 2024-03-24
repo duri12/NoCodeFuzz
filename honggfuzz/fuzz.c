@@ -222,55 +222,7 @@ static void fuzz_perfFeedback(run_t* run) {
     rmb();
     int distance = -1;
 
-    /*
-     * NOTE: no need anymore
-    //TODO: get all data together
-    int representation = run->hwCnts.cpuInstrCnt;
-    //filled all data
-    int distance = -1;
-    //TODO: calc distance better
-    if(run->global->feedback.hwCnts.historyCurrSize == run->global->feedback.hwCnts.historyMaxSize)
-    {
-        int distancesSum=0;
-        int historyMaxSize = run->global->feedback.hwCnts.historyMaxSize;
-        int* arr = run->global->feedback.hwCnts.historyWindow;
 
-        //calc distance
-        for(int i =0; i<run->global->feedback.hwCnts.historyMaxSize; i++)
-        {
-            distancesSum += arr[i] - representation;
-        }
-        distance = distancesSum/historyMaxSize;
-
-        //shift by one:
-        for(int i =0; i<historyMaxSize-1; i++)
-        {
-            arr[i] = arr[i+1];
-        }
-        arr[historyMaxSize-1] = representation;
-    }
-    //NOTE: now needed to just shift history by 1
-    //THINK: how to handle sequential inputs (one after another) cases
-    //THINK: how do we want to start the running - with original version (of maximizing)
-    else
-    {
-        int* arr = run->global->feedback.hwCnts.historyWindow;
-        arr[run->global->feedback.hwCnts.historyCurrSize++] = representation;
-    }
-
-
-    int threshold = 60;
-    if(distance > threshold)
-    {
-        int size = run->global->feedback.hwCnts.historyMaxSize;
-        int offset = size /10;
-        int* arr = run->global->feedback.hwCnts.historyWindow;
-
-        for(int i =0; i<size -offset; i++) {
-            arr[i] = arr[i + offset];
-        }
-        run->global->feedback.hwCnts.historyCurrSize = size-offset;
-    }*/
     int64_t diff_instrCnt = (int64_t)run->global->feedback.hwCnts.cpuInstrCnt - run->hwCnts.cpuInstrCnt;
     int64_t diff_cpuBranchCnt = (int64_t)run->global->feedback.hwCnts.cpuBranchCnt - run->hwCnts.cpuBranchCnt;
 
