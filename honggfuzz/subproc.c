@@ -874,7 +874,8 @@ static bool subproc_runNoFork(run_t *run)
             if(bpRecordTProbe[0][i][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][i][pht_index] < PHT_THRESHOLD &&
                     bpRecordTProbe[0][i][pht_index] > 0 && bpRecordTProbe[1][i][pht_index]> 0)
             {
-                LOG_I("ack");
+                if(password[0]=='P')
+                    LOG_I("ack");
                 bpResult[pht_index+i] = 1;
 
             }
