@@ -633,7 +633,7 @@ static void* fuzz_threadNew(void* arg) {
      */
 
     for (int i = 0; i <NUM_OF_PHT; ++i) {
-        run.scTools.pht[i]  = pht_prepare(512,(void*)(int64_t)(0x3000000+0x2000004*i));
+        run.scTools.pht[i]  = pht_prepare(512,(void*)(int64_t)(0x3000000+0x2000003*i));
     }
     //TODO: create a constant for probe size
 
