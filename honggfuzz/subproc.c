@@ -870,6 +870,10 @@ static bool subproc_runNoFork(run_t *run)
             if(bpRecordTProbe[0][i][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][i][pht_index] < PHT_THRESHOLD)
             {
                 bpResult[pht_index+i] = 1;
+                LOG_I("--------------------------------%d",pht_index+i);
+                LOG_I("%lu",bpRecordTProbe[0][pht_index]);
+                LOG_I("%lu",bpRecordTProbe[1][pht_index]);
+                LOG_I("--------------------------------");
             }
             else
             {
