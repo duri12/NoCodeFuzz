@@ -872,8 +872,8 @@ static bool subproc_runNoFork(run_t *run)
                 bpResult[pht_index+i] = 1;
                 if (password[0] =='P'){
                     LOG_I("--------------------------------%d",pht_index+i);
-                    LOG_I("%lu",bpRecordTProbe[0][pht_index]);
-                    LOG_I("%lu",bpRecordTProbe[1][pht_index]);
+                    LOG_I("%lu",bpRecordTProbe[0][i][pht_index]);
+                    LOG_I("%lu",bpRecordTProbe[1][i][pht_index]);
                     LOG_I("--------------------------------");
                 }
             }
