@@ -867,15 +867,11 @@ static bool subproc_runNoFork(run_t *run)
         //LOG_I("--------------------------------");
 
         for (int i = 0; i <PHT_ARRAY_SIZE; ++i) {
-            if(bpRecordTProbe[0][i][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][i][pht_index] < PHT_THRESHOLD)
+            if(bpRecordTProbe[0][i][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][i][pht_index] < PHT_THRESHOLD &&
+                    bpRecordTProbe[0][i][pht_index] > 0 && bpRecordTProbe[1][i][pht_index]> 0)
             {
                 bpResult[pht_index+i] = 1;
-                if (password[0] =='P'){
-                    LOG_I("--------------------------------%d",pht_index+i);
-                    LOG_I("%lu",bpRecordTProbe[0][i][pht_index]);
-                    LOG_I("%lu",bpRecordTProbe[1][i][pht_index]);
-                    LOG_I("--------------------------------");
-                }
+
             }
             else
             {
