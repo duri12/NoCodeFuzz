@@ -848,7 +848,8 @@ static bool subproc_runNoFork(run_t *run)
 
 
     if(password[0] == 'P'){
-        LOG_I("AAAAAA");
+        LOG_I("%lu",bpRecordTProbe[0][20]);
+        LOG_I("%lu",bpRecordTProbe[1][20]);
     }
 
     uint8_t bpResult[PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE] = {0};
