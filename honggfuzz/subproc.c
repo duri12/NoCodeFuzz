@@ -847,11 +847,6 @@ static bool subproc_runNoFork(run_t *run)
 
 
 
-    if(password[0] == 'P'){
-        LOG_I("%lu",bpRecordTProbe[0][0][27]);
-        LOG_I("%lu",bpRecordTProbe[1][1][27]);
-    }
-
     uint8_t bpResult[PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE] = {0};
     for (int pht_index = 0; pht_index <PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE; pht_index+=PHT_ARRAY_SIZE)
     {
@@ -874,8 +869,6 @@ static bool subproc_runNoFork(run_t *run)
             if(bpRecordTProbe[0][i][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][i][pht_index] < PHT_THRESHOLD &&
                     bpRecordTProbe[0][i][pht_index] > 0 && bpRecordTProbe[1][i][pht_index]> 0)
             {
-                if(password[0]=='P')
-                    LOG_I("ack");
                 bpResult[pht_index+i] = 1;
 
             }
