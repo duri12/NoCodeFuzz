@@ -804,8 +804,7 @@ void stam_buffer(){
 static bool subproc_runNoFork(run_t *run)
 {
     if (run->global->exe.persistent)
-        subproc_New(run); /*should not run . here to skip unused error*/
-    /*set up the environment*/
+        subproc_New(run);
     if (run->global->exe.clearEnv) {
         environ = NULL;
     }
@@ -817,12 +816,6 @@ static bool subproc_runNoFork(run_t *run)
 
     subproc_prepareExecvArgs(run);/* put the args in run->args*/
 
-    /*
-    * NOTE: not relevant here for my opinion
-    * Disable ASLR:
-    * This might fail in Docker, as Docker blocks __NR_personality. Consequently
-    * it's just a debug warning
-    */
 
     arch_prepare(run);
 
@@ -836,43 +829,13 @@ static bool subproc_runNoFork(run_t *run)
 
     strncpy(password, (char *) run->dynfile->data, 8);
     password[6] = '\0';
-    //uint64_t instrCountArr[NUM_OF_RUNS] = {0};
-    //uint64_t l1Cache[NUM_OF_RUNS][L1I_SAMPLE_SIZE]= {0};
-    //uint64_t l1CacheBase[NUM_OF_RUNS][L1I_SAMPLE_SIZE]= {0};
+
 
     uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_ARRAY_SIZE][PHT_SAMPLE_SIZE]= {0};
     //uint64_t bpRecordNTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE] = {0};
 
-    //THINK: do we really need the 10 iterations loop
     for (int i = 0; i < NUM_OF_RUNS; i++)
     {
-        /*TODO: prepare all need - pht //done
-         *
-         *
-         * 1. get option for creating branch at wanted location
-         * 2. call randomize_pht
-         * 3. train bp for wanted state
-         * 4. run code twice
-         * 5. probe for getting results
-         */
-        /*TODO: check l1 instruction cache
-         * 1. get option for accessing wanted set entries (like we did using mmap)
-         * 2. prime wanted adress and
-         * 3. probe wanted address
-        */
-        //NOTE: prime also can save results timing before victim access
-        /*
-        l1i_probeall(run->scTools.l1i, NULL);//prime
-        l1i_probeall(run->scTools.l1i, NULL);//prime
-        l1i_probeall(run->scTools.l1i, l1CacheBase[i]);//base
-        l1i_probeall(run->scTools.l1i, NULL);//prime
-        l1i_probeall(run->scTools.l1i, NULL);//prime
-
-        MyFunction(password);
-        l1i_probeall(run->scTools.l1i, l1Cache[i]); //probe
-        */
-
-        //the PHT prime+probe
         randomize_pht();
         for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
             randomize_pht();
@@ -881,32 +844,12 @@ static bool subproc_runNoFork(run_t *run)
             pht_probe(run->scTools.pht[j], bpRecordTProbe[i][j]);
         }
 
-        //pht_prime(run->scTools.pht,1);
-        //MyFunction(password);
-        //pht_probe(run->scTools.pht,0,bpRecordNTProbe[i]);
-
     }
 
 
-    //create signature for l1i
-    //uint64_t tmp[NUM_OF_RUNS] ={0};
-    //uint8_t l1iResult[L1I_SAMPLE_SIZE] = {0};
-    /*
-    for (int set = 0; set <L1I_SAMPLE_SIZE; ++set)
-    {
-        for(size_t i=0;i< NUM_OF_RUNS; i++)
-        {
-            tmp[i] = l1CacheBase[i][set]>  l1Cache[i][set] ? 0 : l1Cache[i][set] - l1CacheBase[i][set];
-        }
-        float res = middle_mean(tmp,NUM_OF_RUNS);
-        l1iResult[set] = res >L1I_THRESHOLD ? ACCESSED : NOT_ACCESSED;
-    }
-    */
-    //create signature for pht
-    //uint64_t tmpT[NUM_OF_RUNS] ={0};
-    //uint64_t tmpNT[NUM_OF_RUNS] ={0};
+
+
     uint8_t bpResult[PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE] = {0};
-    //LOG_I("%p",&run->scTools.pht->memory);
     for (int pht_index = 0; pht_index <PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE; pht_index+=PHT_ARRAY_SIZE)
     {
 
@@ -925,8 +868,7 @@ static bool subproc_runNoFork(run_t *run)
         //LOG_I("--------------------------------");
 
         for (int i = 0; i <PHT_ARRAY_SIZE; ++i) {
-            if(bpRecordTProbe[0][i][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][i][pht_index] < PHT_THRESHOLD
-                /*&& bpRecordTProbe[2][pht_index] < PHT_THRESHOLD*/ )
+            if(bpRecordTProbe[0][i][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][i][pht_index] < PHT_THRESHOLD)
             {
                 bpResult[pht_index+i] = 1;
             }
@@ -939,35 +881,15 @@ static bool subproc_runNoFork(run_t *run)
     }
     //TODO: add bpResult to the vector of the run
 
-    //LOG_I("--------------------------------");
-
-    //int n = sizeof(instrCountArr) / sizeof(instrCountArr[0]);
-    //float mean = middle_mean(instrCountArr, n);
-    int64_t instrCount = 0;//floor(mean)/10;
 
 
     //TODO: create vector signature
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT)
     {
-        run->hwCnts.cpuInstrCnt = instrCount;
+        run->hwCnts.cpuInstrCnt = 0;
         uint8_t * signature = malloc(sizeof(uint8_t)*(PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE));
-        //TODO: remember to free this (at the end or after some time)
-        //size_t l1iOffset = L1I_SAMPLE_SIZE*sizeof(uint8_t);
-        //memcpy(signature, l1iResult, l1iOffset);
         memcpy(signature, bpResult, PHT_ARRAY_SIZE*PHT_SAMPLE_SIZE*sizeof(uint8_t));
         run->hwCnts.scSignature = signature;
-
-        /*
-        int res = HistogramSearch(run->global->feedback.hwCnts.scSignatureHistogram,signature);
-        if(!res){
-           for (int pht_index = 0; pht_index < 100; ++pht_index)
-           {
-                LOG_I("Entry #%d", pht_index);
-                LOG_I("    [0]: %lu", bpRecordTProbe[0][pht_index]);
-                LOG_I("    [1]: %lu", bpRecordTProbe[1][pht_index]);
-            }
-        }
-         */
     }
 
     int64_t diffUSecs = util_timeNowUSecs() - run->timeStartedUSecs;
