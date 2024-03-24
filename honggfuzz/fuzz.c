@@ -55,6 +55,7 @@
 #include "side-channels/l1i.h"
 
 #define NUM_OF_ENTRIES 512
+#define NUM_OF_PHT 1
 static time_t termTimeStamp = 0;
 
 bool fuzz_isTerminating(void) {
@@ -334,7 +335,7 @@ static void fuzz_perfFeedback(run_t* run) {
         if(!res) {
             //LOG_I("was a change in signature");
 
-            for (int i = 0; i < NUM_OF_ENTRIES*8; i++)
+            for (int i = 0; i < NUM_OF_ENTRIES*NUM_OF_PHT; i++)
             {
                 if((char) currScSignature[i] == 1){
                     LOG_I("item %d: %d", i, (char) currScSignature[i]);
@@ -679,7 +680,7 @@ static void* fuzz_threadNew(void* arg) {
      * This is used in the inference stage of the attacker
      */
 
-    for (int i = 0; i <8; ++i) {
+    for (int i = 0; i <NUM_OF_PHT; ++i) {
         run.scTools.pht[i]  = pht_prepare(512,(void*)(int64_t)(0x3000000+0x1000002*i));
     }
     //TODO: create a constant for probe size
@@ -723,7 +724,7 @@ static void* fuzz_threadNew(void* arg) {
     }
 
     l1i_release(run.scTools.l1i);
-    for (int i = 0; i < 8; ++i) {
+    for (int i = 0; i < NUM_OF_PHT; ++i) {
         pht_release(run.scTools.pht[i]);
     }
     size_t j = ATOMIC_PRE_INC(run.global->threads.threadsFinished);
