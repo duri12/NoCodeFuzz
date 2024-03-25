@@ -840,7 +840,7 @@ static bool subproc_runNoFork(run_t *run)
             pht_prime(run->scTools.pht[j]);
             MyFunction(password);
             //ioctl(f,0,password);
-            pht_probe(run->scTools.pht[j], bpRecordTProbe[i]+j*sizeof(uint64_t)*PHT_SAMPLE_SIZE);
+            pht_probe(run->scTools.pht[j], &bpRecordTProbe[i][j*PHT_SAMPLE_SIZE]);
         }
 
     }
