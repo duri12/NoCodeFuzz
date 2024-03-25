@@ -838,8 +838,8 @@ static bool subproc_runNoFork(run_t *run)
         for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
             randomize_pht();
             pht_prime(run->scTools.pht[j]);
-            //MyFunction(password);
-            ioctl(f,0,password);
+            MyFunction(password);
+            //ioctl(f,0,password);
             pht_probe(run->scTools.pht[j], &bpRecordTProbe[i][j*PHT_SAMPLE_SIZE]);
         }
 
