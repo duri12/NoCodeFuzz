@@ -54,7 +54,6 @@
 //TODO: should not be here - need to be decided at different place (and also be dynamic)
 #define L1I_SAMPLE_SIZE 64
 #define L1I_THRESHOLD 10
-#define PHT_THRESHOLD 120
 #define NUM_OF_RUNS 2 //NOTE: just for now
 
 
@@ -821,7 +820,6 @@ static bool subproc_runNoFork(run_t *run)
         return false;
     }
 
-    //uint64_t start, end;
 
     char password[1024];
 
@@ -829,7 +827,6 @@ static bool subproc_runNoFork(run_t *run)
     password[6] = '\0';
     int f = open("/dev/check_mod2",0);
     uint64_t bpRecordTProbe[NUM_OF_RUNS][run.scTools.phtNumOfSets*run.scTools.phtProbeSize]= {0};
-    //uint64_t bpRecordNTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE] = {0};
 
     for (int i = 0; i < NUM_OF_RUNS; i++)
     {
@@ -849,20 +846,6 @@ static bool subproc_runNoFork(run_t *run)
     uint8_t bpResult[run.scTools.phtProbeSize*run.scTools.phtNumOfSets] = {0};
     for (int pht_index = 0; pht_index <run.scTools.phtProbeSize*run.scTools.phtNumOfSets; ++pht_index)
     {
-        /*
-         * We are checking twice for handling cases of branch not exist and also to force consistency
-         * If branch is taken -> we want hit in taken probe & miss in notTaken Probe
-         * If branch is not taken -> we want miss in taken and hit in notTaken
-         * otherwise - no branch was jumped or pure logic :(.
-         */
-        // hit & miss
-        //LOG_I("--------------------------------%d",pht_index);
-        //LOG_I("%lu",bpRecordTProbe[0][pht_index]);
-        //LOG_I("%lu",bpRecordTProbe[1][pht_index]);
-        //LOG_I("%lu",bpRecordTProbe[2][pht_index]);
-        //LOG_I("--------------------------------");
-
-
         if(bpRecordTProbe[0][pht_index] < run.scTools.phtThreshold && bpRecordTProbe[1][pht_index] < run.scTools.phtThreshold &&
            bpRecordTProbe[0][pht_index] > 0 && bpRecordTProbe[1][pht_index]> 0)
         {
@@ -876,11 +859,8 @@ static bool subproc_runNoFork(run_t *run)
 
 
     }
-    //TODO: add bpResult to the vector of the run
 
 
-
-    //TODO: create vector signature
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT)
     {
         run->hwCnts.cpuInstrCnt = 0;
