@@ -67,7 +67,8 @@ start_label:
     (*((fptr1)p))(0);
     
     p += FUNC_SIZE;
-    
+
+    printf("getting here");
     CONDITIONAL_JUMP_TO_LABEL(i, start_label);
     CONDITIONAL_JUMP_TO_LABEL(j,loop_2);
 
