@@ -93,7 +93,7 @@ void pht_probe(phtpp_t pht, uint64_t **results){
     register uint64_t *p_result = results[j-1];
     register uint64_t start, end;
     uint32_t ecx;
-
+    printf("aaaaaa");
 start_label:
     (*((fptr1)p))(1);
     start = _rdtscp(&ecx);
