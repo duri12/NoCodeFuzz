@@ -634,7 +634,7 @@ static void* fuzz_threadNew(void* arg) {
 
     run.scTools.pht = pht_prepare(NUM_OF_ENTRIES,(void*)(int64_t)(/*0x30037E0*/0x3000000),NUM_OF_PHT);
     //TODO: create a constant for probe size
-
+    printf("allocating");
     for (;;) {
         /* Check if dry run mode with verifier enabled */
         if (run.global->mutate.mutationsPerRun == 0U && run.global->cfg.useVerifier &&

@@ -56,7 +56,7 @@ typedef void (*fptr1)(int);
 
 void pht_prime(phtpp_t pht){
     int j = pht->times;
-
+    printf("prime\n");
 loop_2:
     void *p = pht->memory[j];
     int i = pht->size;
