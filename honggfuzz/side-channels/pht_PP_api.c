@@ -56,9 +56,9 @@ typedef void (*fptr1)(int);
 
 void pht_prime(phtpp_t pht){
     int j = pht->times;
-    printf("prime\n");
-loop_2:
-    void *p = pht->memory[j];
+
+    loop_2:
+    void *p = &pht->memory[j];
     int i = pht->size;
 
 start_label:
@@ -91,7 +91,7 @@ __attribute__((optimize("O0")))
 void pht_probe(phtpp_t pht, uint64_t **results){
     register int j = pht->times;
     loop_3:
-    register void *p = pht->memory[j];
+    register void *p = &pht->memory[j];
     register int i = pht->size;
     register uint64_t *p_result = results[j];
     register uint64_t start, end;
