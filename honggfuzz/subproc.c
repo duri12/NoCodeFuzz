@@ -835,11 +835,14 @@ static bool subproc_runNoFork(run_t *run)
 
     for (int i = 0; i < NUM_OF_RUNS; i++)
     {
+        printf("starting");
         randomize_pht();
         pht_prime(run->scTools.pht);
+        printf("prime");
         MyFunction(password);
         //ioctl(f,0,password);
         pht_probe(run->scTools.pht, &bpRecordTProbe[i]);
+        printf("probe");
 
     }
     close(f);
