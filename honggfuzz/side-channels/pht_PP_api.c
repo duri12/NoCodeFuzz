@@ -58,7 +58,6 @@ void pht_prime(phtpp_t pht){
     loop_2:
     void *p = pht->memory[j-1];
     int i = pht->size;
-    printf("%p\n", p);
 
 start_label:
     (*((fptr1)p))(0);
@@ -68,11 +67,9 @@ start_label:
     
     p += FUNC_SIZE;
 
-    printf("getting here");
     CONDITIONAL_JUMP_TO_LABEL(i, start_label);
     CONDITIONAL_JUMP_TO_LABEL(j,loop_2);
 
-    printf("finished prime\n");
     __asm__ volatile(".global pht_prepare_end\n\t"
                     "pht_prepare_end:");
 }
@@ -89,9 +86,9 @@ void* ignore_me;
 // Disable optimizations
 __attribute__((optimize("O0")))
 void pht_probe(phtpp_t pht, uint64_t **results){
-    register int j = pht->times-1;
+    register int j = pht->times;
     loop_3:
-    register void *p = &pht->memory[j];
+    register void *p = pht->memory[j-1];
     register int i = pht->size;
     register uint64_t *p_result = results[j];
     register uint64_t start, end;
