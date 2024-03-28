@@ -841,10 +841,12 @@ static bool subproc_runNoFork(run_t *run)
         uint64_t * p3 =&bpRecordTProbe[i][1*PHT_SAMPLE_SIZE];
         randomize_pht();
         pht_prime(p1);
+        MyFunction(password);
+        pht_probe(p1,p4);
+
         pht_prime(p2);
         MyFunction(password);
         //ioctl(f,0,password);
-        pht_probe(p1,p4);
         pht_probe(p2,p3);
     }
     close(f);
