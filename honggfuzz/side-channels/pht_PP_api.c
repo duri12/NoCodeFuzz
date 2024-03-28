@@ -10,12 +10,18 @@
 #include "util.h"
 
 #define PAGE_SIZE 4096
-#define FUNC_SIZE 16
+#define FUNC_SIZE 8
 
-const uint8_t jumpArray[FUNC_SIZE] = {0x55,0x48,0x89,0xe5,0x89,
-                                       0x7d,0xfc,0x83,0x7d,0xfc,
-                                       0x00,0x74,0x01,0x90,0x5d,
-                                       0xc3};
+const uint8_t jumpArray[FUNC_SIZE] = {0x83, 0xff, 0x00, 0x90,
+                                      0x74,  0x01, 0x90, 0xc3};
+/*
+ 0:  83 ff 00                cmp    edi,0x0
+ 3:  90                      nop
+ 4:  75 01                   jne    0x7
+ 6:  90                      nop
+ 7:  c3                      ret
+*/
+
 /*
 0:  55                      push   ebp
 1:  48                      dec    eax
