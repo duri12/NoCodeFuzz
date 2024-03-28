@@ -71,7 +71,7 @@ start_label:
     CONDITIONAL_JUMP_TO_LABEL(i, start_label);
     CONDITIONAL_JUMP_TO_LABEL(j,loop_2);
 
-
+    printf("finished prime\n");
     __asm__ volatile(".global pht_prepare_end\n\t"
                     "pht_prepare_end:");
 }
