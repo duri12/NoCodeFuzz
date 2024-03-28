@@ -826,16 +826,16 @@ static bool subproc_runNoFork(run_t *run)
     strncpy(password, (char *) run->dynfile->data, 8);
     password[6] = '\0';
     int f = open("/dev/check_mod2",0);
-    uint64_t bpRecordTProbe[NUM_OF_RUNS][run.scTools.phtNumOfSets*run.scTools.phtProbeSize]= {0};
+    uint64_t bpRecordTProbe[NUM_OF_RUNS][run->scTools.phtNumOfSets*run->scTools.phtProbeSize]= {0};
 
     for (int i = 0; i < NUM_OF_RUNS; i++)
     {
-        for (int j = 0; j <run.scTools.phtNumOfSets; ++j) {
+        for (int j = 0; j <run->scTools.phtNumOfSets; ++j) {
             randomize_pht();
             pht_prime(run->scTools.pht[j]);
             //MyFunction(password);
             ioctl(f,0,password);
-            pht_probe(run->scTools.pht[j], &bpRecordTProbe[i][j*run.scTools.phtProbeSize]);
+            pht_probe(run->scTools.pht[j], &bpRecordTProbe[i][j*run->scTools.phtProbeSize]);
         }
 
     }
@@ -843,10 +843,10 @@ static bool subproc_runNoFork(run_t *run)
 
 
 
-    uint8_t bpResult[run.scTools.phtProbeSize*run.scTools.phtNumOfSets] = {0};
-    for (int pht_index = 0; pht_index <run.scTools.phtProbeSize*run.scTools.phtNumOfSets; ++pht_index)
+    uint8_t bpResult[run->scTools.phtProbeSize*run->scTools.phtNumOfSets] = {0};
+    for (int pht_index = 0; pht_index <run->scTools.phtProbeSize*run->scTools.phtNumOfSets; ++pht_index)
     {
-        if(bpRecordTProbe[0][pht_index] < run.scTools.phtThreshold && bpRecordTProbe[1][pht_index] < run.scTools.phtThreshold &&
+        if(bpRecordTProbe[0][pht_index] < run->scTools.phtThreshold && bpRecordTProbe[1][pht_index] < run->scTools.phtThreshold &&
            bpRecordTProbe[0][pht_index] > 0 && bpRecordTProbe[1][pht_index]> 0)
         {
             bpResult[pht_index] = 1;
@@ -864,8 +864,8 @@ static bool subproc_runNoFork(run_t *run)
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT)
     {
         run->hwCnts.cpuInstrCnt = 0;
-        uint8_t * signature = malloc(sizeof(uint8_t)*(run.scTools.phtProbeSize*run.scTools.phtNumOfSets));
-        memcpy(signature, bpResult, run.scTools.phtNumOfSets*run.scTools.phtProbeSize*sizeof(uint8_t));
+        uint8_t * signature = malloc(sizeof(uint8_t)*(run->scTools.phtProbeSize*run->scTools.phtNumOfSets));
+        memcpy(signature, bpResult, run->scTools.phtNumOfSets*run->scTools.phtProbeSize*sizeof(uint8_t));
         run->hwCnts.scSignature = signature;
     }
 
