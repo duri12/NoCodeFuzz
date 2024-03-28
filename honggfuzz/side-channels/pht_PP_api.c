@@ -90,7 +90,7 @@ void pht_probe(phtpp_t pht, uint64_t **results){
     loop_3:
     register void *p = pht->memory[j-1];
     register int i = pht->size;
-    register uint64_t *p_result = results[j];
+    register uint64_t *p_result = results[j-1];
     register uint64_t start, end;
     uint32_t ecx;
 
