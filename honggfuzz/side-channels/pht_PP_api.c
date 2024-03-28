@@ -55,12 +55,12 @@ phtpp_t pht_prepare(int probe_size,void* start,int times){ //0x3000000
 typedef void (*fptr1)(int);
 
 void pht_prime(phtpp_t pht){
-    int j = pht->times;
+    int j = pht->times-1;
 
     loop_2:
     void *p = &pht->memory[j];
     int i = pht->size;
-
+    printf("%d\n", i);
 start_label:
     (*((fptr1)p))(0);
     (*((fptr1)p))(0);
@@ -89,7 +89,7 @@ void* ignore_me;
 // Disable optimizations
 __attribute__((optimize("O0")))
 void pht_probe(phtpp_t pht, uint64_t **results){
-    register int j = pht->times;
+    register int j = pht->times-1;
     loop_3:
     register void *p = &pht->memory[j];
     register int i = pht->size;
