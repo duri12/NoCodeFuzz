@@ -60,6 +60,7 @@ void pht_prime(phtpp_t pht){
     int i = pht->size;
     printf("%p\n",p);
 start_label:
+    printf("aaaaaa");
     (*((fptr1)p))(0);
     (*((fptr1)p))(0);
     (*((fptr1)p))(0);
