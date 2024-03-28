@@ -53,12 +53,13 @@ phtpp_t pht_prepare(int probe_size,void* start,int times){ //0x3000000
 typedef void (*fptr1)(int);
 
 void pht_prime(phtpp_t pht){
-    int j = pht->times-1;
+    int j = pht->times;
 
     loop_2:
-    void *p = &pht->memory[j];
+    void *p = &pht->memory[j-1];
     int i = pht->size;
     printf("%d\n", j);
+
 start_label:
     (*((fptr1)p))(0);
     (*((fptr1)p))(0);
