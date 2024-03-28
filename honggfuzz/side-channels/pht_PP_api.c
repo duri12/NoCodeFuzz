@@ -58,7 +58,7 @@ void pht_prime(phtpp_t pht){
     loop_2:
     void *p = pht->memory[j-1];
     int i = pht->size;
-    printf("staring\n");
+    printf("%p\n",p);
 start_label:
     (*((fptr1)p))(0);
     (*((fptr1)p))(0);
