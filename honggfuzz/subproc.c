@@ -837,7 +837,7 @@ static bool subproc_runNoFork(run_t *run)
 
     for (int i = 0; i < NUM_OF_RUNS; i++)
     {
-        uint64_t * p4 =&bpRecordTProbe[i][0]
+        uint64_t * p4 =&bpRecordTProbe[i][0];
         uint64_t * p3 =&bpRecordTProbe[i][1*PHT_SAMPLE_SIZE]
         randomize_pht();
         pht_prime(p1);
