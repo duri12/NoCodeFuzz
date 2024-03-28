@@ -844,6 +844,7 @@ static bool subproc_runNoFork(run_t *run)
         MyFunction(password);
         pht_probe(p1,p4);
 
+        randomize_pht();
         pht_prime(p2);
         MyFunction(password);
         //ioctl(f,0,password);
