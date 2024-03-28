@@ -285,7 +285,7 @@ static void fuzz_perfFeedback(run_t* run) {
         if(!res) {
             //LOG_I("was a change in signature");
 
-            for (int i = 0; i < run.scTools.phtProbeSize*run.scTools.phtNumOfSets; i++)
+            for (int i = 0; i < run->scTools.phtProbeSize*run->scTools.phtNumOfSets; i++)
             {
                 if((char) currScSignature[i] == 1){
                     LOG_I("item %d: %d", i, (char) currScSignature[i]);
