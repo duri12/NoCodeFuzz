@@ -54,9 +54,9 @@
 //TODO: should not be here - need to be decided at different place (and also be dynamic)
 #define L1I_SAMPLE_SIZE 64
 #define L1I_THRESHOLD 10
-#define PHT_SAMPLE_SIZE 64
+#define PHT_SAMPLE_SIZE 512
 #define PHT_THRESHOLD 120
-#define PHT_ARRAY_SIZE 8
+#define PHT_ARRAY_SIZE 2
 #define NUM_OF_RUNS 2 //NOTE: just for now
 
 
@@ -832,17 +832,20 @@ static bool subproc_runNoFork(run_t *run)
     int f = open("/dev/check_mod2",0);
     uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_ARRAY_SIZE*PHT_SAMPLE_SIZE]= {0};
     //uint64_t bpRecordNTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE] = {0};
+    phtpp_t p1 =  run->scTools.pht[0];
+    phtpp_t p2 =  run->scTools.pht[1];
 
     for (int i = 0; i < NUM_OF_RUNS; i++)
     {
-        for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
-            randomize_pht();
-            pht_prime(run->scTools.pht[j]);
-            //MyFunction(password);
-            ioctl(f,0,password);
-            pht_probe(run->scTools.pht[j], &bpRecordTProbe[i][j*PHT_SAMPLE_SIZE]);
-        }
-
+        uint64_t * p4 =&bpRecordTProbe[i][0]
+        uint64_t * p3 =&bpRecordTProbe[i][1*PHT_SAMPLE_SIZE]
+        randomize_pht();
+        pht_prime(p1);
+        pht_probe(p2);
+        MyFunction(password);
+        //ioctl(f,0,password);
+        pht_probe(p1,p4);
+        pht_probe(p2,p3);
     }
     close(f);
 
