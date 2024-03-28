@@ -55,7 +55,8 @@
 #define L1I_SAMPLE_SIZE 64
 #define L1I_THRESHOLD 10
 #define NUM_OF_RUNS 2 //NOTE: just for now
-
+#define PHT_PROBE_SIZE 512
+#define PHT_ways 2 //NOTE: should move to sctools
 
 extern char **environ;
 
@@ -826,7 +827,7 @@ static bool subproc_runNoFork(run_t *run)
     strncpy(password, (char *) run->dynfile->data, 8);
     password[6] = '\0';
     int f = open("/dev/check_mod2",0);
-    uint64_t bpRecordTProbe[NUM_OF_RUNS][run->scTools.phtNumOfSets*run->scTools.phtProbeSize]= {0};
+    uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_PROBE_SIZE*PHT_ways]= {0};
 
     for (int i = 0; i < NUM_OF_RUNS; i++)
     {
@@ -843,7 +844,7 @@ static bool subproc_runNoFork(run_t *run)
 
 
 
-    uint8_t bpResult[run->scTools.phtProbeSize*run->scTools.phtNumOfSets] = {0};
+    uint8_t bpResult[PHT_PROBE_SIZE*PHT_ways] = {0};
     for (int pht_index = 0; pht_index <run->scTools.phtProbeSize*run->scTools.phtNumOfSets; ++pht_index)
     {
         if(bpRecordTProbe[0][pht_index] < run->scTools.phtThreshold && bpRecordTProbe[1][pht_index] < run->scTools.phtThreshold &&
