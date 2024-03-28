@@ -29,25 +29,36 @@ f:  c3                      ret
  */
 
 void pht_release(phtpp_t pht){
-    munmap(pht->memory, FUNC_SIZE*pht->size);
+    for(int i=0;i < pht->times;i++){
+        munmap(pht->memory[i], FUNC_SIZE*pht->size);
+    }
+    free(pht->memory);
     free(pht);
 }
 
-phtpp_t pht_prepare(int probe_size,void* where,int offset){ //0x3000000
+phtpp_t pht_prepare(int probe_size,void* start,int times){ //0x3000000
     phtpp_t pht = (phtpp_t)malloc(sizeof(struct phtpp));
-    pht->memory = mmap(where, FUNC_SIZE*probe_size+offset, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
     pht->size = probe_size;
-    pht->memory += offset;
-    printf("%p\n",pht->memory);
-    for (int i = 0; i < probe_size*FUNC_SIZE; i+=FUNC_SIZE)
-        memcpy(pht->memory + i, jumpArray, FUNC_SIZE);
+    pht->times = times;
+    pht->memory = (char**)malloc(sizeof(char*)*times);
+    for(int i   = 0; i < probe_size;i++){
+        where += i * 0x3000002
+        pht->memory[i] = mmap(where, FUNC_SIZE*probe_size, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+        for (int j = 0; j < probe_size*FUNC_SIZE; j+=FUNC_SIZE)
+            memcpy(pht->memory[i] + j, jumpArray, FUNC_SIZE);
+        printf("%p\n",pht->memory[i]);
+
+    }
     return pht;
 }
 
 typedef void (*fptr1)(int);
 
 void pht_prime(phtpp_t pht){
-    void *p = pht->memory;
+    int j = pht->times;
+
+loop_2:
+    void *p = pht->memory[j];
     int i = pht->size;
 
 start_label:
@@ -59,6 +70,9 @@ start_label:
     p += FUNC_SIZE;
     
     CONDITIONAL_JUMP_TO_LABEL(i, start_label);
+    CONDITIONAL_JUMP_TO_LABEL(j,loop_2);
+
+
     __asm__ volatile(".global pht_prepare_end\n\t"
                     "pht_prepare_end:");
 }
@@ -74,10 +88,12 @@ void* ignore_me;
 
 // Disable optimizations
 __attribute__((optimize("O0")))
-void pht_probe(phtpp_t pht, uint64_t *results){
-    register void *p = pht->memory;
+void pht_probe(phtpp_t pht, uint64_t **results){
+    register int j = pht->times;
+    loop_3:
+    register void *p = pht->memory[j];
     register int i = pht->size;
-    register uint64_t *p_result = results;
+    register uint64_t *p_result = results[j];
     register uint64_t start, end;
     uint32_t ecx;
 
@@ -93,6 +109,8 @@ start_label:
     p += FUNC_SIZE;
 
     CONDITIONAL_JUMP_TO_LABEL(i, start_label);
+    CONDITIONAL_JUMP_TO_LABEL(j, loop_3);
+
     __asm__ volatile(".global pht_probe_end\n\t"
-                    "pht_probe_end:");
+            "pht_probe_end:");
 }

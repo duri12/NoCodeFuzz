@@ -55,7 +55,7 @@
 #include "side-channels/l1i.h"
 
 #define NUM_OF_ENTRIES 64
-#define NUM_OF_PHT 8
+#define NUM_OF_PHT 1
 static time_t termTimeStamp = 0;
 
 bool fuzz_isTerminating(void) {
@@ -632,9 +632,8 @@ static void* fuzz_threadNew(void* arg) {
      * This is used in the inference stage of the attacker
      */
 
-    for (int i = 0; i <NUM_OF_PHT; ++i) {
-        run.scTools.pht[i]  = pht_prepare(NUM_OF_ENTRIES,(void*)(int64_t)(0x30037E0 + 0x10000000*i),2*i);
-    }
+    run.scTools.pht = pht_prepare(NUM_OF_ENTRIES,(void*)(int64_t)(/*0x30037E0*/0x3000000),NUM_OF_PHT);
+
     //TODO: create a constant for probe size
 
     for (;;) {
@@ -676,9 +675,8 @@ static void* fuzz_threadNew(void* arg) {
     }
 
     l1i_release(run.scTools.l1i);
-    for (int i = 0; i < NUM_OF_PHT; ++i) {
-        pht_release(run.scTools.pht[i]);
-    }
+    pht_release(run.scTools.pht);
+
     size_t j = ATOMIC_PRE_INC(run.global->threads.threadsFinished);
     LOG_I("Terminating thread no. #%" PRId32 ", left: %zu", fuzzNo, hfuzz->threads.threadsMax - j);
     return NULL;

@@ -56,7 +56,7 @@
 #define L1I_THRESHOLD 10
 #define PHT_SAMPLE_SIZE 64
 #define PHT_THRESHOLD 120
-#define PHT_ARRAY_SIZE 8
+#define PHT_ARRAY_SIZE 1
 #define NUM_OF_RUNS 2 //NOTE: just for now
 
 
@@ -830,18 +830,16 @@ static bool subproc_runNoFork(run_t *run)
     strncpy(password, (char *) run->dynfile->data, 8);
     password[6] = '\0';
     int f = open("/dev/check_mod2",0);
-    uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_ARRAY_SIZE*PHT_SAMPLE_SIZE]= {0};
+    uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE][PHT_ARRAY_SIZE]= {0};
     //uint64_t bpRecordNTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE] = {0};
 
     for (int i = 0; i < NUM_OF_RUNS; i++)
     {
-        for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
-            randomize_pht();
-            pht_prime(run->scTools.pht[j]);
-            //MyFunction(password);
-            ioctl(f,0,password);
-            pht_probe(run->scTools.pht[j], &bpRecordTProbe[i][j*PHT_SAMPLE_SIZE]);
-        }
+        randomize_pht();
+        pht_prime(run->scTools.pht);
+        MyFunction(password);
+        //ioctl(f,0,password);
+        pht_probe(run->scTools.pht, &bpRecordTProbe[i]);
 
     }
     close(f);
@@ -857,14 +855,6 @@ static bool subproc_runNoFork(run_t *run)
          * If branch is not taken -> we want miss in taken and hit in notTaken
          * otherwise - no branch was jumped or pure logic :(.
          */
-        // hit & miss
-        //LOG_I("--------------------------------%d",pht_index);
-        //LOG_I("%lu",bpRecordTProbe[0][pht_index]);
-        //LOG_I("%lu",bpRecordTProbe[1][pht_index]);
-        //LOG_I("%lu",bpRecordTProbe[2][pht_index]);
-        //LOG_I("--------------------------------");
-
-
         if(bpRecordTProbe[0][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][pht_index] < PHT_THRESHOLD &&
            bpRecordTProbe[0][pht_index] > 0 && bpRecordTProbe[1][pht_index]> 0)
         {
