@@ -69,7 +69,7 @@ start_label:
 
     CONDITIONAL_JUMP_TO_LABEL(i, start_label);
     CONDITIONAL_JUMP_TO_LABEL(j,loop_2);
-
+    printf("bbbbbb");
     __asm__ volatile(".global pht_prepare_end\n\t"
                     "pht_prepare_end:");
 }
@@ -86,11 +86,11 @@ void* ignore_me;
 // Disable optimizations
 __attribute__((optimize("O0")))
 void pht_probe(phtpp_t pht, uint64_t **results){
+    printf("aaaaaa");
     register int j = pht->times;
     loop_3:
     register void *p = pht->memory[j-1];
     register int i = pht->size;
-    printf("aaaaaa");
     register uint64_t *p_result = results[j-1];
     register uint64_t start, end;
     uint32_t ecx;
