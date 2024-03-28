@@ -42,7 +42,7 @@ phtpp_t pht_prepare(int probe_size,void* start,int times){ //0x3000000
     pht->times = times;
     pht->memory = (char**)malloc(sizeof(char*)*times);
     for(int i   = 0; i < probe_size;i++){
-        start += i * 0x3000002
+        start += i * 0x3000002;
         pht->memory[i] = mmap(start, FUNC_SIZE*probe_size, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
         for (int j = 0; j < probe_size*FUNC_SIZE; j+=FUNC_SIZE)
             memcpy(pht->memory[i] + j, jumpArray, FUNC_SIZE);
