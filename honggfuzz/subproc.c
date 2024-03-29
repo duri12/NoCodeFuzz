@@ -838,11 +838,11 @@ static bool subproc_runNoFork(run_t *run)
     {
         for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
 
-            phtpp_t pht =run->scTools.pht[j] ;
+
             randomize_pht();
-            pht_prime(pht);
+            pht_prime(run->scTools.pht[j]);
             MyFunction(password);
-            pht_probe(pht, bpRecordTProbe[i][j]);
+            pht_probe(run->scTools.pht[j], bpRecordTProbe[i][j]);
         }
 
     }
