@@ -56,7 +56,7 @@
 #define L1I_THRESHOLD 10
 #define NUM_OF_RUNS 2 //NOTE: just for now
 #define PHT_PROBE_SIZE 512
-#define PHT_ways 2 //NOTE: should move to sctools
+#define PHT_ways 1 //NOTE: should move to sctools
 
 extern char **environ;
 
