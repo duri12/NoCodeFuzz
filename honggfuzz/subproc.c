@@ -843,9 +843,10 @@ static bool subproc_runNoFork(run_t *run)
         pht_prime(pht);
         MyFunction(password);
         pht_probe(pht, p);
+
         pht = run->scTools.pht[1];
         p=bpRecordTProbe[i][1];
-        randomize_pht();
+
         pht_prime(pht);
         MyFunction(password);
         pht_probe(pht, p);
