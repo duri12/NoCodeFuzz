@@ -92,7 +92,7 @@ const char *subproc_StatusToStr(int status) {
         return str;
     }
 #if defined(PTRACE_EVENT_STOP)
-    #define __LINUX_WPTRACEEVENT(x) ((x & 0xff0000) >> 16)
+#define __LINUX_WPTRACEEVENT(x) ((x & 0xff0000) >> 16)
     if (WSTOPSIG(status) == SIGTRAP && __LINUX_WPTRACEEVENT(status) != 0) {
         switch (__LINUX_WPTRACEEVENT(status)) {
         case PTRACE_EVENT_FORK:
@@ -829,8 +829,9 @@ static bool subproc_runNoFork(run_t *run)
 
     strncpy(password, (char *) run->dynfile->data, 8);
     password[6] = '\0';
-    int f = open("/dev/check_mod2",0);
-    uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_ARRAY_SIZE*PHT_SAMPLE_SIZE]= {0};
+
+
+    uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_ARRAY_SIZE][PHT_SAMPLE_SIZE]= {0};
     //uint64_t bpRecordNTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE] = {0};
 
     for (int i = 0; i < NUM_OF_RUNS; i++)
@@ -839,18 +840,18 @@ static bool subproc_runNoFork(run_t *run)
             randomize_pht();
             pht_prime(run->scTools.pht[j]);
             MyFunction(password);
-            //ioctl(f,0,password);
-            pht_probe(run->scTools.pht[j], &bpRecordTProbe[i][j*PHT_SAMPLE_SIZE]);
+            pht_probe(run->scTools.pht[j], bpRecordTProbe[i][j]);
         }
 
     }
-    close(f);
 
 
 
     uint8_t bpResult[PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE] = {0};
-    for (int pht_index = 0; pht_index <PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE; ++pht_index)
+    for (int pht_index = 0; pht_index <PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE; pht_index+=PHT_ARRAY_SIZE)
     {
+
+
         /*
          * We are checking twice for handling cases of branch not exist and also to force consistency
          * If branch is taken -> we want hit in taken probe & miss in notTaken Probe
@@ -864,18 +865,18 @@ static bool subproc_runNoFork(run_t *run)
         //LOG_I("%lu",bpRecordTProbe[2][pht_index]);
         //LOG_I("--------------------------------");
 
+        for (int i = 0; i <PHT_ARRAY_SIZE; ++i) {
+            if(bpRecordTProbe[0][i][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][i][pht_index] < PHT_THRESHOLD &&
+                    bpRecordTProbe[0][i][pht_index] > 0 && bpRecordTProbe[1][i][pht_index]> 0)
+            {
+                bpResult[pht_index+i] = 1;
 
-        if(bpRecordTProbe[0][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][pht_index] < PHT_THRESHOLD &&
-           bpRecordTProbe[0][pht_index] > 0 && bpRecordTProbe[1][pht_index]> 0)
-        {
-            bpResult[pht_index] = 1;
-
+            }
+            else
+            {
+                bpResult[pht_index+i] = 0;
+            }
         }
-        else
-        {
-            bpResult[pht_index] = 0;
-        }
-
 
     }
     //TODO: add bpResult to the vector of the run

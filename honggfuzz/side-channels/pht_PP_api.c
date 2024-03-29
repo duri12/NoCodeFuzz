@@ -37,7 +37,8 @@ phtpp_t pht_prepare(int probe_size,void* where,int offset){ //0x3000000
     phtpp_t pht = (phtpp_t)malloc(sizeof(struct phtpp));
     pht->memory = mmap(where, FUNC_SIZE*probe_size+offset, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
     pht->size = probe_size;
-    pht->memory = +=offset;
+    pht->memory += offset;
+    printf("%p\n",pht->memory);
     for (int i = 0; i < probe_size*FUNC_SIZE; i+=FUNC_SIZE)
         memcpy(pht->memory + i, jumpArray, FUNC_SIZE);
     return pht;
