@@ -630,7 +630,7 @@ static void* fuzz_threadNew(void* arg) {
      * This is used in the inference stage of the attacker
      */
 
-    run.scTools.phtNumOfSets = 2;
+    run.scTools.phtNumOfSets = 1;
     run.scTools.phtProbeSize = 512;
     run.scTools.phtThreshold = 120;
     for (int i = 0; i <run.scTools.phtNumOfSets; ++i) {
