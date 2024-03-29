@@ -56,7 +56,7 @@
 #define L1I_THRESHOLD 10
 #define PHT_SAMPLE_SIZE 512
 #define PHT_THRESHOLD 120
-#define PHT_ARRAY_SIZE 1
+#define PHT_ARRAY_SIZE 2
 #define NUM_OF_RUNS 2 //NOTE: just for now
 
 
@@ -837,10 +837,13 @@ static bool subproc_runNoFork(run_t *run)
     for (int i = 0; i < NUM_OF_RUNS; i++)
     {
         for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
+
+            phtpp_t pht = run->scTools.pht[j];
+            uint64_t *p=bpRecordTProbe[i][j];
             randomize_pht();
-            pht_prime(run->scTools.pht[j]);
+            pht_prime(pht);
             MyFunction(password);
-            pht_probe(run->scTools.pht[j], bpRecordTProbe[i][j]);
+            pht_probe(pht, p);
         }
 
     }
