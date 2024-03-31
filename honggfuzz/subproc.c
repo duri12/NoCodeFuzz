@@ -839,7 +839,7 @@ static bool subproc_runNoFork(run_t *run)
         for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
 
             int * arr = run->scTools.arrs[j];
-            int len = run->scTools.lengths[j];
+            int len = *run->scTools.lengths[j];
             numOfProbes+=len;
             randomize_pht();
             printf("%d\n",len);
