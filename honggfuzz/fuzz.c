@@ -55,7 +55,7 @@
 #include "side-channels/l1i.h"
 
 #define NUM_OF_ENTRIES 128
-#define NUM_OF_PHT 8
+#define NUM_OF_PHT 1
 static time_t termTimeStamp = 0;
 
 bool fuzz_isTerminating(void) {
