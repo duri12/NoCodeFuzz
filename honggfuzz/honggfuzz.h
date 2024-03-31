@@ -131,11 +131,12 @@ typedef struct {
     uint64_t softCntPc;
     uint64_t softCntEdge;
     uint64_t softCntCmp;
-    int*         historyWindow;
-    int          historyCurrSize;
-    int          historyMaxSize;
-    uint8_t*      scSignature;
-    Histogram    scSignatureHistogram;
+    int*     historyWindow;
+    int      historyCurrSize;
+    int      historyMaxSize;
+    uint8_t* scSignature;
+    Histogram scSignatureHistogram;
+    int      ErrorCode;
 } hwcnt_t;
 
 typedef enum {
