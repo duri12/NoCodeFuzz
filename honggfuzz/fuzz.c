@@ -242,7 +242,17 @@ static void fuzz_perfFeedback(run_t* run) {
         run->global->feedback.hwCnts.softCntPc += softNewPC;
         run->global->feedback.hwCnts.softCntEdge += softNewEdge;
         run->global->feedback.hwCnts.softCntCmp += softNewCmp;
-        LOG_I("the input was %s", run->dynfile->data);
+        LOG_I("-*-*-*-*-")
+        LOG_I("Input:%s", run->dynfile->data);
+        char output[NUM_OF_ENTRIES*NUM_OF_PHT + 1]; // +1 for null terminator
+        for (int i = 0; i < NUM_OF_ENTRIES*NUM_OF_PHT; i++) {
+            output[i] = currScSignature[i] + '0'; // Convert uint8_t to character '0' or '1'
+        }
+        output[NUM_OF_ENTRIES*NUM_OF_PHT] = '\0'; // Null-terminate the string
+
+        // Print the constructed string using the logging function
+        LOG_I("Signature:%s", output);
+        LOG_I("Errno:%d", run->hwCnts.ErrorCode);
         //LOG_I("Size:%zu Time:%" _HF_NONMON_SEP PRIu64,
         //    run->dynfile->size, util_timeNowUSecs() - run->timeStartedUSecs);
 
@@ -287,12 +297,7 @@ static void fuzz_perfFeedback(run_t* run) {
         if(!res) {
             //LOG_I("was a change in signature");
 
-            for (int i = 0; i < NUM_OF_ENTRIES*NUM_OF_PHT; i++)
-            {
-                if((char) currScSignature[i] == 1){
-                    LOG_I("item %d: %d", i, (char) currScSignature[i]);
-                }
-            }
+
             HistogramInsert(run->global->feedback.hwCnts.scSignatureHistogram,currScSignature,1);
         }
         else

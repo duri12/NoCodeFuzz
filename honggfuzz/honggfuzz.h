@@ -403,6 +403,7 @@ typedef struct {
         uint8_t* perfMmapAux;
         /** NOTE: sent here the signature of bp+l1i**/
         uint8_t* scSignature;
+        int      ErrorCode;
         int      cpuInstrFd;
         int      cpuBranchFd;
         int      cpuIptBtsFd;

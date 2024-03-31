@@ -832,16 +832,14 @@ static bool subproc_runNoFork(run_t *run)
 
 
     uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_ARRAY_SIZE][PHT_SAMPLE_SIZE]= {0};
-    //uint64_t bpRecordNTProbe[NUM_OF_RUNS][PHT_SAMPLE_SIZE] = {0};
-
+    int out = 0;
     for (int i = 0; i < NUM_OF_RUNS; i++)
     {
         for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
 
-
             randomize_pht();
             pht_prime(run->scTools.pht[j]);
-            MyFunction(password);
+            out = MyFunction(password);
             pht_probe(run->scTools.pht[j], bpRecordTProbe[i][j]);
         }
 
@@ -860,12 +858,6 @@ static bool subproc_runNoFork(run_t *run)
          * If branch is not taken -> we want miss in taken and hit in notTaken
          * otherwise - no branch was jumped or pure logic :(.
          */
-        // hit & miss
-        //LOG_I("--------------------------------%d",pht_index);
-        //LOG_I("%lu",bpRecordTProbe[0][pht_index]);
-        //LOG_I("%lu",bpRecordTProbe[1][pht_index]);
-        //LOG_I("%lu",bpRecordTProbe[2][pht_index]);
-        //LOG_I("--------------------------------");
 
         for (int i = 0; i <PHT_ARRAY_SIZE; ++i) {
             if(bpRecordTProbe[0][i][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][i][pht_index] < PHT_THRESHOLD &&
@@ -881,17 +873,16 @@ static bool subproc_runNoFork(run_t *run)
         }
 
     }
-    //TODO: add bpResult to the vector of the run
 
 
 
-    //TODO: create vector signature
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT)
     {
         run->hwCnts.cpuInstrCnt = 0;
         uint8_t * signature = malloc(sizeof(uint8_t)*(PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE));
         memcpy(signature, bpResult, PHT_ARRAY_SIZE*PHT_SAMPLE_SIZE*sizeof(uint8_t));
         run->hwCnts.scSignature = signature;
+        run->hwCnts.ErrorCode = (out == -1) ? errno : 0;
     }
 
     int64_t diffUSecs = util_timeNowUSecs() - run->timeStartedUSecs;
