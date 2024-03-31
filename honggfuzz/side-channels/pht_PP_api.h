@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 struct phtpp{
-    char *memory[8];
+    char *memory;
     int size;
 };
 extern int randomize_pht();
