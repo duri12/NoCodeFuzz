@@ -841,6 +841,7 @@ static bool subproc_runNoFork(run_t *run)
             int len = run->scTools.lengths[j];
             numOfProbes+=len;
             randomize_pht();
+            printf("%d\n",len);
             pht_prime(run->scTools.pht,j,arr,len);
             /*out =*/ MyFunction(password);
             pht_probe(run->scTools.pht, bpRecordTProbe[i][j],j,arr,len);
