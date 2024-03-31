@@ -37,7 +37,10 @@ e:  48                      dec    eax
 f:  c3                      ret
  */
 void pht_release(phtpp_t pht) {
-    munmap(pht->memory, FUNC_SIZE * pht->size);
+    for (int i = 0; i < 8; ++i) {
+        munmap(pht->memory[i],FUNC_SIZE * pht->size)
+    }
+    free(pht->memory);
     free(pht);
 }
 
