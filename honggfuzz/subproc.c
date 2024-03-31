@@ -56,7 +56,7 @@
 #define L1I_THRESHOLD 10
 #define PHT_SAMPLE_SIZE 512
 #define PHT_THRESHOLD 100
-#define PHT_ARRAY_SIZE 1
+#define PHT_ARRAY_SIZE 8
 #define NUM_OF_RUNS 2 //NOTE: just for now
 
 
@@ -830,17 +830,19 @@ static bool subproc_runNoFork(run_t *run)
     strncpy(password, (char *) run->dynfile->data, 8);
     password[6] = '\0';
 
-
+    int numOfProbes = 0;
     uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_ARRAY_SIZE][PHT_SAMPLE_SIZE]= {0};
-    int out = 0;
     for (int i = 0; i < NUM_OF_RUNS; i++)
     {
         for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
 
+            int * arr = run->scTools.arrs[j];
+            int len = run->scTools.lengths[j];
+            numOfProbes+=len;
             randomize_pht();
-            pht_prime(run->scTools.pht[j]);
+            pht_prime(run->scTools.pht,j,arr,len);
             /*out =*/ MyFunction(password);
-            pht_probe(run->scTools.pht[j], bpRecordTProbe[i][j]);
+            pht_probe(run->scTools.pht, bpRecordTProbe[i][j],j,arr,len);
         }
 
     }
@@ -848,28 +850,22 @@ static bool subproc_runNoFork(run_t *run)
 
 
     uint8_t bpResult[PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE] = {0};
-    for (int pht_index = 0; pht_index <PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE; pht_index+=PHT_ARRAY_SIZE)
+    int idx = 0 ;
+    for (int array_idx = 0; array_idx <PHT_ARRAY_SIZE; array_idx++)
     {
+        for (int i = 0; i <run->scTools.lengths[array_idx]; ++array_idx) {
 
-
-        /*
-         * We are checking twice for handling cases of branch not exist and also to force consistency
-         * If branch is taken -> we want hit in taken probe & miss in notTaken Probe
-         * If branch is not taken -> we want miss in taken and hit in notTaken
-         * otherwise - no branch was jumped or pure logic :(.
-         */
-
-        for (int i = 0; i <PHT_ARRAY_SIZE; ++i) {
-            if(bpRecordTProbe[0][i][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][i][pht_index] < PHT_THRESHOLD &&
-                    bpRecordTProbe[0][i][pht_index] > 0 && bpRecordTProbe[1][i][pht_index]> 0)
+            if(bpRecordTProbe[0][array_idx][i] < PHT_THRESHOLD && bpRecordTProbe[1][array_idx][i] < PHT_THRESHOLD &&
+                    bpRecordTProbe[0][array_idx][i] > 0 && bpRecordTProbe[1][array_idx][i]> 0)
             {
-                bpResult[pht_index+i] = 1;
+                bpResult[idx] = 1;
 
             }
             else
             {
-                bpResult[pht_index+i] = 0;
+                bpResult[idx] = 0;
             }
+            idx++;
         }
 
     }

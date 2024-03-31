@@ -56,6 +56,7 @@
 
 #define NUM_OF_ENTRIES 512
 #define NUM_OF_PHT 8
+#define PROBES 32
 static time_t termTimeStamp = 0;
 
 bool fuzz_isTerminating(void) {
@@ -635,9 +636,19 @@ static void* fuzz_threadNew(void* arg) {
      * This is used in the inference stage of the attacker
      */
 
-    for (int i = 0; i <NUM_OF_PHT; ++i) {
-        run.scTools.pht[i]  = pht_prepare(512,(void*)(int)(0x3000000+0x1200000*i),4*i);
+    srand(123);
+    run.scTools.pht  = pht_prepare(512,0x3000000);
+
+    run.scTools.arrs = (int**)malloc(sizeof(int)*8*ARRAY_SIZE);
+    run.scTools.lengths = (int*)malloc(sizeof(int)*8);
+    for (int i = 0; i <8; ++i) {
+        run.scTools.lengths[i] = rand() % 32;
+        for (int j = 0; j <run.scTools.lengths[i]; ++j) {
+            run.scTools.arrs[i][j] = rand() % 5;
+        }
     }
+
+
     //TODO: create a constant for probe size
 
     for (;;) {

@@ -366,7 +366,9 @@ typedef enum {
 
 typedef struct{
     l1ipp_t l1i;
-    phtpp_t pht[8];
+    phtpp_t pht;
+    int **arrs;
+    int *lengths;
     int phtThreshold;
     int phtProbeSize;
     int phtNumOfSets;
