@@ -833,13 +833,15 @@ static bool subproc_runNoFork(run_t *run)
     int numOfProbes = 0;
     int out = 0;
     uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_ARRAY_SIZE][PHT_SAMPLE_SIZE]= {0};
-    printf("%d\n",run->scTools.lengths[0]);
+    for (int i = 0; i < 8; i ++){
+        printf("%d ",run->scTools.lengths[i]);
+    }
     for (int i = 0; i < NUM_OF_RUNS; i++)
     {
         for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
 
             int * arr = run->scTools.arrs[j];
-            int len = *run->scTools.lengths[j];
+            int len = run->scTools.lengths[j];
             numOfProbes+=len;
             randomize_pht();
             printf("%d\n",len);
