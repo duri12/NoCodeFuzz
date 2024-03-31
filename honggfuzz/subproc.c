@@ -833,11 +833,12 @@ static bool subproc_runNoFork(run_t *run)
 
     uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_ARRAY_SIZE][PHT_SAMPLE_SIZE]= {0};
     int out = 0;
+    randomize_pht();
+
     for (int i = 0; i < NUM_OF_RUNS; i++)
     {
         for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
 
-            randomize_pht();
             pht_prime(run->scTools.pht[j]);
             /*out =*/ MyFunction(password);
             pht_probe(run->scTools.pht[j], bpRecordTProbe[i][j]);
