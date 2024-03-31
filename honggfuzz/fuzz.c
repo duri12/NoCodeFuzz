@@ -637,15 +637,15 @@ static void* fuzz_threadNew(void* arg) {
      */
 
     srand(1333); // change seed
-    run.scTools.pht  = pht_prepare(512,(void*)(uint64_t)0x3000400); // change starting addr here
+    run.scTools.pht  = pht_prepare(512,(void*)(uint64_t)0x3000000); // change starting addr here
 
     run.scTools.arrs = (int**)malloc(sizeof(int*)*8);
     run.scTools.lengths = (int*)malloc(sizeof(int)*8);
 
     for (int i = 0; i <8; ++i) {
-        run.scTools.lengths[i] = 32;//rand() % 32;
+        run.scTools.lengths[i] = 64;//rand() % 32;
         printf("length of %d is %d\n", i, run.scTools.lengths[i]);
-        run.scTools.arrs[i] =(int *) malloc(sizeof(int)*32);
+        run.scTools.arrs[i] =(int *) malloc(sizeof(int)*64);
         for (int j = 0; j <run.scTools.lengths[i]; ++j) {
             run.scTools.arrs[i][j] = 1;//rand() % 3;
         }
