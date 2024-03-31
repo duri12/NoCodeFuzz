@@ -837,8 +837,7 @@ static bool subproc_runNoFork(run_t *run)
     randomize_pht();
     for (int i = 0; i < NUM_OF_RUNS; i++)
     {
-x        for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
-
+        for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
             int * arr = run->scTools.arrs[j];
             int len = run->scTools.lengths[j];
             numOfProbes+=len;
