@@ -246,18 +246,17 @@ static void fuzz_perfFeedback(run_t* run) {
         char hex_string[3 * sizeof(run->dynfile->data) + 1];
         int index = 0;
         for (int i = 0; run->dynfile->data[i] != '\0'; i++) {
-            index += sprintf(hex_string + index, "%02X", (unsigned char)str[i]);
+            index += sprintf(hex_string + index, "%02X", (unsigned char)run->dynfile->data[i]);
         }
         hex_string[index] = '\0';
         LOG_I("%s", hex_string);
-        LOG_I("Input:\\x%02X", );
-        char output[NUM_OF_ENTRIES*NUM_OF_PHT + 1]; // +1 for null terminator
-        for (int i = 0; i < NUM_OF_ENTRIES*NUM_OF_PHT; i++) {
-            output[i] = currScSignature[i] + '0'; // Convert uint8_t to character '0' or '1'
-        }
-        output[NUM_OF_ENTRIES*NUM_OF_PHT] = '\0'; // Null-terminate the string
 
-        // Print the constructed string using the logging function
+        LOG_I("Input:\\x%02X", );
+        char output[NUM_OF_ENTRIES*NUM_OF_PHT + 1];
+        for (int i = 0; i < NUM_OF_ENTRIES*NUM_OF_PHT; i++) {
+            output[i] = currScSignature[i] + '0';
+        }
+        output[NUM_OF_ENTRIES*NUM_OF_PHT] = '\0';
         LOG_I("Signature:%s", output);
         LOG_I("Errno:%d", run->hwCnts.ErrorCode);
         //LOG_I("Size:%zu Time:%" _HF_NONMON_SEP PRIu64,
