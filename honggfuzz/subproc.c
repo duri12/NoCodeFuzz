@@ -831,6 +831,7 @@ static bool subproc_runNoFork(run_t *run)
     password[6] = '\0';
 
     int numOfProbes = 0;
+    int out = 0;
     uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_ARRAY_SIZE][PHT_SAMPLE_SIZE]= {0};
     for (int i = 0; i < NUM_OF_RUNS; i++)
     {
