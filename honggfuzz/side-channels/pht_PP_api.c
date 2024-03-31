@@ -40,7 +40,6 @@ void pht_release(phtpp_t pht) {
     for (int i = 0; i < 8; ++i) {
         munmap(pht->memory[i],FUNC_SIZE * pht->size);
     }
-    free(pht->memory);
     free(pht);
 }
 
@@ -50,6 +49,7 @@ phtpp_t pht_prepare(int probe_size , void * where ) { //0x3000000
         pht->memory[i] = mmap(where + i*0x100000, FUNC_SIZE * probe_size + i*2, PROT_READ | PROT_WRITE | PROT_EXEC,
                              MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
         pht->memory[i] += i*2;
+        printf("address of in %d is %p\n", i, pht->memory[i])
     }
     pht->size = probe_size;
     for (int i = 0; i < probe_size * FUNC_SIZE; i += FUNC_SIZE){
