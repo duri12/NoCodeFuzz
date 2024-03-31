@@ -243,13 +243,7 @@ static void fuzz_perfFeedback(run_t* run) {
         run->global->feedback.hwCnts.softCntEdge += softNewEdge;
         run->global->feedback.hwCnts.softCntCmp += softNewCmp;
         LOG_I("-*-*-*-*-")
-        char hex_string[3 * sizeof(run->dynfile->data) + 1];
-        int index = 0;
-        for (int i = 0; run->dynfile->data[i] != '\0'; i++) {
-            index += sprintf(hex_string + index, "\\x%02X ", (unsigned char)run->dynfile->data[i]);
-        }
-        hex_string[index] = '\0';
-        LOG_I("Input:%s", hex_string);
+        LOG_I("Input:%s", run->dynfile->data);
         char output[NUM_OF_ENTRIES*NUM_OF_PHT + 1];
         for (int i = 0; i < NUM_OF_ENTRIES*NUM_OF_PHT; i++) {
             output[i] = currScSignature[i] + '0';
