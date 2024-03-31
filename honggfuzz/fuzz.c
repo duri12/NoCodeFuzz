@@ -243,7 +243,7 @@ static void fuzz_perfFeedback(run_t* run) {
         run->global->feedback.hwCnts.softCntEdge += softNewEdge;
         run->global->feedback.hwCnts.softCntCmp += softNewCmp;
         LOG_I("-*-*-*-*-")
-        LOG_I("Input:%s", run->dynfile->data);
+        LOG_I("Input:\\x%02X", run->dynfile->data);
         char output[NUM_OF_ENTRIES*NUM_OF_PHT + 1]; // +1 for null terminator
         for (int i = 0; i < NUM_OF_ENTRIES*NUM_OF_PHT; i++) {
             output[i] = currScSignature[i] + '0'; // Convert uint8_t to character '0' or '1'
