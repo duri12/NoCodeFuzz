@@ -246,7 +246,7 @@ static void fuzz_perfFeedback(run_t* run) {
         char hex_string[3 * sizeof(run->dynfile->data) + 1];
         int index = 0;
         for (int i = 0; run->dynfile->data[i] != '\0'; i++) {
-            index += sprintf(hex_string + index, "%02X", (unsigned char)run->dynfile->data[i]);
+            index += sprintf(hex_string + index, "\\x%02X", (unsigned char)run->dynfile->data[i]);
         }
         hex_string[index] = '\0';
         LOG_I("Input:%s", hex_string);
