@@ -54,7 +54,7 @@
 #include "subproc.h"
 #include "side-channels/l1i.h"
 
-#define NUM_OF_ENTRIES 64
+#define NUM_OF_ENTRIES 128
 #define NUM_OF_PHT 8
 static time_t termTimeStamp = 0;
 
