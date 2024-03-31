@@ -851,10 +851,6 @@ static bool subproc_runNoFork(run_t *run)
     uint8_t bpResult[PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE] = {0};
     for (int pht_index = 0; pht_index <PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE; pht_index+=PHT_ARRAY_SIZE)
     {
-
-
-
-
         for (int i = 0; i <PHT_ARRAY_SIZE; ++i) {
             if(bpRecordTProbe[0][i][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][i][pht_index] < PHT_THRESHOLD &&
                     bpRecordTProbe[0][i][pht_index] > 0 && bpRecordTProbe[1][i][pht_index]> 0)
