@@ -38,7 +38,7 @@ f:  c3                      ret
  */
 void pht_release(phtpp_t pht) {
     for (int i = 0; i < 8; ++i) {
-        munmap(pht->memory[i],FUNC_SIZE * pht->size)
+        munmap(pht->memory[i],FUNC_SIZE * pht->size);
     }
     free(pht->memory);
     free(pht);
