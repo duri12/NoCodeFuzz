@@ -636,7 +636,7 @@ static void* fuzz_threadNew(void* arg) {
      * This is used in the inference stage of the attacker
      */
 
-    srand(123);
+    srand(1333);
     run.scTools.pht  = pht_prepare(512,0x3000000);
 
     run.scTools.arrs = (int**)malloc(sizeof(int*)*8);
