@@ -54,8 +54,8 @@
 #include "subproc.h"
 #include "side-channels/l1i.h"
 
-#define NUM_OF_ENTRIES 512
-#define NUM_OF_PHT 1
+#define NUM_OF_ENTRIES 128
+#define NUM_OF_PHT 8
 static time_t termTimeStamp = 0;
 
 bool fuzz_isTerminating(void) {
@@ -243,13 +243,7 @@ static void fuzz_perfFeedback(run_t* run) {
         run->global->feedback.hwCnts.softCntEdge += softNewEdge;
         run->global->feedback.hwCnts.softCntCmp += softNewCmp;
         LOG_I("-*-*-*-*-")
-        char hex_string[3 * sizeof(run->dynfile->data) + 1];
-        int index = 0;
-        for (int i = 0; run->dynfile->data[i] != '\0'; i++) {
-            index += sprintf(hex_string + index, "\\x%02X", (unsigned char)run->dynfile->data[i]);
-        }
-        hex_string[index] = '\0';
-        LOG_I("Input:%s", hex_string);
+        LOG_I("Input:%s", run->dynfile->data);
         char output[NUM_OF_ENTRIES*NUM_OF_PHT + 1];
         for (int i = 0; i < NUM_OF_ENTRIES*NUM_OF_PHT; i++) {
             output[i] = currScSignature[i] + '0';
@@ -257,8 +251,7 @@ static void fuzz_perfFeedback(run_t* run) {
         output[NUM_OF_ENTRIES*NUM_OF_PHT] = '\0';
         LOG_I("Signature:%s", output);
         LOG_I("Errno:%d", run->hwCnts.ErrorCode);
-        //LOG_I("Size:%zu Time:%" _HF_NONMON_SEP PRIu64,
-        //    run->dynfile->size, util_timeNowUSecs() - run->timeStartedUSecs);
+
 
         if (run->global->io.statsFileName) {
             const time_t curr_sec      = time(NULL);

@@ -54,9 +54,9 @@
 //TODO: should not be here - need to be decided at different place (and also be dynamic)
 #define L1I_SAMPLE_SIZE 64
 #define L1I_THRESHOLD 10
-#define PHT_SAMPLE_SIZE 512
-#define PHT_THRESHOLD 100
-#define PHT_ARRAY_SIZE 1
+#define PHT_SAMPLE_SIZE 128
+#define PHT_THRESHOLD 115
+#define PHT_ARRAY_SIZE 8
 #define NUM_OF_RUNS 2 //NOTE: just for now
 
 
@@ -833,11 +833,12 @@ static bool subproc_runNoFork(run_t *run)
 
     uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_ARRAY_SIZE][PHT_SAMPLE_SIZE]= {0};
     int out = 0;
+    randomize_pht();
     for (int i = 0; i < NUM_OF_RUNS; i++)
     {
         for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
 
-            randomize_pht();
+
             pht_prime(run->scTools.pht[j]);
             /*out =*/ MyFunction(password);
             pht_probe(run->scTools.pht[j], bpRecordTProbe[i][j]);
@@ -852,12 +853,7 @@ static bool subproc_runNoFork(run_t *run)
     {
 
 
-        /*
-         * We are checking twice for handling cases of branch not exist and also to force consistency
-         * If branch is taken -> we want hit in taken probe & miss in notTaken Probe
-         * If branch is not taken -> we want miss in taken and hit in notTaken
-         * otherwise - no branch was jumped or pure logic :(.
-         */
+
 
         for (int i = 0; i <PHT_ARRAY_SIZE; ++i) {
             if(bpRecordTProbe[0][i][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][i][pht_index] < PHT_THRESHOLD &&
