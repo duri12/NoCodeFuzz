@@ -636,8 +636,8 @@ static void* fuzz_threadNew(void* arg) {
      * This is used in the inference stage of the attacker
      */
 
-    srand(1333);
-    run.scTools.pht  = pht_prepare(512,(void*)(uint64_t)0x3000480);
+    srand(1333); // change seed
+    run.scTools.pht  = pht_prepare(512,(void*)(uint64_t)0x3000430); // change starting addr here
 
     run.scTools.arrs = (int**)malloc(sizeof(int*)*8);
     run.scTools.lengths = (int*)malloc(sizeof(int)*8);
