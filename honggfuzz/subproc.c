@@ -833,7 +833,7 @@ static bool subproc_runNoFork(run_t *run)
     int numOfProbes = 0;
     int out = 0;
     uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_ARRAY_SIZE][PHT_SAMPLE_SIZE]= {0};
-    for (int i = 0; i < 8; i ++){
+    for (int i = 0; i < 8; i++){
         printf("%d ",run->scTools.lengths[i]);
     }
     for (int i = 0; i < NUM_OF_RUNS; i++)

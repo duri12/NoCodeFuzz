@@ -639,7 +639,7 @@ static void* fuzz_threadNew(void* arg) {
     srand(123);
     run.scTools.pht  = pht_prepare(512,0x3000000);
 
-    run.scTools.arrs = (int**)malloc(sizeof(int)*8);
+    run.scTools.arrs = (int**)malloc(sizeof(int*)*8);
     run.scTools.lengths = (int*)malloc(sizeof(int)*8);
     printf("%p\n",run.scTools.lengths);
 
