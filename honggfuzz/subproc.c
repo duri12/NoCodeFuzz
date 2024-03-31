@@ -54,7 +54,7 @@
 //TODO: should not be here - need to be decided at different place (and also be dynamic)
 #define L1I_SAMPLE_SIZE 64
 #define L1I_THRESHOLD 10
-#define PHT_SAMPLE_SIZE 128
+#define PHT_SAMPLE_SIZE 64
 #define PHT_THRESHOLD 115
 #define PHT_ARRAY_SIZE 8
 #define NUM_OF_RUNS 2 //NOTE: just for now
@@ -828,7 +828,6 @@ static bool subproc_runNoFork(run_t *run)
     char password[1024];
 
     strncpy(password, (char *) run->dynfile->data, 8);
-    password[6] = '\0';
 
 
     uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_ARRAY_SIZE][PHT_SAMPLE_SIZE]= {0};
@@ -840,7 +839,7 @@ static bool subproc_runNoFork(run_t *run)
 
 
             pht_prime(run->scTools.pht[j]);
-            /*out =*/ MyFunction(password);
+            out = open(password , O_RDONLY);
             pht_probe(run->scTools.pht[j], bpRecordTProbe[i][j]);
         }
 
