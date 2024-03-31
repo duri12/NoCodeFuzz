@@ -637,7 +637,7 @@ static void* fuzz_threadNew(void* arg) {
      */
 
     srand(1333);
-    run.scTools.pht  = pht_prepare(512,0x3000000);
+    run.scTools.pht  = pht_prepare(512,0x3000490);
 
     run.scTools.arrs = (int**)malloc(sizeof(int*)*8);
     run.scTools.lengths = (int*)malloc(sizeof(int)*8);
