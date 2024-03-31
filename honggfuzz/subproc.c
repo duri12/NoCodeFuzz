@@ -54,7 +54,7 @@
 //TODO: should not be here - need to be decided at different place (and also be dynamic)
 #define L1I_SAMPLE_SIZE 64
 #define L1I_THRESHOLD 10
-#define PHT_SAMPLE_SIZE 128
+#define PHT_SAMPLE_SIZE 64
 #define PHT_THRESHOLD 115
 #define PHT_ARRAY_SIZE 8
 #define NUM_OF_RUNS 2 //NOTE: just for now
@@ -827,12 +827,12 @@ static bool subproc_runNoFork(run_t *run)
 
     char password[1024];
 
-    strncpy(password, (char *) run->dynfile->data, 8);
-    password[6] = '\0';
-
+    strncpy(password, (char *) run->dynfile->data, 40);
+    password[40] = '\0';
 
     uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_ARRAY_SIZE][PHT_SAMPLE_SIZE]= {0};
-    int out = 0;
+
+    int tempFD[NUM_OF_RUNS][PHT_ARRAY_SIZE] = {0};
     randomize_pht();
     for (int i = 0; i < NUM_OF_RUNS; i++)
     {
@@ -840,21 +840,24 @@ static bool subproc_runNoFork(run_t *run)
 
 
             pht_prime(run->scTools.pht[j]);
-            /*out =*/ MyFunction(password);
+            tempFD[i][j] = open(password , O_RDONLY);
             pht_probe(run->scTools.pht[j], bpRecordTProbe[i][j]);
         }
-
     }
+    int out = tempFD[0][0] == -1? errno: 0;
+    for (int i = 0; i < NUM_OF_RUNS; i++)
+    {
+        for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
+            close(tempFD[i][j]);
+        }
+    }
+
 
 
 
     uint8_t bpResult[PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE] = {0};
     for (int pht_index = 0; pht_index <PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE; pht_index+=PHT_ARRAY_SIZE)
     {
-
-
-
-
         for (int i = 0; i <PHT_ARRAY_SIZE; ++i) {
             if(bpRecordTProbe[0][i][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][i][pht_index] < PHT_THRESHOLD &&
                     bpRecordTProbe[0][i][pht_index] > 0 && bpRecordTProbe[1][i][pht_index]> 0)
@@ -878,7 +881,7 @@ static bool subproc_runNoFork(run_t *run)
         uint8_t * signature = malloc(sizeof(uint8_t)*(PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE));
         memcpy(signature, bpResult, PHT_ARRAY_SIZE*PHT_SAMPLE_SIZE*sizeof(uint8_t));
         run->hwCnts.scSignature = signature;
-        run->hwCnts.ErrorCode = (out == -1) ? errno : 0;
+        run->hwCnts.ErrorCode = out;
     }
 
     int64_t diffUSecs = util_timeNowUSecs() - run->timeStartedUSecs;

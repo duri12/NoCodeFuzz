@@ -31,9 +31,16 @@ def parse_log_file(log_file):
             row += 1
     return entry_lines
 
+def find_cells_with_one(input_string):
+    cells_with_one = []
+    for i, cell in enumerate(input_string):
+        if cell == '1':
+            cells_with_one.append(i)
+    return cells_with_one
 
 if __name__ == "__main__":
     log_file = "Log.txt"
     parsed_data = parse_log_file(log_file)
     for entry in parsed_data:
-        print(entry)
+
+        print(f"the input {entry['Input']}, the error code {entry['Errno']} and the signature is {find_cells_with_one(entry['Signature'])}")
