@@ -56,6 +56,7 @@
 
 #define NUM_OF_ENTRIES 128
 #define NUM_OF_PHT 8
+#define START_ADDR 0x3000000
 static time_t termTimeStamp = 0;
 
 bool fuzz_isTerminating(void) {
@@ -635,7 +636,7 @@ static void* fuzz_threadNew(void* arg) {
      */
 
     for (int i = 0; i <NUM_OF_PHT; ++i) {
-        run.scTools.pht[i]  = pht_prepare(NUM_OF_PHT,(void*)(uint64_t)(0x3000000+0x120000000*i),2*i);
+        run.scTools.pht[i]  = pht_prepare(NUM_OF_PHT,(void*)(uint64_t)(START_ADDR+0x120000000*i),2*i);
     }
     //TODO: create a constant for probe size
 
