@@ -54,7 +54,7 @@
 #include "subproc.h"
 #include "side-channels/l1i.h"
 
-#define NUM_OF_ENTRIES 512
+#define NUM_OF_ENTRIES 128
 #define NUM_OF_PHT 1
 static time_t termTimeStamp = 0;
 
@@ -636,7 +636,7 @@ static void* fuzz_threadNew(void* arg) {
      */
 
     for (int i = 0; i <NUM_OF_PHT; ++i) {
-        run.scTools.pht[i]  = pht_prepare(512,(void*)(int)(0x3000000+0x1200000*i),4*i);
+        run.scTools.pht[i]  = pht_prepare(NUM_OF_ENTRIES,(void*)(uint64_t)(0x3000000+0x1200000*i),2*i);
     }
     //TODO: create a constant for probe size
 

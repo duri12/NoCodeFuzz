@@ -8,7 +8,7 @@ struct phtpp{
 };
 extern int randomize_pht();
 typedef struct phtpp *phtpp_t;
-phtpp_t pht_prepare(int probe_size,void* where , int offset);
+phtpp_t pht_prepare(int probe_size,void* where,int offset);
 void pht_prime(phtpp_t pht);
 void pht_probe(phtpp_t pht, uint64_t *results);
 void pht_release(phtpp_t pht);
