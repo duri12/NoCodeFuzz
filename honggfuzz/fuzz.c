@@ -644,6 +644,7 @@ static void* fuzz_threadNew(void* arg) {
 
     for (int i = 0; i <8; ++i) {
         run.scTools.lengths[i] = rand() % 32;
+        printf("length of %d is %d\n", i, run.scTools.lengths[i]);
         run.scTools.arrs[i] =(int *) malloc(sizeof(int)*32);
         for (int j = 0; j <run.scTools.lengths[i]; ++j) {
             run.scTools.arrs[i][j] = rand() % 5;
