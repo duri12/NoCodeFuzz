@@ -55,7 +55,7 @@
 #define L1I_SAMPLE_SIZE 64
 #define L1I_THRESHOLD 10
 #define PHT_SAMPLE_SIZE 512
-#define PHT_THRESHOLD 115
+#define PHT_THRESHOLD 100
 #define PHT_ARRAY_SIZE 1
 #define NUM_OF_RUNS 2 //NOTE: just for now
 
