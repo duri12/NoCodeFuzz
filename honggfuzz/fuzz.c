@@ -249,9 +249,7 @@ static void fuzz_perfFeedback(run_t* run) {
             index += sprintf(hex_string + index, "%02X", (unsigned char)run->dynfile->data[i]);
         }
         hex_string[index] = '\0';
-        LOG_I("%s", hex_string);
-
-        LOG_I("Input:\\x%02X", );
+        LOG_I("Input:%s", hex_string);
         char output[NUM_OF_ENTRIES*NUM_OF_PHT + 1];
         for (int i = 0; i < NUM_OF_ENTRIES*NUM_OF_PHT; i++) {
             output[i] = currScSignature[i] + '0';
