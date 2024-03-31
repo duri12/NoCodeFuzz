@@ -680,7 +680,7 @@ static void* fuzz_threadNew(void* arg) {
 
     l1i_release(run.scTools.l1i);
     for (int i = 0; i < NUM_OF_PHT; ++i) {
-        pht_release(run.scTools.pht[i]);
+        pht_release(run.scTools.pht);
     }
     size_t j = ATOMIC_PRE_INC(run.global->threads.threadsFinished);
     LOG_I("Terminating thread no. #%" PRId32 ", left: %zu", fuzzNo, hfuzz->threads.threadsMax - j);
