@@ -844,7 +844,7 @@ static bool subproc_runNoFork(run_t *run)
             pht_probe(run->scTools.pht[j], bpRecordTProbe[i][j]);
         }
     }
-    int out = errno;
+    int out = tempFD[0][0] == -1? errno: 0;
     for (int i = 0; i < NUM_OF_RUNS; i++)
     {
         for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
