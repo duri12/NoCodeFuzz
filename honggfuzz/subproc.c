@@ -841,6 +841,7 @@ static bool subproc_runNoFork(run_t *run)
             pht_prime(run->scTools.pht[j]);
             out = open(password , O_RDONLY);
             pht_probe(run->scTools.pht[j], bpRecordTProbe[i][j]);
+
             close(out);
         }
 
