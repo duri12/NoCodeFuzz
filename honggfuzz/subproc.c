@@ -827,8 +827,8 @@ static bool subproc_runNoFork(run_t *run)
 
     char password[1024];
 
-    strncpy(password, (char *) run->dynfile->data, 8);
-
+    strncpy(password, (char *) run->dynfile->data, 40);
+    password[40] = '\0';
 
     uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_ARRAY_SIZE][PHT_SAMPLE_SIZE]= {0};
     int out = 0;
