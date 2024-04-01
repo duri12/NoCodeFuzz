@@ -877,7 +877,7 @@ static bool subproc_runNoFork(run_t *run)
         uint8_t * signature = malloc(sizeof(uint8_t)*(PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE));
         memcpy(signature, bpResult, PHT_ARRAY_SIZE*PHT_SAMPLE_SIZE*sizeof(uint8_t));
         run->hwCnts.scSignature = signature;
-        run->hwCnts.ErrorCode = (out == -1) ? errno : 0;
+        run->hwCnts.ErrorCode = out;
     }
 
     int64_t diffUSecs = util_timeNowUSecs() - run->timeStartedUSecs;
