@@ -831,8 +831,8 @@ static bool subproc_runNoFork(run_t *run)
     password[40] = '\0';
 
     uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_ARRAY_SIZE][PHT_SAMPLE_SIZE]= {0};
-    int out  = 0;
-    int tempFD = 0;
+
+    int tempFD[NUM_OF_RUNS][PHT_ARRAY_SIZE] = {0};
     randomize_pht();
     for (int i = 0; i < NUM_OF_RUNS; i++)
     {
@@ -840,12 +840,16 @@ static bool subproc_runNoFork(run_t *run)
 
 
             pht_prime(run->scTools.pht[j]);
-            tempFD = open(password , O_RDONLY);
+            tempFD[i][j] = open(password , O_RDONLY);
             pht_probe(run->scTools.pht[j], bpRecordTProbe[i][j]);
-            out = errno;
-            close(tempFD);
         }
-
+    }
+    out = errno;
+    for (int i = 0; i < NUM_OF_RUNS; i++)
+    {
+        for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
+            close(tempFD[i]][j]);
+        }
     }
 
 
