@@ -49,7 +49,7 @@ To use NoCodeFuzz, follow these simple steps:
    ```bash
    taskset -c 1 honggfuzz/honggfuzz --linux_perf_instr -i Inputs/ -o outputs/ -s  -n 1  -l log.txt -- some_runable_code
    ```
-3.*Background Execution:*
+3. *Background Execution:*
    To run NoCodeFuzz in the background, use the following command:
    ```bash
    nohup taskset -c 1 honggfuzz/honggfuzz --linux_perf_instr -i Inputs/ -o outputs/ -s  -n 1  -l log.txt -- toRun &
