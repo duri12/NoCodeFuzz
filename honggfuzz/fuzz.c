@@ -54,9 +54,9 @@
 #include "subproc.h"
 #include "side-channels/l1i.h"
 
-#define NUM_OF_ENTRIES 64
-#define NUM_OF_PHT 8
-#define START_ADDR 0x30E4000
+#define NUM_OF_ENTRIES 64 // change as you wish
+#define NUM_OF_PHT 8 // do not change
+#define START_ADDR 0x30E4000 // starting address
 static time_t termTimeStamp = 0;
 
 bool fuzz_isTerminating(void) {
@@ -230,8 +230,7 @@ static void fuzz_perfFeedback(run_t* run) {
     uint8_t* currScSignature = run->hwCnts.scSignature;
     int res = HistogramSearch(run->global->feedback.hwCnts.scSignatureHistogram,currScSignature);
 
-    /* Any increase in coverage (edge, pc, cmp, hw) counters forces adding input to the corpus */
-    if(!res)//|| diff_instrCnt>0)
+    if(!res) // found new signature
     {
         if (diff_instrCnt < 0) {
             run->global->feedback.hwCnts.cpuInstrCnt = run->hwCnts.cpuInstrCnt;
@@ -258,12 +257,6 @@ static void fuzz_perfFeedback(run_t* run) {
             const time_t curr_sec      = time(NULL);
             const time_t elapsed_sec   = curr_sec - run->global->timing.timeStart;
             size_t       curr_exec_cnt = ATOMIC_GET(run->global->cnts.mutationsCnt);
-            /*
-             * We increase the mutation counter unconditionally in threads, but if it's
-             * above hfuzz->mutationsMax we don't really execute the fuzzing loop.
-             * Therefore, at the end of fuzzing, the mutation counter might be higher
-             * than hfuzz->mutationsMax
-             */
             if (run->global->mutate.mutationsMax > 0 &&
                 curr_exec_cnt > run->global->mutate.mutationsMax) {
                 curr_exec_cnt = run->global->mutate.mutationsMax;
@@ -293,15 +286,10 @@ static void fuzz_perfFeedback(run_t* run) {
         run->dynfile->distance = distance;
 
         if(!res) {
-            //LOG_I("was a change in signature");
-
-
             HistogramInsert(run->global->feedback.hwCnts.scSignatureHistogram,currScSignature,1);
         }
         else
         {
-            //LOG_I("no change in signature: found %p",(void*)run->global->feedback.hwCnts.scSignatureHistogram );
-            //TODO: should be in correct places
             free(run->global->feedback.hwCnts.scSignatureHistogram);
             run->global->feedback.hwCnts.scSignatureHistogram = 0;
         }

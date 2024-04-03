@@ -51,12 +51,9 @@
 #include "side-channels/util.h"
 #include "side-channels/pht_PP_api.h"
 
-//TODO: should not be here - need to be decided at different place (and also be dynamic)
-#define L1I_SAMPLE_SIZE 64
-#define L1I_THRESHOLD 10
-#define PHT_SAMPLE_SIZE 64
+#define PHT_SAMPLE_SIZE 64 // change as you wish
 #define PHT_THRESHOLD 115
-#define PHT_ARRAY_SIZE 8
+#define PHT_ARRAY_SIZE 8//do not change
 #define NUM_OF_RUNS 2 //NOTE: just for now
 
 
@@ -484,325 +481,10 @@ float middle_mean(uint64_t arr[], int n) {
     return (float)middle_sum /elements_num;
 }
 
-void stam_buffer(){
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-    __asm__("nop");
-}
 
 static bool subproc_runNoFork(run_t *run)
 {
+    // HF setup staff
     if (run->global->exe.persistent)
         subproc_New(run);
     if (run->global->exe.clearEnv) {
@@ -812,69 +494,58 @@ static bool subproc_runNoFork(run_t *run)
          i++) {
         putenv(run->global->exe.env_ptrs[i]);
     }
-
-
     subproc_prepareExecvArgs(run);/* put the args in run->args*/
-
-
     arch_prepare(run);
-
     if (run->global->feedback.dynFileMethod == _HF_DYNFILE_NONE) {
         return false;
     }
 
-    //uint64_t start, end;
 
+    //get the input from the fuzzer
     char password[1024];
-
     strncpy(password, (char *) run->dynfile->data, 40);
     password[40] = '\0';
-
     uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_ARRAY_SIZE][PHT_SAMPLE_SIZE]= {0};
-
     int tempFD[NUM_OF_RUNS][PHT_ARRAY_SIZE] = {0};
+
+
+    //the prime probe test
     randomize_pht();
-    for (int i = 0; i < NUM_OF_RUNS; i++)
-    {
-        for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
+    for (int i = 0; i < NUM_OF_RUNS * PHT_ARRAY_SIZE; ++i) {
+        int run_index = i / PHT_ARRAY_SIZE;
+        int pht_index = i % PHT_ARRAY_SIZE;
 
-
-            pht_prime(run->scTools.pht[j]);
-            tempFD[i][j] = open(password , O_RDONLY);
-            pht_probe(run->scTools.pht[j], bpRecordTProbe[i][j]);
-        }
+        pht_prime(run->scTools.pht[pht_index]);
+        tempFD[run_index][pht_index] = open(password, O_RDONLY);
+        pht_probe(run->scTools.pht[pht_index], bpRecordTProbe[run_index][pht_index]);
     }
+
+
+    // test error code and close files
     int out = tempFD[0][0] == -1? errno: 0;
-    for (int i = 0; i < NUM_OF_RUNS; i++)
-    {
-        for (int j = 0; j <PHT_ARRAY_SIZE; ++j) {
-            close(tempFD[i][j]);
-        }
+    for (int k = 0; k < NUM_OF_RUNS * PHT_ARRAY_SIZE; ++k) {
+        int i = k / PHT_ARRAY_SIZE;
+        int j = k % PHT_ARRAY_SIZE;
+        close(tempFD[i][j]);
     }
 
-
-
-
+    //check the threshold
     uint8_t bpResult[PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE] = {0};
-    for (int pht_index = 0; pht_index <PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE; pht_index+=PHT_ARRAY_SIZE)
-    {
-        for (int i = 0; i <PHT_ARRAY_SIZE; ++i) {
-            if(bpRecordTProbe[0][i][pht_index] < PHT_THRESHOLD && bpRecordTProbe[1][i][pht_index] < PHT_THRESHOLD &&
-                    bpRecordTProbe[0][i][pht_index] > 0 && bpRecordTProbe[1][i][pht_index]> 0)
-            {
-                bpResult[pht_index+i] = 1;
+    for (int pht_index = 0; pht_index < PHT_SAMPLE_SIZE * PHT_ARRAY_SIZE; ++pht_index) {
+        int array_index = pht_index % PHT_ARRAY_SIZE;
+        int sample_index = pht_index / PHT_ARRAY_SIZE;
 
-            }
-            else
-            {
-                bpResult[pht_index+i] = 0;
-            }
+        int record0 = bpRecordTProbe[0][array_index][sample_index];
+        int record1 = bpRecordTProbe[1][array_index][sample_index];
+
+        if (record0 < PHT_THRESHOLD && record1 < PHT_THRESHOLD && record0 > 0 && record1 > 0) {
+            bpResult[pht_index] = 1;
+        } else {
+            bpResult[pht_index] = 0;
         }
-
     }
 
-
-
+    //update the signature
     if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT)
     {
         run->hwCnts.cpuInstrCnt = 0;
@@ -884,6 +555,7 @@ static bool subproc_runNoFork(run_t *run)
         run->hwCnts.ErrorCode = out;
     }
 
+    // HF parameters for display
     int64_t diffUSecs = util_timeNowUSecs() - run->timeStartedUSecs;
 
     {
