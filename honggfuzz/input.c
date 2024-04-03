@@ -353,6 +353,15 @@ bool input_writeCovFile(const char* dir, dynfile_t* dynfile) {
 
 /* true if item1 is bigger than item2 */
 static bool input_cmpCov(dynfile_t* item1, dynfile_t* item2) {
+    if(item1->distance > item2->distance)
+    {
+        return true;
+    }
+    else if(item1->distance < item2->distance)
+    {
+        return false;
+    }
+
     for (size_t j = 0; j < ARRAYSIZE(item1->cov); j++) {
         if (item1->cov[j] > item2->cov[j]) {
             return true;
@@ -543,12 +552,14 @@ bool input_prepareDynamicInput(run_t* run, bool needs_mangle) {
             run->triesLeft--;
             break;
         }
+        // if triesLeft ==0 ->then continue to next one
 
         run->current                    = run->global->io.dynfileqCurrent;
         run->global->io.dynfileqCurrent = TAILQ_NEXT(run->global->io.dynfileqCurrent, pointers);
-
+        //NOTE: positive skip factor -> lead to throwing of input
         int skip_factor = input_skipFactor(run, run->current, &speed_factor);
-        if (skip_factor <= 0) {
+        if (skip_factor <= 0)
+        {
             run->triesLeft = -(skip_factor);
             break;
         }
@@ -756,6 +767,7 @@ bool input_prepareStaticFile(run_t* run, bool rewind, bool needs_mangle) {
             if (!input_getNext(run, run->dynfile->path, /* rewind= */ rewind)) {
                 return false;
             }
+            //NOTE: what - shouldn't second condition be without ! - contradicts text
             if (!needs_mangle || !input_inDynamicCorpus(run, run->dynfile->path)) {
                 LOG_D("Skipping '%s' as it's already in the dynamic corpus", run->dynfile->path);
                 break;

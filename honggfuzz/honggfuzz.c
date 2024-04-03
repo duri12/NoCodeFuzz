@@ -34,7 +34,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
-
+#include "side-channels/hashTable.h"
 #if defined(__FreeBSD__)
 #include <sys/procctl.h>
 #endif
@@ -296,7 +296,8 @@ static uint8_t mainThreadLoop(honggfuzz_t* hfuzz) {
             break;
         }
         pingThreads(hfuzz);
-        pause();
+        //pause();
+        sleep(1);
     }
 
     fuzz_setTerminating();
@@ -356,6 +357,15 @@ int main(int argc, char** argv) {
         LOG_I("Minimization mode enabled. Setting number of threads to 1");
         hfuzz.threads.threadsMax = 1;
     }
+
+    //initial history
+    //TODO: do this smarter
+    hfuzz.feedback.hwCnts.historyMaxSize = 10000;
+    hfuzz.feedback.hwCnts.historyWindow = (int*)malloc(sizeof(int) * hfuzz.feedback.hwCnts.historyMaxSize);
+    hfuzz.feedback.hwCnts.historyCurrSize = 0;
+
+    //TODO: init histogram
+    hfuzz.feedback.hwCnts.scSignatureHistogram = HistogramCreate();
 
     char tmstr[64];
     util_getLocalTime("%F.%H.%M.%S", tmstr, sizeof(tmstr), time(NULL));

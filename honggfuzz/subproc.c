@@ -37,6 +37,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <math.h>
+#include <stdint.h>
 
 #include "arch.h"
 #include "fuzz.h"
@@ -45,9 +47,19 @@
 #include "libhfcommon/log.h"
 #include "libhfcommon/util.h"
 
-extern char** environ;
+#include "side-channels/l1i.h"
+#include "side-channels/util.h"
+#include "side-channels/pht_PP_api.h"
 
-const char* subproc_StatusToStr(int status) {
+#define PHT_SAMPLE_SIZE 64 // change as you wish
+#define PHT_THRESHOLD 115
+#define PHT_ARRAY_SIZE 8//do not change
+#define NUM_OF_RUNS 2 //NOTE: just for now
+
+
+extern char **environ;
+
+const char *subproc_StatusToStr(int status) {
     static __thread char str[256];
 
     if (WIFEXITED(status)) {
@@ -57,7 +69,7 @@ const char* subproc_StatusToStr(int status) {
 
     if (WIFSIGNALED(status)) {
         snprintf(str, sizeof(str), "SIGNALED, signal: %d (%s)", WTERMSIG(status),
-            strsignal(WTERMSIG(status)));
+                 strsignal(WTERMSIG(status)));
         return str;
     }
     if (WIFCONTINUED(status)) {
@@ -73,7 +85,7 @@ const char* subproc_StatusToStr(int status) {
     /* Must be in a stopped state */
     if (WSTOPSIG(status) == (SIGTRAP | 0x80)) {
         snprintf(str, sizeof(str), "STOPPED (linux syscall): %d (%s)", WSTOPSIG(status),
-            strsignal(WSTOPSIG(status)));
+                 strsignal(WSTOPSIG(status)));
         return str;
     }
 #if defined(PTRACE_EVENT_STOP)
@@ -121,90 +133,93 @@ const char* subproc_StatusToStr(int status) {
 #endif /*  defined(PTRACE_EVENT_STOP)  */
 
     snprintf(str, sizeof(str), "STOPPED with signal: %d (%s)", WSTOPSIG(status),
-        strsignal(WSTOPSIG(status)));
+             strsignal(WSTOPSIG(status)));
     return str;
 }
 
-static bool subproc_persistentSendFileIndicator(run_t* run) {
-    uint64_t len = (uint64_t)run->dynfile->size;
-    if (!files_sendToSocketNB(run->persistentSock, (uint8_t*)&len, sizeof(len))) {
+static bool subproc_persistentSendFileIndicator(run_t *run) {
+    uint64_t len = (uint64_t) run->dynfile->size;
+    if (!files_sendToSocketNB(run->persistentSock, (uint8_t * ) & len, sizeof(len))) {
         PLOG_W("files_sendToSocketNB(len=%zu)", sizeof(len));
         return false;
     }
     return true;
 }
 
-static bool subproc_persistentGetReady(run_t* run) {
+static bool subproc_persistentGetReady(run_t *run) {
     uint8_t rcv;
     if (recv(run->persistentSock, &rcv, sizeof(rcv), MSG_DONTWAIT) != sizeof(rcv)) {
         return false;
     }
     if (rcv != HFReadyTag) {
         LOG_E("Received invalid message from the persistent process: '%c' (0x%" PRIx8
-              ") , expected '%c' (0x%" PRIx8 ")",
-            rcv, rcv, HFReadyTag, HFReadyTag);
+                      ") , expected '%c' (0x%" PRIx8 ")",
+              rcv, rcv, HFReadyTag, HFReadyTag);
         return false;
     }
     return true;
 }
 
-bool subproc_persistentModeStateMachine(run_t* run) {
+bool subproc_persistentModeStateMachine(run_t *run) {
     if (!run->global->exe.persistent) {
         return false;
     }
 
     for (;;) {
         switch (run->runState) {
-        case _HF_RS_WAITING_FOR_INITIAL_READY: {
-            if (!subproc_persistentGetReady(run)) {
-                return false;
-            }
-            run->runState = _HF_RS_SEND_DATA;
-        }; break;
-        case _HF_RS_SEND_DATA: {
-            if (!subproc_persistentSendFileIndicator(run)) {
-                LOG_E("Could not send the file size indicator to the persistent process. "
-                      "Killing the process pid=%d",
-                    (int)run->pid);
-                kill(run->pid, SIGKILL);
-                return false;
-            }
-            run->runState = _HF_RS_WAITING_FOR_READY;
-        }; break;
-        case _HF_RS_WAITING_FOR_READY: {
-            if (!subproc_persistentGetReady(run)) {
-                return false;
-            }
-            run->runState = _HF_RS_SEND_DATA;
-            /* The current persistent round is done */
-            return true;
-        }; break;
-        default:
+            case _HF_RS_WAITING_FOR_INITIAL_READY: {
+                if (!subproc_persistentGetReady(run)) {
+                    return false;
+                }
+                run->runState = _HF_RS_SEND_DATA;
+            };
+                break;
+            case _HF_RS_SEND_DATA: {
+                if (!subproc_persistentSendFileIndicator(run)) {
+                    LOG_E("Could not send the file size indicator to the persistent process. "
+                          "Killing the process pid=%d",
+                          (int) run->pid);
+                    kill(run->pid, SIGKILL);
+                    return false;
+                }
+                run->runState = _HF_RS_WAITING_FOR_READY;
+            };
+                break;
+            case _HF_RS_WAITING_FOR_READY: {
+                if (!subproc_persistentGetReady(run)) {
+                    return false;
+                }
+                run->runState = _HF_RS_SEND_DATA;
+                /* The current persistent round is done */
+                return true;
+            };
+                break;
+            default:
             LOG_F("Unknown runState: %d", run->runState);
         }
     }
 }
 
-static void subproc_prepareExecvArgs(run_t* run) {
+static void subproc_prepareExecvArgs(run_t *run) {
     size_t x = 0;
-    for (x = 0; x < _HF_ARGS_MAX && x < (size_t)run->global->exe.argc; x++) {
-        const char* ph_str = strstr(run->global->exe.cmdline[x], _HF_FILE_PLACEHOLDER);
+    for (x = 0; x < _HF_ARGS_MAX && x < (size_t) run->global->exe.argc; x++) {
+        const char *ph_str = strstr(run->global->exe.cmdline[x], _HF_FILE_PLACEHOLDER);
         if (!strcmp(run->global->exe.cmdline[x], _HF_FILE_PLACEHOLDER)) {
             run->args[x] = _HF_INPUT_FILE_PATH;
         } else if (ph_str) {
             static __thread char argData[PATH_MAX];
             snprintf(argData, sizeof(argData), "%.*s%s",
-                (int)(ph_str - run->global->exe.cmdline[x]), run->global->exe.cmdline[x],
-                _HF_INPUT_FILE_PATH);
+                     (int) (ph_str - run->global->exe.cmdline[x]), run->global->exe.cmdline[x],
+                     _HF_INPUT_FILE_PATH);
             run->args[x] = argData;
         } else {
-            run->args[x] = (char*)run->global->exe.cmdline[x];
+            run->args[x] = (char *) run->global->exe.cmdline[x];
         }
     }
     run->args[x] = NULL;
 }
 
-static bool subproc_PrepareExecv(run_t* run) {
+static bool subproc_PrepareExecv(run_t *run) {
     util_ParentDeathSigIfAvail(SIGKILL);
 
     /*
@@ -272,7 +287,8 @@ static bool subproc_PrepareExecv(run_t* run) {
         putenv(run->global->exe.env_ptrs[i]);
     }
     char fuzzNo[128];
-    snprintf(fuzzNo, sizeof(fuzzNo), "%" PRId32, run->fuzzNo);
+    snprintf(fuzzNo, sizeof(fuzzNo), "%"
+    PRId32, run->fuzzNo);
     setenv(_HF_THREAD_NO_ENV, fuzzNo, 1);
     if (run->global->exe.netDriver) {
         setenv(_HF_THREAD_NETDRIVER_ENV, "1", 1);
@@ -282,27 +298,27 @@ static bool subproc_PrepareExecv(run_t* run) {
     setsid();
 
     util_closeStdio(/* close_stdin= */ run->global->exe.nullifyStdio,
-        /* close_stdout= */ run->global->exe.nullifyStdio,
-        /* close_stderr= */ run->global->exe.nullifyStdio);
+            /* close_stdout= */ run->global->exe.nullifyStdio,
+            /* close_stderr= */ run->global->exe.nullifyStdio);
 
     /* The coverage bitmap/feedback structure */
     if (TEMP_FAILURE_RETRY(dup2(run->global->feedback.covFeedbackFd, _HF_COV_BITMAP_FD)) == -1) {
         PLOG_E("dup2(%d, _HF_COV_BITMAP_FD=%d)", run->global->feedback.covFeedbackFd,
-            _HF_COV_BITMAP_FD);
+               _HF_COV_BITMAP_FD);
         return false;
     }
     /* The const comparison bitmap/feedback structure */
     if (run->global->feedback.cmpFeedback &&
         TEMP_FAILURE_RETRY(dup2(run->global->feedback.cmpFeedbackFd, _HF_CMP_BITMAP_FD)) == -1) {
         PLOG_E("dup2(%d, _HF_CMP_BITMAP_FD=%d)", run->global->feedback.cmpFeedbackFd,
-            _HF_CMP_BITMAP_FD);
+               _HF_CMP_BITMAP_FD);
         return false;
     }
 
     /* The per-thread coverage feedback bitmap */
     if (TEMP_FAILURE_RETRY(dup2(run->perThreadCovFeedbackFd, _HF_PERTHREAD_BITMAP_FD)) == -1) {
         PLOG_E("dup2(%d, _HF_CMP_PERTHREAD_FD=%d)", run->perThreadCovFeedbackFd,
-            _HF_PERTHREAD_BITMAP_FD);
+               _HF_PERTHREAD_BITMAP_FD);
         return false;
     }
 
@@ -313,7 +329,7 @@ static bool subproc_PrepareExecv(run_t* run) {
             PLOG_E("dup2('%d', _HF_INPUT_FD='%d')", run->dynfile->fd, _HF_INPUT_FD);
             return false;
         }
-        if (lseek(_HF_INPUT_FD, 0, SEEK_SET) == (off_t)-1) {
+        if (lseek(_HF_INPUT_FD, 0, SEEK_SET) == (off_t) - 1) {
             PLOG_E("lseek(_HF_INPUT_FD=%d, 0, SEEK_SET)", _HF_INPUT_FD);
             return false;
         }
@@ -345,10 +361,12 @@ static bool subproc_PrepareExecv(run_t* run) {
     return true;
 }
 
-static bool subproc_New(run_t* run) {
+
+static bool subproc_New(run_t *run) {
     if (run->pid) {
         return true;
     }
+
 
     int sv[2];
     if (run->global->exe.persistent) {
@@ -369,13 +387,13 @@ static bool subproc_New(run_t* run) {
 
     LOG_D("Forking new process for thread: %" PRId32, run->fuzzNo);
 
-    run->pid = arch_fork(run);
+    //run->pid = arch_fork(run);
     if (run->pid == -1) {
         PLOG_E("Couldn't fork");
         run->pid = 0;
         return false;
     }
-    /* The child process */
+    /* The child process AKA shouldnt get here */
     if (!run->pid) {
         logMutexReset();
         /*
@@ -405,8 +423,8 @@ static bool subproc_New(run_t* run) {
         }
 
         LOG_D("Launching '%s' on file '%s' (%s mode)", run->args[0],
-            run->global->exe.persistent ? "PERSISTENT_MODE" : _HF_INPUT_FILE_PATH,
-            run->global->exe.fuzzStdin ? "stdin" : "file");
+              run->global->exe.persistent ? "PERSISTENT_MODE" : _HF_INPUT_FILE_PATH,
+              run->global->exe.fuzzStdin ? "stdin" : "file");
 
         if (!arch_launchChild(run)) {
             LOG_E("Error launching child process");
@@ -417,29 +435,127 @@ static bool subproc_New(run_t* run) {
     }
 
     /* Parent */
-    LOG_D("Launched new process, pid=%d, thread: %" PRId32 " (concurrency: %zd)", (int)run->pid,
-        run->fuzzNo, run->global->threads.threadsMax);
+    LOG_D("Launched new process, pid=%d, thread: %" PRId32 " (concurrency: %zd)", (int) run->pid,
+          run->fuzzNo, run->global->threads.threadsMax);
 
     arch_prepareParentAfterFork(run);
 
     if (run->global->exe.persistent) {
         close(sv[1]);
         run->runState = _HF_RS_WAITING_FOR_INITIAL_READY;
-        LOG_I("Persistent mode: Launched new persistent pid=%d", (int)run->pid);
+        LOG_I("Persistent mode: Launched new persistent pid=%d", (int) run->pid);
     }
 
     return true;
 }
 
-bool subproc_Run(run_t* run) {
-    if (!subproc_New(run)) {
-        LOG_E("subproc_New()");
+
+int cmp(const void *a, const void *b) {
+    return *(int64_t *) a - *(int64_t *) b;
+}
+
+
+int compare_ints(const void *a, const void *b) {
+    int int_a = *(int*)a;
+    int int_b = *(int*)b;
+
+    return (int_a > int_b) - (int_a < int_b);
+}
+
+float middle_mean(uint64_t arr[], int n) {
+    // Check if the array is empty or has less than 3 elements
+    if (n < 3) {
+        return 0;
+    }
+    qsort(arr, n, sizeof(uint64_t), compare_ints);
+    int start = n * 0.25;
+    int end = n * 0.75;
+
+
+    uint64_t middle_sum = 0;
+    for (int i = start; i < end; i++) {
+        middle_sum += arr[i];
+    }
+    int elements_num = end - start+1;
+
+    return (float)middle_sum /elements_num;
+}
+
+
+static bool subproc_runNoFork(run_t *run)
+{
+    // HF setup staff
+    if (run->global->exe.persistent)
+        subproc_New(run);
+    if (run->global->exe.clearEnv) {
+        environ = NULL;
+    }
+    for (size_t i = 0; i < ARRAYSIZE(run->global->exe.env_ptrs) && run->global->exe.env_ptrs[i];
+         i++) {
+        putenv(run->global->exe.env_ptrs[i]);
+    }
+    subproc_prepareExecvArgs(run);/* put the args in run->args*/
+    arch_prepare(run);
+    if (run->global->feedback.dynFileMethod == _HF_DYNFILE_NONE) {
         return false;
     }
 
-    arch_prepareParent(run);
-    arch_reapChild(run);
 
+    //get the input from the fuzzer
+    char password[1024];
+    strncpy(password, (char *) run->dynfile->data, 40);
+    password[40] = '\0';
+    uint64_t bpRecordTProbe[NUM_OF_RUNS][PHT_ARRAY_SIZE][PHT_SAMPLE_SIZE]= {0};
+    int tempFD[NUM_OF_RUNS][PHT_ARRAY_SIZE] = {0};
+
+
+    //the prime probe test
+    randomize_pht();
+    for (int i = 0; i < NUM_OF_RUNS * PHT_ARRAY_SIZE; ++i) {
+        int run_index = i / PHT_ARRAY_SIZE;
+        int pht_index = i % PHT_ARRAY_SIZE;
+
+        pht_prime(run->scTools.pht[pht_index]);
+        tempFD[run_index][pht_index] = open(password, O_RDONLY);
+        pht_probe(run->scTools.pht[pht_index], bpRecordTProbe[run_index][pht_index]);
+    }
+
+
+    // test error code and close files
+    int out = tempFD[0][0] == -1? errno: 0;
+    for (int k = 0; k < NUM_OF_RUNS * PHT_ARRAY_SIZE; ++k) {
+        int i = k / PHT_ARRAY_SIZE;
+        int j = k % PHT_ARRAY_SIZE;
+        close(tempFD[i][j]);
+    }
+
+    //check the threshold
+    uint8_t bpResult[PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE] = {0};
+    for (int pht_index = 0; pht_index < PHT_SAMPLE_SIZE * PHT_ARRAY_SIZE; ++pht_index) {
+        int array_index = pht_index % PHT_ARRAY_SIZE;
+        int sample_index = pht_index / PHT_ARRAY_SIZE;
+
+        int record0 = bpRecordTProbe[0][array_index][sample_index];
+        int record1 = bpRecordTProbe[1][array_index][sample_index];
+
+        if (record0 < PHT_THRESHOLD && record1 < PHT_THRESHOLD && record0 > 0 && record1 > 0) {
+            bpResult[pht_index] = 1;
+        } else {
+            bpResult[pht_index] = 0;
+        }
+    }
+
+    //update the signature
+    if (run->global->feedback.dynFileMethod & _HF_DYNFILE_INSTR_COUNT)
+    {
+        run->hwCnts.cpuInstrCnt = 0;
+        uint8_t * signature = malloc(sizeof(uint8_t)*(PHT_SAMPLE_SIZE*PHT_ARRAY_SIZE));
+        memcpy(signature, bpResult, PHT_ARRAY_SIZE*PHT_SAMPLE_SIZE*sizeof(uint8_t));
+        run->hwCnts.scSignature = signature;
+        run->hwCnts.ErrorCode = out;
+    }
+
+    // HF parameters for display
     int64_t diffUSecs = util_timeNowUSecs() - run->timeStartedUSecs;
 
     {
@@ -452,7 +568,12 @@ bool subproc_Run(run_t* run) {
     return true;
 }
 
-uint8_t subproc_System(run_t* run, const char* const argv[]) {
+
+bool subproc_Run(run_t *run) {
+    return subproc_runNoFork(run);
+}
+
+uint8_t subproc_System(run_t *run, const char *const argv[]) {
     pid_t pid = arch_fork(run);
     if (pid == -1) {
         PLOG_E("Couldn't fork");
@@ -463,7 +584,7 @@ uint8_t subproc_System(run_t* run, const char* const argv[]) {
 
         setsid();
         util_closeStdio(
-            /* close_stdin= */ true, /* close_stdout= */ false, /* close_stderr= */ false);
+                /* close_stdin= */ true, /* close_stdout= */ false, /* close_stderr= */ false);
 
         sigset_t sset;
         sigemptyset(&sset);
@@ -471,7 +592,7 @@ uint8_t subproc_System(run_t* run, const char* const argv[]) {
             PLOG_W("sigprocmask(empty_set)");
         }
 
-        execv(argv[0], (char* const*)&argv[0]);
+        execv(argv[0], (char *const *) &argv[0]);
         PLOG_F("Couldn't execute '%s'", argv[0]);
         return 255;
     }
@@ -488,11 +609,11 @@ uint8_t subproc_System(run_t* run, const char* const argv[]) {
         int status;
         int ret = TEMP_FAILURE_RETRY(wait4(pid, &status, flags, NULL));
         if (ret == -1) {
-            PLOG_E("wait4() for process pid=%d", (int)pid);
+            PLOG_E("wait4() for process pid=%d", (int) pid);
             return 255;
         }
         if (ret != pid) {
-            LOG_E("wait4() returned %d, but waited for %d", ret, (int)pid);
+            LOG_E("wait4() returned %d, but waited for %d", ret, (int) pid);
             return 255;
         }
         if (WIFSIGNALED(status)) {
@@ -511,27 +632,27 @@ uint8_t subproc_System(run_t* run, const char* const argv[]) {
     }
 }
 
-void subproc_checkTimeLimit(run_t* run) {
+void subproc_checkTimeLimit(run_t *run) {
     if (!run->global->timing.tmOut) {
         return;
     }
 
-    int64_t curUSecs  = util_timeNowUSecs();
+    int64_t curUSecs = util_timeNowUSecs();
     int64_t diffUSecs = curUSecs - run->timeStartedUSecs;
 
     if (run->tmOutSignaled && (diffUSecs > ((run->global->timing.tmOut + 1) * 1000000))) {
         /* Has this instance been already signaled due to timeout? Just, SIGKILL it */
         LOG_W("pid=%d has already been signaled due to timeout. Killing it with SIGKILL",
-            (int)run->pid);
+              (int) run->pid);
         kill(run->pid, SIGKILL);
         return;
     }
 
     if ((diffUSecs > (run->global->timing.tmOut * 1000000)) && !run->tmOutSignaled) {
         run->tmOutSignaled = true;
-        LOG_W("pid=%d took too much time (limit %ld s). Killing it with %s", (int)run->pid,
-            (long)run->global->timing.tmOut,
-            run->global->timing.tmoutVTALRM ? "SIGVTALRM" : "SIGKILL");
+        LOG_W("pid=%d took too much time (limit %ld s). Killing it with %s", (int) run->pid,
+              (long) run->global->timing.tmOut,
+              run->global->timing.tmoutVTALRM ? "SIGVTALRM" : "SIGKILL");
         if (run->global->timing.tmoutVTALRM) {
             kill(run->pid, SIGVTALRM);
         } else {
@@ -541,24 +662,24 @@ void subproc_checkTimeLimit(run_t* run) {
     }
 }
 
-void subproc_checkTermination(run_t* run) {
+void subproc_checkTermination(run_t *run) {
     if (fuzz_isTerminating()) {
-        LOG_D("Killing pid=%d", (int)run->pid);
+        LOG_D("Killing pid=%d", (int) run->pid);
         kill(run->pid, SIGKILL);
     }
 }
 
 bool subproc_runThread(
-    honggfuzz_t* hfuzz, pthread_t* thread, void* (*thread_func)(void*), bool joinable) {
+        honggfuzz_t *hfuzz, pthread_t *thread, void *(*thread_func)(void *), bool joinable) {
     pthread_attr_t attr;
 
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(
-        &attr, joinable ? PTHREAD_CREATE_JOINABLE : PTHREAD_CREATE_DETACHED);
+            &attr, joinable ? PTHREAD_CREATE_JOINABLE : PTHREAD_CREATE_DETACHED);
     pthread_attr_setstacksize(&attr, _HF_PTHREAD_STACKSIZE);
-    pthread_attr_setguardsize(&attr, (size_t)sysconf(_SC_PAGESIZE));
+    pthread_attr_setguardsize(&attr, (size_t) sysconf(_SC_PAGESIZE));
 
-    if (pthread_create(thread, &attr, thread_func, (void*)hfuzz) < 0) {
+    if (pthread_create(thread, &attr, thread_func, (void *) hfuzz) < 0) {
         PLOG_W("Couldn't create a new thread");
         return false;
     }

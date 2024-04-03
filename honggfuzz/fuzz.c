@@ -23,7 +23,7 @@
  */
 
 #include "fuzz.h"
-
+#include <dlfcn.h> // For dynamic symbol resolution
 #include <errno.h>
 #include <fcntl.h>
 #include <inttypes.h>
@@ -35,6 +35,9 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <sys/types.h>
+#include <sys/mman.h>
+#include <assert.h>
+#include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -49,7 +52,11 @@
 #include "sanitizers.h"
 #include "socketfuzzer.h"
 #include "subproc.h"
+#include "side-channels/l1i.h"
 
+#define NUM_OF_ENTRIES 64 // change as you wish
+#define NUM_OF_PHT 8 // do not change
+#define START_ADDR 0x30E4000 // starting address
 static time_t termTimeStamp = 0;
 
 bool fuzz_isTerminating(void) {
@@ -165,7 +172,9 @@ static void fuzz_minimizeRemoveFiles(run_t* run) {
         if (!input_getNext(run, fname, /* rewind= */ false)) {
             break;
         }
-        if (!input_inDynamicCorpus(run, fname)) {
+        //File wasn't entered to corpus
+        if (!input_inDynamicCorpus(run, fname))
+        {
             if (input_removeStaticFile(run->global->io.inputDir, fname)) {
                 LOG_I("Removed unnecessary '%s'", fname);
             }
@@ -212,43 +221,42 @@ static void fuzz_perfFeedback(run_t* run) {
     }
 
     rmb();
+    int distance = -1;
 
-    int64_t diff0 = (int64_t)run->global->feedback.hwCnts.cpuInstrCnt - run->hwCnts.cpuInstrCnt;
-    int64_t diff1 = (int64_t)run->global->feedback.hwCnts.cpuBranchCnt - run->hwCnts.cpuBranchCnt;
 
-    /* Any increase in coverage (edge, pc, cmp, hw) counters forces adding input to the corpus */
-    if (run->hwCnts.newBBCnt > 0 || softNewPC > 0 || softNewEdge > 0 || softNewCmp > 0 ||
-        diff0 < 0 || diff1 < 0) {
-        if (diff0 < 0) {
+    int64_t diff_instrCnt = (int64_t)run->global->feedback.hwCnts.cpuInstrCnt - run->hwCnts.cpuInstrCnt;
+    int64_t diff_cpuBranchCnt = (int64_t)run->global->feedback.hwCnts.cpuBranchCnt - run->hwCnts.cpuBranchCnt;
+
+    uint8_t* currScSignature = run->hwCnts.scSignature;
+    int res = HistogramSearch(run->global->feedback.hwCnts.scSignatureHistogram,currScSignature);
+
+    if(!res) // found new signature
+    {
+        if (diff_instrCnt < 0) {
             run->global->feedback.hwCnts.cpuInstrCnt = run->hwCnts.cpuInstrCnt;
         }
-        if (diff1 < 0) {
+        if (diff_cpuBranchCnt < 0) {
             run->global->feedback.hwCnts.cpuBranchCnt = run->hwCnts.cpuBranchCnt;
         }
         run->global->feedback.hwCnts.bbCnt += run->hwCnts.newBBCnt;
         run->global->feedback.hwCnts.softCntPc += softNewPC;
         run->global->feedback.hwCnts.softCntEdge += softNewEdge;
         run->global->feedback.hwCnts.softCntCmp += softNewCmp;
+        LOG_I("-*-*-*-*-")
+        LOG_I("Input:%s", run->dynfile->data);
+        char output[NUM_OF_ENTRIES*NUM_OF_PHT + 1];
+        for (int i = 0; i < NUM_OF_ENTRIES*NUM_OF_PHT; i++) {
+            output[i] = currScSignature[i] + '0';
+        }
+        output[NUM_OF_ENTRIES*NUM_OF_PHT] = '\0';
+        LOG_I("Signature:%s", output);
+        LOG_I("Errno:%d", run->hwCnts.ErrorCode);
 
-        LOG_I("Sz:%zu Tm:%" _HF_NONMON_SEP PRIu64 "us (i/b/h/e/p/c) New:%" PRIu64 "/%" PRIu64
-              "/%" PRIu64 "/%" PRIu64 "/%" PRIu64 "/%" PRIu64 ", Cur:%" PRIu64 "/%" PRIu64
-              "/%" PRIu64 "/%" PRIu64 "/%" PRIu64 "/%" PRIu64,
-            run->dynfile->size, util_timeNowUSecs() - run->timeStartedUSecs,
-            run->hwCnts.cpuInstrCnt, run->hwCnts.cpuBranchCnt, run->hwCnts.newBBCnt, softNewEdge,
-            softNewPC, softNewCmp, run->hwCnts.cpuInstrCnt, run->hwCnts.cpuBranchCnt,
-            run->global->feedback.hwCnts.bbCnt, run->global->feedback.hwCnts.softCntEdge,
-            run->global->feedback.hwCnts.softCntPc, run->global->feedback.hwCnts.softCntCmp);
 
         if (run->global->io.statsFileName) {
             const time_t curr_sec      = time(NULL);
             const time_t elapsed_sec   = curr_sec - run->global->timing.timeStart;
             size_t       curr_exec_cnt = ATOMIC_GET(run->global->cnts.mutationsCnt);
-            /*
-             * We increase the mutation counter unconditionally in threads, but if it's
-             * above hfuzz->mutationsMax we don't really execute the fuzzing loop.
-             * Therefore at the end of fuzzing, the mutation counter might be higher
-             * than hfuzz->mutationsMax
-             */
             if (run->global->mutate.mutationsMax > 0 &&
                 curr_exec_cnt > run->global->mutate.mutationsMax) {
                 curr_exec_cnt = run->global->mutate.mutationsMax;
@@ -275,6 +283,18 @@ static void fuzz_perfFeedback(run_t* run) {
         run->dynfile->cov[1] = softCurCmp;
         run->dynfile->cov[2] = run->hwCnts.cpuInstrCnt + run->hwCnts.cpuBranchCnt;
         run->dynfile->cov[3] = run->dynfile->size ? (64 - util_Log2(run->dynfile->size)) : 64;
+        run->dynfile->distance = distance;
+
+        if(!res) {
+            HistogramInsert(run->global->feedback.hwCnts.scSignatureHistogram,currScSignature,1);
+        }
+        else
+        {
+            free(run->global->feedback.hwCnts.scSignatureHistogram);
+            run->global->feedback.hwCnts.scSignatureHistogram = 0;
+        }
+        //NOTE: here it creates new inputs according to results.
+        //only if was an increasing in cov
         input_addDynamicInput(run);
 
         if (run->global->socketFuzzer.enabled) {
@@ -356,7 +376,8 @@ static bool fuzz_runVerifier(run_t* run) {
 static bool fuzz_fetchInput(run_t* run) {
     {
         fuzzState_t st = fuzz_getState(run->global);
-        if (st == _HF_STATE_DYNAMIC_DRY_RUN) {
+        if (st == _HF_STATE_DYNAMIC_DRY_RUN)
+        {
             run->mutationsPerRun = 0U;
             if (input_prepareStaticFile(run, /* rewind= */ false, /* mangle= */ false)) {
                 return true;
@@ -366,12 +387,14 @@ static bool fuzz_fetchInput(run_t* run) {
         }
     }
 
-    if (fuzz_getState(run->global) == _HF_STATE_DYNAMIC_MINIMIZE) {
+    if (fuzz_getState(run->global) == _HF_STATE_DYNAMIC_MINIMIZE)
+    {
         fuzz_minimizeRemoveFiles(run);
         return false;
     }
 
-    if (fuzz_getState(run->global) == _HF_STATE_DYNAMIC_MAIN) {
+    if (fuzz_getState(run->global) == _HF_STATE_DYNAMIC_MAIN)
+    {
         if (run->global->exe.externalCommand) {
             if (!input_prepareExternalFile(run)) {
                 LOG_E("input_prepareExternalFile() failed");
@@ -388,7 +411,8 @@ static bool fuzz_fetchInput(run_t* run) {
         }
     }
 
-    if (fuzz_getState(run->global) == _HF_STATE_STATIC) {
+    if (fuzz_getState(run->global) == _HF_STATE_STATIC)
+    {
         if (run->global->exe.externalCommand) {
             if (!input_prepareExternalFile(run)) {
                 LOG_E("input_prepareExternalFile() failed");
@@ -510,6 +534,28 @@ static void fuzz_fuzzLoopSocket(run_t* run) {
 
     report_saveReport(run);
 }
+static void unprotect(void *address, size_t len)
+{
+    // Calculate the page size
+    long page_size = sysconf(_SC_PAGESIZE);
+
+    // Align the start address to the page boundary
+    void* aligned_addr = (void*)((uintptr_t)address & ~(page_size - 1));
+
+    // Adjust size for the new alignment
+    size_t aligned_size = len + (address - aligned_addr);
+    aligned_size = (aligned_size + page_size - 1) & ~(page_size - 1); // Ensure the size covers the end symbol, rounded up to a page boundary
+
+    if (mprotect(aligned_addr, aligned_size, PROT_READ | PROT_WRITE | PROT_EXEC) == -1) {
+        perror("mprotect");
+        exit(EXIT_FAILURE);
+    }
+}
+
+extern char pht_prepare_end;
+extern char pht_probe_end;
+extern char victim_end;
+
 
 static void* fuzz_threadNew(void* arg) {
     honggfuzz_t* hfuzz  = (honggfuzz_t*)arg;
@@ -532,6 +578,7 @@ static void* fuzz_threadNew(void* arg) {
     defer {
         free(run.dynfile);
     };
+    //init here all side-channel tools
 
     /* Do not try to handle input files with socketfuzzer */
     char mapname[32];
@@ -564,6 +611,22 @@ static void* fuzz_threadNew(void* arg) {
     if (!arch_archThreadInit(&run)) {
         LOG_F("Could not initialize the thread");
     }
+
+    //NOTE: here initializing l1i sc tools structure
+    run.scTools.l1i = l1i_prepare();
+    unprotect(&randomize_pht, 3000000); // actually only R+X
+    unprotect(&pht_prime, (uintptr_t)&pht_prepare_end - (uintptr_t)&pht_prepare); // R+W+X
+    unprotect(&pht_probe, (uintptr_t)&pht_probe_end - (uintptr_t)&pht_probe ); // actually only R+X
+
+    /*
+     * Threshold latency between correct prediction and mis-prediction
+     * This is used in the inference stage of the attacker
+     */
+
+    for (int i = 0; i <NUM_OF_PHT; ++i) {
+        run.scTools.pht[i]  = pht_prepare(NUM_OF_PHT,(void*)(uint64_t)(START_ADDR+0x120000000*i),2*i + 0xcc0);
+    }
+    //TODO: create a constant for probe size
 
     for (;;) {
         /* Check if dry run mode with verifier enabled */
@@ -603,6 +666,10 @@ static void* fuzz_threadNew(void* arg) {
         kill(run.pid, SIGKILL);
     }
 
+    l1i_release(run.scTools.l1i);
+    for (int i = 0; i < NUM_OF_PHT; ++i) {
+        pht_release(run.scTools.pht[i]);
+    }
     size_t j = ATOMIC_PRE_INC(run.global->threads.threadsFinished);
     LOG_I("Terminating thread no. #%" PRId32 ", left: %zu", fuzzNo, hfuzz->threads.threadsMax - j);
     return NULL;

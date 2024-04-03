@@ -885,8 +885,10 @@ void mangle_mangleContent(run_t* run, int speed_factor) {
     }
 
     /* If last coverage acquisition was more than 5 secs ago, use splicing more frequently */
+    //NOTE: figure how this code works
     if ((time(NULL) - ATOMIC_GET(run->global->timing.lastCovUpdate)) > 5) {
-        if (util_rnd64() & 0x1) {
+        if (util_rnd64() & 0x1)  //NOTE: 50% chance
+        {
             mangle_Splice(run, run->global->cfg.only_printable);
         }
     }

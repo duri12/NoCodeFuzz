@@ -37,6 +37,9 @@
 #include <time.h>
 
 #include "libhfcommon/util.h"
+#include "side-channels/l1i.h"
+#include "side-channels/pht_PP_api.h"
+#include "side-channels/hashTable.h"
 
 #define PROG_NAME    "honggfuzz"
 #define PROG_VERSION "2.6"
@@ -128,6 +131,12 @@ typedef struct {
     uint64_t softCntPc;
     uint64_t softCntEdge;
     uint64_t softCntCmp;
+    int*     historyWindow;
+    int      historyCurrSize;
+    int      historyMaxSize;
+    uint8_t* scSignature;
+    Histogram scSignatureHistogram;
+    int      ErrorCode;
 } hwcnt_t;
 
 typedef enum {
@@ -147,6 +156,7 @@ typedef enum {
 struct _dynfile_t {
     size_t             size;
     uint64_t           cov[4];
+    int                distance;
     size_t             idx;
     int                fd;
     uint64_t           timeExecUSecs;
@@ -294,6 +304,7 @@ typedef struct {
         uint64_t        maxCov[4];
         dynFileMethod_t dynFileMethod;
         hwcnt_t         hwCnts;
+
     } feedback;
     struct {
         size_t mutationsCnt;
@@ -353,6 +364,14 @@ typedef enum {
     _HF_RS_SEND_DATA                 = 3,
 } runState_t;
 
+typedef struct{
+    l1ipp_t l1i;
+    phtpp_t pht[8];
+    int phtThreshold;
+    int phtProbeSize;
+    int phtNumOfSets;
+}scTools_t;
+
 typedef struct {
     honggfuzz_t* global;
     pid_t        pid;
@@ -376,11 +395,16 @@ typedef struct {
     unsigned     triesLeft;
     dynfile_t*   current;
     hwcnt_t      hwCnts;
+    scTools_t    scTools;
 
+    //TODO: should be in different struct with a proper locks
     struct {
         /* For Linux code */
         uint8_t* perfMmapBuf;
         uint8_t* perfMmapAux;
+        /** NOTE: sent here the signature of bp+l1i**/
+        uint8_t* scSignature;
+        int      ErrorCode;
         int      cpuInstrFd;
         int      cpuBranchFd;
         int      cpuIptBtsFd;
